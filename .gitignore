@@ -16,3 +16,6 @@ release/
 # Generated toolchain files
 .build-tools/
 settings-window/src-tauri/gen/
+
+# Finder metadata
+.DS_Store

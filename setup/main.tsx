@@ -2,13 +2,13 @@ import { createRoot } from 'react-dom/client'
 import { useLayoutEffect } from 'react'
 import { VoiceSettingsShell } from '@voicemesh/settings-editor'
 import { claudeBackend, closePreviewSession } from './client/claude-backend.ts'
-import { dismissSettings, type SettingsWindowApi } from './client/close-settings.ts'
+import { dismissSettings, settingsReady, type SettingsWindowApi } from '@voicemesh/composer/desktop'
 import '@voicemesh/settings-editor/style.css'
 import './shell.css'
 
 declare global {
   interface Window {
-    __TAURI__?: SettingsWindowApi & { core: { invoke: (command: string) => Promise<unknown> } }
+    __TAURI__?: SettingsWindowApi
   }
 }
 
@@ -29,7 +29,7 @@ function SettingsApp() {
   useLayoutEffect(() => {
     // This runs after the shell is in the DOM, without an arbitrary timer or a
     // dependency on remote catalogs. The native window has already been positioned.
-    void window.__TAURI__?.core.invoke('settings_ready').catch(error => {
+    void settingsReady(window.__TAURI__).catch(error => {
       // Older installed windows are already visible and don't implement this command.
       console.debug('Settings ready signal unavailable', error)
     })

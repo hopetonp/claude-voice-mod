@@ -15,7 +15,7 @@
     "host:install:macos": "node scripts/install-host-macos.js"
   },
   "dependencies": {
-    "@voicemesh/composer": "file:vendor/voicemesh-composer-0.2.8.tgz",
+    "@voicemesh/composer": "file:vendor/voicemesh-composer-0.2.9.tgz",
     "@voicemesh/settings-editor": "file:vendor/voicemesh-settings-editor-0.1.18.tgz",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

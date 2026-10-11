@@ -121,3 +121,20 @@ The first target surface is a local session in the Code tab of Claude Desktop. I
 - [Use the Mods API](https://code.claude.com/docs/en/plugins/mods/api)
 - [Test a Mod](https://code.claude.com/docs/en/plugins/mods/test)
 - Local VoiceMesh Composer source: `/Users/hgp/DeepSeek/voicemesh-composer/README.md`.
+# Shared desktop behavior
+
+Claude consumes the desktop lifecycle and platform helpers from the existing
+`@voicemesh/composer` package. Composer owns OS theme lookup, hidden background
+process launches on Windows, ready/reveal, bounded close cleanup, and native
+focus-loss dismissal. Claude supplies its saved theme preference, settings URL,
+display position, window dimensions, and narrowly scoped Tauri capability.
+
+The checked-in Composer 0.2.9 archive preserves all 113 runtime files from the
+previous 0.2.8 archive and adds the desktop JavaScript, declarations, and native
+helper built from `C:/Development/Projects/voicemesh-compose`. The source checkout
+started at 0.2.0, so replacing its entire voice bundle would lose later fixes.
+`scripts/pack-composer-desktop.js <composer-source>` reproduces this archive after
+building that source's JavaScript and types, and verifies every existing runtime
+file's hash before packing. The desktop support remains part of Composer, with
+no second npm package to maintain. Subsequent unified Composer releases should
+reconcile the voice runtime source with this preserved runtime baseline.

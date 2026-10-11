@@ -3,6 +3,7 @@ import { execFileSync, spawn } from 'node:child_process'
 import { mkdir } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
+import { spawnBackground } from '@voicemesh/composer/desktop/server'
 
 export async function startBackgroundMedia(url) {
   const browser = process.env.VOICE_MEDIA_BROWSER ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -34,7 +35,7 @@ export async function startBackgroundMedia(url) {
     // Spawning Chrome from the Node login service attributes capture to Node instead.
     child = browserApp
       ? spawn('/usr/bin/open', ['-n', '-W', '-a', browserApp, '--args', ...args], { stdio: 'ignore' })
-      : spawn(browser, args, { stdio: 'ignore', windowsHide: true })
+      : spawnBackground(browser, args, { stdio: 'ignore' })
     child.once('error', error => {
       console.error(`VoiceMesh media worker could not start: ${error.message}`)
     })

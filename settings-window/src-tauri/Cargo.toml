@@ -8,5 +8,6 @@ description = "VoiceMesh settings window for Claude Desktop"
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+voicemesh-desktop = { path = "../../node_modules/@voicemesh/composer/native/settings-window" }
 tauri = { version = "2", features = ["macos-private-api"] }
 tauri-plugin-single-instance = "2"

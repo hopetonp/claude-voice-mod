@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { dismissSettings } from '../setup/client/close-settings.ts'
+import { dismissSettings } from '@voicemesh/composer/desktop'
 
 function nativeWindow({ failExit = false } = {}) {
   const calls = []

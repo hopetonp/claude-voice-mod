@@ -34,7 +34,7 @@ export async function startBackgroundMedia(url) {
     // Spawning Chrome from the Node login service attributes capture to Node instead.
     child = browserApp
       ? spawn('/usr/bin/open', ['-n', '-W', '-a', browserApp, '--args', ...args], { stdio: 'ignore' })
-      : spawn(browser, args, { stdio: 'ignore' })
+      : spawn(browser, args, { stdio: 'ignore', windowsHide: true })
     child.once('error', error => {
       console.error(`VoiceMesh media worker could not start: ${error.message}`)
     })

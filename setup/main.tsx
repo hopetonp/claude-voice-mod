@@ -1,24 +1,19 @@
 import { createRoot } from 'react-dom/client'
+import { useLayoutEffect } from 'react'
 import { VoiceSettingsShell } from '@voicemesh/settings-editor'
 import { claudeBackend, closePreviewSession } from './client/claude-backend.ts'
+import { dismissSettings, type SettingsWindowApi } from './client/close-settings.ts'
 import '@voicemesh/settings-editor/style.css'
 import './shell.css'
 
 declare global {
   interface Window {
-    __TAURI__?: {
-      app: { exit: (code: number) => Promise<void> }
-      window: { getCurrentWindow: () => { close: () => Promise<void> } }
-    }
+    __TAURI__?: SettingsWindowApi & { core: { invoke: (command: string) => Promise<unknown> } }
   }
 }
 
 async function closeSettings(): Promise<void> {
-  try { await closePreviewSession() } catch { /* Closing must still exit if preview cleanup fails. */ }
-  const tauri = window.__TAURI__
-  if (!tauri) return
-  try { await tauri.app.exit(0) }
-  catch { await tauri.window.getCurrentWindow().close() }
+  await dismissSettings(window.__TAURI__, closePreviewSession)
 }
 
 const locale = new URLSearchParams(location.search).get('locale') || 'en'
@@ -30,8 +25,18 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
   if (!theme || theme === 'auto') document.documentElement.dataset.theme = event.matches ? 'dark' : 'light'
 })
 
-createRoot(document.getElementById('app')!).render(
-  <VoiceSettingsShell backend={claudeBackend} locale={locale} hostName="Claude" voiceSelector="dropdown"
+function SettingsApp() {
+  useLayoutEffect(() => {
+    // This runs after the shell is in the DOM, without an arbitrary timer or a
+    // dependency on remote catalogs. The native window has already been positioned.
+    void window.__TAURI__?.core.invoke('settings_ready').catch(error => {
+      // Older installed windows are already visible and don't implement this command.
+      console.debug('Settings ready signal unavailable', error)
+    })
+  }, [])
+  return <VoiceSettingsShell backend={claudeBackend} locale={locale} hostName="Claude" voiceSelector="dropdown"
     providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }}
-    onClose={window.__TAURI__ ? () => { void closeSettings() } : undefined} />,
-)
+    onClose={window.__TAURI__ ? () => { void closeSettings() } : undefined} />
+}
+
+createRoot(document.getElementById('app')!).render(<SettingsApp />)

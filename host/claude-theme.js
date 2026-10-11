@@ -25,7 +25,9 @@ export async function claudeDesktopTheme(path = claudeDesktopConfigPath(), read 
       return stdout.trim() === 'Dark' ? 'dark' : 'light'
     }
     if (platform === 'win32') {
-      const { stdout } = await run('reg', ['query', 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize', '/v', 'AppsUseLightTheme'])
+      // /api/state is polled frequently. A console for each registry query steals
+      // focus and flashes the taskbar even when the Settings window is closed.
+      const { stdout } = await run('reg', ['query', 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize', '/v', 'AppsUseLightTheme'], { windowsHide: true })
       return /AppsUseLightTheme\s+REG_DWORD\s+0x0(?:\s|$)/i.test(stdout) ? 'dark' : 'light'
     }
     const { stdout } = await run('gsettings', ['get', 'org.gnome.desktop.interface', 'color-scheme'])

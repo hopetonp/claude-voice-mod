@@ -7,5 +7,5 @@
   "remote": {
     "urls": ["http://localhost:*/*"]
   },
-  "permissions": ["core:app:allow-exit", "core:window:allow-close"]
+  "permissions": ["core:app:allow-exit", "core:window:allow-close", "allow-settings-ready"]
 }

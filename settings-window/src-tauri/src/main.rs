@@ -1,6 +1,15 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{Manager, PhysicalPosition, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+mod window_state;
+use window_state::SettingsState;
+
+#[tauri::command]
+fn settings_ready(window: WebviewWindow, state: tauri::State<'_, SettingsState>) -> Result<(), String> {
+    state.mark_ready();
+    window.show().map_err(|error| error.to_string())?;
+    window.set_focus().map_err(|error| error.to_string())
+}
 
 // The launch click identifies Claude's display. Center Settings on that
 // display so moving the pointer does not move the window toward an edge.
@@ -51,18 +60,33 @@ fn main() {
     });
 
     tauri::Builder::default()
+        .manage(SettingsState::default())
+        .invoke_handler(tauri::generate_handler![settings_ready])
+        .on_window_event(|window, event| {
+            if window.label() == "settings" {
+                if let tauri::WindowEvent::Focused(focused) = event {
+                    if window.state::<SettingsState>().should_dismiss_on_focus_change(*focused) {
+                        let _ = window.close();
+                    }
+                }
+            }
+        })
         .plugin(tauri_plugin_single_instance::init(|app, args, _| {
             if let Some(window) = app.get_webview_window("settings") {
                 if let Some(url) = args.get(1).and_then(|value| parse_settings_url(value).ok()) {
                     if window.url().ok().as_ref() != Some(&url) {
+                        app.state::<SettingsState>().prepare_reload();
+                        let _ = window.hide();
                         let _ = window.navigate(url);
                     }
                 }
                 place_over_invoking_screen(&window);
-                let _ = window.show();
-                let _ = window.unminimize();
                 let _ = window.set_always_on_top(true);
-                let _ = window.set_focus();
+                if app.state::<SettingsState>().is_ready() {
+                    let _ = window.show();
+                    let _ = window.unminimize();
+                    let _ = window.set_focus();
+                }
             }
         }))
         .setup(move |app| {
@@ -75,7 +99,9 @@ fn main() {
                 .minimizable(false)
                 .maximizable(false)
                 .always_on_top(true)
-                .focused(true)
+                // Position the hidden window first; React reveals it when the shell is mounted.
+                .visible(false)
+                .focused(false)
                 .build()?;
             place_over_invoking_screen(&window);
             Ok(())

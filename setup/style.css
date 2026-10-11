@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light;
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --surface: #faf9f7; --panel: #fff; --field: #fff; --text: #292723;
+  --muted: #756f68; --border: #e5e0da; --accent: #b6613c;
+  --accent-wash: #faeee8; --hover: #f4f0ec; --success: #297349;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --surface: #1b1b1b; --panel: #242424; --field: #2d2d2d; --text: #f0eeeb;
+  --muted: #aaa5a0; --border: #3d3b39; --accent: #de9877;
+  --accent-wash: #382b28; --hover: #343230; --success: #8bcca0;
+}
+* { box-sizing: border-box }
+html, body, #app { margin: 0; min-height: 100%; background: var(--surface); color: var(--text) }
+button, input, select { font: inherit }
+button, select, input[type='password'] { border: 1px solid var(--border); border-radius: 9px; background: var(--field); color: var(--text) }
+button { padding: 9px 13px; cursor: pointer; white-space: nowrap }
+button:hover:not(:disabled) { background: var(--hover) }
+button:disabled, select:disabled { opacity: .48; cursor: default }
+select, input[type='password'] { min-height: 40px; padding: 9px 12px }
+select { width: 100% }
+input[type='password'] { min-width: 0; flex: 1 }
+input[type='checkbox'] { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer }
+input[type='range'] { accent-color: var(--accent) }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.settings { min-height: 100vh; display: flex; flex-direction: column; background: var(--panel) }
+.settings-header { display: flex; align-items: center; gap: 15px; padding: 27px 32px 21px }
+.settings-mark { display: grid; place-items: center; width: 41px; height: 41px; border-radius: 12px; background: var(--accent-wash); color: var(--accent); font-size: 24px }
+.settings-header h1 { margin: 0; font-size: 22px; line-height: 1.2; letter-spacing: -.025em; font-weight: 650 }
+.settings-header p { margin: 3px 0 0; color: var(--muted); font-size: 13px }
+.settings-state { margin-left: auto; padding: 5px 10px; border-radius: 20px; background: var(--accent-wash); color: var(--accent); font-size: 12px; font-weight: 600 }
+.settings-tabs { display: flex; gap: 27px; padding: 0 32px; border-bottom: 1px solid var(--border) }
+.settings-tabs button { position: relative; border: 0; border-radius: 0; padding: 0 0 13px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600 }
+.settings-tabs button:hover { background: transparent !important; color: var(--text) }
+.settings-tabs button.selected { color: var(--text) }
+.settings-tabs button.selected::after { position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--accent); content: '' }
+.settings-body { flex: 1; padding: 24px 32px 20px; overflow: auto }
+.section-heading { margin-bottom: 21px }
+.section-heading h2 { margin: 0; font-size: 15px; font-weight: 650 }
+.section-heading p { margin: 3px 0 0; color: var(--muted); font-size: 13px }
+.field-block { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px }
+.field-block > label { font-size: 13px; font-weight: 600 }
+.field-status { margin-left: 7px; color: var(--muted); font-size: 12px; font-weight: 500 }
+.field-status.ready { color: var(--success) }
+.field-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px }
+.field-grid .field-block { min-width: 0 }
+.input-action { display: flex; gap: 8px }
+.input-action button { background: var(--accent-wash); color: var(--accent); border-color: transparent; font-weight: 600 }
+.voice-choice { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 40px; text-align: left }
+.voice-choice span { color: var(--accent); font-size: 12px; font-weight: 600 }
+.checks { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 2px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface) }
+.checks strong, .setting-row strong { font-size: 13px; font-weight: 600 }
+.checks p, .setting-row p { margin: 3px 0 0; color: var(--muted); font-size: 12px }
+.checks > div:last-child { display: flex; gap: 7px }
+.checks button { padding: 8px 10px; font-size: 12px }
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 76px; border-bottom: 1px solid var(--border) }
+.setting-row:last-child { border-bottom: 0 }
+.setting-row > div:first-child { min-width: 0 }
+.setting-row select { flex: 0 0 230px }
+.standby-control { display: flex; align-items: center; gap: 10px; flex: 0 0 230px }
+.standby-control input { min-width: 0; flex: 1 }
+.standby-control span { flex: 0 0 80px; text-align: right; font-size: 12px }
+.settings-footer { display: flex; justify-content: space-between; align-items: center; gap: 15px; min-height: 48px; padding: 10px 32px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px }
+.settings-footer p { margin: 0 }
+.settings-footer span { white-space: nowrap }
+@media (max-width: 620px) {
+  .settings-header, .settings-body, .settings-footer { padding-left: 20px; padding-right: 20px }
+  .settings-tabs { padding-left: 20px; padding-right: 20px; gap: 16px }
+  .field-grid { grid-template-columns: 1fr; gap: 0 }
+  .checks { align-items: flex-start; flex-direction: column }
+  .setting-row select, .standby-control { flex-basis: 170px }
+}

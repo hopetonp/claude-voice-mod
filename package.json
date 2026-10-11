@@ -1,0 +1,28 @@
+{
+  "name": "claude-voice-mod",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "media:dev": "vite --config media/vite.config.js --host 127.0.0.1",
+    "media:build": "vite build --config media/vite.config.js",
+    "setup:build": "vite build --config setup/vite.config.js",
+    "settings:window:build": "node scripts/build-settings-window.js",
+    "plugin:stage": "node scripts/stage-plugin.js",
+    "release:windows": "node scripts/build-windows-release.js",
+    "release:windows:mod": "node scripts/build-windows-mod-release.js",
+    "host": "node host/server.js",
+    "host:install:macos": "node scripts/install-host-macos.js"
+  },
+  "dependencies": {
+    "@voicemesh/composer": "file:vendor/voicemesh-composer-0.2.8.tgz",
+    "@voicemesh/settings-editor": "file:vendor/voicemesh-settings-editor-0.1.18.tgz",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.1",
+    "vite": "^7.3.0"
+  }
+}

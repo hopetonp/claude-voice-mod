@@ -1,0 +1,6 @@
+{
+  "name": "voicemesh-said",
+  "version": "0.1.16",
+  "description": "Shows VoiceMesh conversation captions as chat bubbles without starting a Claude turn",
+  "author": { "name": "Hopeton Palmer" }
+}

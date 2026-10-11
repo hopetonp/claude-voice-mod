@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schema.tauri.app/config/2/capability",
+  "identifier": "settings-close",
+  "description": "Allow the local settings page to exit when dismissed",
+  "windows": ["settings"],
+  "local": false,
+  "remote": {
+    "urls": ["http://localhost:*/*"]
+  },
+  "permissions": ["core:app:allow-exit", "core:window:allow-close"]
+}

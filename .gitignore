@@ -1,0 +1,18 @@
+node_modules/
+dist/
+dist-setup/
+.voice-host/
+.plugin-build/
+settings-window/src-tauri/target/
+release/
+
+# Machine-local state and credentials
+.claude/
+.settings-window/
+.env
+.env.*
+*.log
+
+# Generated toolchain files
+.build-tools/
+settings-window/src-tauri/gen/

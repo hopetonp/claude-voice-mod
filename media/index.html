@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoiceMesh Composer</title>
+    <style>
+      body { font: 16px system-ui, sans-serif; max-width: 38rem; margin: 3rem auto; padding: 0 1rem; }
+      button { font: inherit; margin: .25rem .35rem .25rem 0; padding: .6rem .9rem; }
+      #level { width: 100%; }
+      #error { color: #b42318; }
+    </style>
+  </head>
+  <body>
+    <h1>VoiceMesh Composer</h1>
+    <p>Composer runs the voice conversation. The Claude connection exchanges coding requests and results.</p>
+    <p><strong id="status">Connecting to host…</strong></p>
+    <p id="error" role="alert"></p>
+    <button id="enable">Enable audio</button>
+    <button id="stop">Stop</button>
+    <button id="mute">Mute</button>
+    <button id="tone">Test speaker</button>
+    <p>Microphone level</p>
+    <progress id="level" max="100" value="0"></progress>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

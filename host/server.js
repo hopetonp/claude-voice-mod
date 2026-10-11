@@ -911,8 +911,16 @@ const pipelineSockets = new WebSocketServer({ noServer: true, maxPayload: 1024 *
 // starting there loads that session's history and replays what it is owed (voice-server.js).
 const VOICE_ON = ['connecting', 'listening', 'speaking', 'thinking', 'standby']
 const voiceOn = new Map()
+// Sockets of a session switched away from. The page closes them when it takes the quiet stop; until then they
+// neither count as voice being on nor block the next session's socket.
+const retiring = new WeakSet()
+const liveSockets = server => [...server.clients].filter(socket => !retiring.has(socket)).length
+function closeRetiring(server) {
+  for (const socket of server.clients) if (retiring.has(socket)) socket.close()
+}
+
 function switchVoice(previous) {
-  const wasOn = VOICE_ON.includes(mediaState.phase) || voiceSockets.clients.size > 0 || pipelineSockets.clients.size > 0
+  const wasOn = VOICE_ON.includes(mediaState.phase) || liveSockets(voiceSockets) > 0 || liveSockets(pipelineSockets) > 0
   if (previous) voiceOn.set(previous, wasOn)
   // Quiet: a switch only resumes or pauses a session's voice, so the page plays no connection chime.
   const queue = action => {
@@ -920,8 +928,12 @@ function switchVoice(previous) {
     while (commands.length > 64) commands.shift()
   }
   if (wasOn) {
-    for (const socket of voiceSockets.clients) socket.close()
-    for (const socket of pipelineSockets.clients) socket.close()
+    // Closing the page's sockets here made it report a failed connection before the stop reached it. The page
+    // closes them itself when it takes the stop; any it has not closed in two seconds are closed then.
+    for (const socket of [...voiceSockets.clients, ...pipelineSockets.clients]) {
+      retiring.add(socket)
+      setTimeout(() => { if (socket.readyState === socket.OPEN) socket.close() }, 2000).unref()
+    }
     queue('stop')
   }
   if (voiceOn.get(sessions.selected()) === true) queue('start')
@@ -930,7 +942,7 @@ function switchVoice(previous) {
 server.on('upgrade', (request, socket, head) => {
   const port = server.address().port
   if (request.url === '/pipeline/stt') {
-    if (providerStore.voiceMode() !== 'pipeline' || pipelineSockets.clients.size > 0 || !pipelineReady()
+    if (providerStore.voiceMode() !== 'pipeline' || liveSockets(pipelineSockets) > 0 || !pipelineReady()
       || ![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(request.headers.origin)) {
       socket.destroy(); return
     }
@@ -938,10 +950,11 @@ server.on('upgrade', (request, socket, head) => {
     const recognizer = createPipelineRecognizer(selected.sttEngine, selected.sttModel, connectPipelineProvider,
       () => pipelineKey(selected.sttEngine), localVoice)
     if (!recognizer || !('turnStream' in recognizer)) { socket.destroy(); return }
+    closeRetiring(pipelineSockets)
     pipelineSockets.handleUpgrade(request, socket, head, ws => attachPipelineSttSession(ws, recognizer))
     return
   }
-  if (request.url !== '/voice' || providerStore.voiceMode() !== 'sts' || voiceSockets.clients.size > 0 || !configuredConnections(providerStore).length || ![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(request.headers.origin)) {
+  if (request.url !== '/voice' || providerStore.voiceMode() !== 'sts' || liveSockets(voiceSockets) > 0 || !configuredConnections(providerStore).length || ![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(request.headers.origin)) {
     socket.destroy()
     return
   }
@@ -983,6 +996,7 @@ server.on('upgrade', (request, socket, head) => {
     },
     close: () => owner ? transcriptLedger.closeTurns(owner) : undefined,
   }
+  closeRetiring(voiceSockets)
   voiceSockets.handleUpgrade(request, socket, head, ws => providerStore.selectedProvider() === 'openai-live'
     ? attachVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history, turns)
     : attachRealtimeVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history))

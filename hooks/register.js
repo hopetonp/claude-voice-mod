@@ -52,20 +52,34 @@ let sessionFresh = false
 // DeepSeek's five-bar, stop, and muted glyphs inside the established Claude button surface.
 function voiceButtonIcon(phase, muted, theme = 'light') {
   const colors = voiceColors(theme)
+  // The symbols sit on the blue button, so in light mode they are white rather than the theme's dark ink.
+  const ink = theme === 'dark' ? colors.ink : '#ffffff'
   const connecting = phase === 'connecting'
   const active = !['offline', 'idle', 'error', 'needs-activation', 'connecting'].includes(phase)
   const bars = [[0.15, 5.6], [3.65, 16], [7.15, 9.6], [10.65, 13], [14.15, 5.6]]
   const delays = [0, -720, -540, -360, -180]
   const wave = bars.map(([x, height], index) => {
     const y = (16 - height) / 2
-    if (!connecting) return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${colors.bars}"/>`
+    if (!connecting) return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${ink}"/>`
     const shortHeight = height * .35
     const shortY = (16 - shortHeight) / 2
-    return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${colors.bars}"><animate attributeName="height" values="${shortHeight};${height};${shortHeight}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="y" values="${shortY};${y};${shortY}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;1;.55" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/></rect>`
+    return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${ink}"><animate attributeName="height" values="${shortHeight};${height};${shortHeight}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="y" values="${shortY};${y};${shortY}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;1;.55" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/></rect>`
   }).join('')
-  const stop = `<path d="M4.4 4.4 11.6 11.6M11.6 4.4 4.4 11.6" stroke="${colors.ink}" stroke-width="1.9" stroke-linecap="round"/>`
-  const micOff = `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v1.1l5.2 5.2V3.6A2.6 2.6 0 0 0 8 1ZM4.2 8.2c0 .4.05.7.14 1.05l3.66 3.66h-1.6l-4-4 1.1-1.1c.1.15.3.25.7.39ZM7.4 11.7v2.2h1.2v-2.2H7.4ZM2.3 1.4l12.3 12.3-.85.85L1.45 2.25 2.3 1.4Z" fill="${colors.ink}"/>`
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="${colors.control}" stroke="${colors.border}" stroke-width="2"/><g transform="translate(9 9)">${muted ? micOff : active ? stop : wave}</g></svg>`
+  const stop = `<path d="M4.4 4.4 11.6 11.6M11.6 4.4 4.4 11.6" stroke="${ink}" stroke-width="1.9" stroke-linecap="round"/>`
+  const micOff = `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v1.1l5.2 5.2V3.6A2.6 2.6 0 0 0 8 1ZM4.2 8.2c0 .4.05.7.14 1.05l3.66 3.66h-1.6l-4-4 1.1-1.1c.1.15.3.25.7.39ZM7.4 11.7v2.2h1.2v-2.2H7.4ZM2.3 1.4l12.3 12.3-.85.85L1.45 2.25 2.3 1.4Z" fill="${ink}"/>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="${BUTTON_FILL}" stroke="${darken(BUTTON_FILL, .25)}" stroke-width="1"/><g transform="translate(9 9)">${muted ? micOff : active ? stop : wave}</g></svg>`
+}
+// The start button's size in pixels: the SVG is drawn at exactly this size. Its seat, which sets the voice
+// row's height, is BUTTON_ROWS tall, with the button centred in it.
+const BUTTON_SIZE = 28
+const BUTTON_ROWS = 1.4
+// The voice's orb in pixels, drawn at exactly this size; at most BUTTON_SIZE so the row keeps its height.
+const ORB_SIZE = 28
+// The start button's colour; its ring is the same colour, a little darker.
+const BUTTON_FILL = '#1d4ed8'
+function darken(hex, amount) {
+  const channels = [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * (1 - amount)))
+  return `#${channels.map(c => c.toString(16).padStart(2, '0')).join('')}`
 }
 
 // DeepSeek's quick-control glyphs (voice-client glyphs.tsx), drawn at 15px in a 26px round seat.
@@ -85,7 +99,7 @@ function voiceIcon(glyph, color) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><g transform="translate(5.5 5.5) scale(.9375)">${GLYPHS[glyph](color)}</g></svg>`
 }
 
-// DeepSeek's nine-band microphone meter, adapted to a Mod SVG leaf, in a calm green to teal: the user's mic is live.
+// DeepSeek's nine-band microphone meter, adapted to a Mod SVG leaf, in a clear green: the user's mic is live.
 const xmlText = value => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char])
 function voiceWave(levels = [], label = 'Microphone levels') {
   const bars = Array.from({ length: 9 }, (_, i) => {
@@ -93,7 +107,7 @@ function voiceWave(levels = [], label = 'Microphone levels') {
     const height = 3 + Math.min(1, Math.sqrt(amplitude) * 2) * 19
     return `<rect x="${5 + i * 6}" y="${(24 - height) / 2}" width="3" height="${height}" rx="1.5" fill="url(#spectrum)" opacity="${amplitude > .01 ? 1 : .4}"/>`
   }).join('')
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="24" viewBox="0 0 64 24" role="img" aria-label="${xmlText(label)}"><defs><linearGradient id="spectrum" x2="1" y2="0"><stop stop-color="#81c784"/><stop offset=".5" stop-color="#4db6ac"/><stop offset="1" stop-color="#4dd0e1"/></linearGradient></defs>${bars}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="24" viewBox="0 0 64 24" role="img" aria-label="${xmlText(label)}"><defs><linearGradient id="spectrum" x2="1" y2="0"><stop stop-color="#22c55e"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>${bars}</svg>`
 }
 
 // The voice's mark on the live line: a calm blue-violet orb, soft at the edges, that swells and glows with
@@ -102,22 +116,23 @@ function voiceOrb(levels = [], label = 'Voice speaking') {
   const level = Math.min(1, Math.sqrt(Math.max(0, ...levels.map(value => Number(value) || 0))) * 1.4)
   const core = (6 + level * 2).toFixed(2)
   const glow = (9.5 + level * 1.5).toFixed(2)
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 22 22" role="img" aria-label="${xmlText(label)}"><defs>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${ORB_SIZE}" height="${ORB_SIZE}" viewBox="0 0 22 22" role="img" aria-label="${xmlText(label)}"><defs>`
     + `<radialGradient id="orb-glow"><stop stop-color="#7c6cf7" stop-opacity="${(.6 + level * .3).toFixed(2)}"/><stop offset=".6" stop-color="#7c6cf7" stop-opacity="${(.3 + level * .2).toFixed(2)}"/><stop offset="1" stop-color="#7c6cf7" stop-opacity="0"/></radialGradient>`
     + `<radialGradient id="orb-core" cx=".4" cy=".4" r=".6"><stop stop-color="#c6ecff"/><stop offset=".45" stop-color="#4fc3f7"/><stop offset=".8" stop-color="#7c6cf7" stop-opacity=".85"/><stop offset="1" stop-color="#7c6cf7" stop-opacity="0"/></radialGradient>`
     + `</defs><circle cx="11" cy="11" r="${glow}" fill="url(#orb-glow)"/><circle cx="11" cy="11" r="${core}" fill="url(#orb-core)"/></svg>`
 }
 
-// The orb while voice listens and nobody talks: smaller and dimmer than the speaking orb, breathing slowly.
+// The orb while voice listens and nobody talks: dimmer than the speaking orb, breathing slowly.
 // The breath is drawn from the time on each redraw (an animated SVG draws in a framed box on desktop).
 const BREATH_MS = 3200
 // Parked (standby, nothing running), the orb holds still in gray: the voice will not respond until resumed.
 function restingOrb(now, parked = false, label = parked ? 'Voice on standby' : 'Voice listening') {
   const [light, mid, edge] = parked ? ['#d4d8de', '#aab1bb', '#8a929c'] : ['#c6ecff', '#4fc3f7', '#7c6cf7']
   const breath = (1 - Math.cos(2 * Math.PI * (now % BREATH_MS) / BREATH_MS)) / 2
-  const core = (3.8 + breath * 2).toFixed(2)
-  const glow = (5.5 + breath * 4.5).toFixed(2)
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 22 22" role="img" aria-label="${xmlText(label)}"><defs>`
+  // As large as the speaking orb at rest, so it reads at the row's size; the breath only swells it a little.
+  const core = (6 + breath * 1.2).toFixed(2)
+  const glow = (8.5 + breath * 2).toFixed(2)
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${ORB_SIZE}" height="${ORB_SIZE}" viewBox="0 0 22 22" role="img" aria-label="${xmlText(label)}"><defs>`
     + `<radialGradient id="rest-glow"><stop stop-color="${edge}" stop-opacity=".4"/><stop offset=".6" stop-color="${edge}" stop-opacity=".15"/><stop offset="1" stop-color="${edge}" stop-opacity="0"/></radialGradient>`
     + `<radialGradient id="rest-core" cx=".4" cy=".4" r=".6"><stop stop-color="${light}" stop-opacity=".8"/><stop offset=".45" stop-color="${mid}" stop-opacity=".7"/><stop offset=".8" stop-color="${edge}" stop-opacity=".55"/><stop offset="1" stop-color="${edge}" stop-opacity="0"/></radialGradient>`
     + `</defs><circle cx="11" cy="11" r="${glow}" fill="url(#rest-glow)"/><circle cx="11" cy="11" r="${core}" fill="url(#rest-core)"/></svg>`
@@ -142,7 +157,8 @@ async function refresh($) {
   polling = true
   try {
     if (connection === null) {
-      const home = await $.env.get('HOME')
+      // Windows sets USERPROFILE, not HOME, unless something set HOME for the session.
+      const home = await $.env.get('HOME') ?? await $.env.get('USERPROFILE')
       if (!home) throw new Error('HOME is unavailable')
       const saved = await $.fs.read(`${home}/.claude/voicemesh-controls/connection.json`)
       connection = JSON.parse(saved)
@@ -152,6 +168,11 @@ async function refresh($) {
     })
     if (!response.ok) throw new Error(`Host returned ${response.status}`)
     const next = JSON.parse(response.text)
+    // The host's voice belongs to the selected session. Any other session shows its voice off: never
+    // another session's phase, clock or levels, so switching into it starts clean.
+    if (next.selectedSession && next.selectedSession !== sessionId) {
+      Object.assign(next, { phase: 'idle', muted: false, speakerMuted: false, inputLevels: [], outputLevels: [], activeSeconds: 0, error: undefined })
+    }
     history.classifierEnabled = next.classifierEnabled === true
     const themeChanged = next.theme !== media.theme
     const localeChanged = next.locale !== media.locale
@@ -502,10 +523,30 @@ async function loadHistory($) {
   savedHistory = Array.isArray(stored) ? stored.filter(row => typeof row?.id === 'string' && typeof row?.line === 'string').slice(-128) : []
 }
 
-async function control($, action) {
-  if (connection === null) {
+// Makes sure a host is up with its media page connected, starting the host when none answers. Resolves
+// true once it takes controls, false if it did not come up in time. Call it from anything that needs voice
+// now; never from the polling timer, which would keep restarting a host that shut itself down.
+async function ensureConnected($, { timeoutMs = 8000 } = {}) {
+  if (connection === null) await refresh($)
+  if (connection !== null && media.mediaConnected) return true
+  if (connection === null) await ensurePackagedHost($).catch(() => {})
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    await $.clock.sleep(250)
     await refresh($)
-    if (connection === null) return $.ui.toast(vt('status.startHost'))
+    if (connection !== null && media.mediaConnected) return true
+  }
+  return false
+}
+
+async function control($, action) {
+  // Starting voice brings a host up if none is running; stopping or muting has nothing to do without one.
+  if (action === 'start') {
+    if (connection === null) show($, vt('status.connecting'))
+    if (!await ensureConnected($)) return $.ui.toast(vt('status.hostNotConnected'))
+  } else if (connection === null) {
+    await refresh($)
+    if (connection === null) return $.ui.toast(vt('status.hostNotConnected'))
   }
   const previousMedia = media
   try {
@@ -642,7 +683,7 @@ async function chatStyle($) {
 
 // Chat bubbles or plain text for finished turns: a file the voicemesh-said companion reads as it draws.
 async function displayFile($) {
-  return `${await $.env.get('HOME')}/.claude/voicemesh-controls/display.json`
+  return `${await $.env.get('HOME') ?? await $.env.get('USERPROFILE')}/.claude/voicemesh-controls/display.json`
 }
 
 async function openSettings($, surface) {
@@ -723,16 +764,16 @@ function voiceStrip($, e, original) {
           ...(line || live || parked || connecting || !active ? [Box({ flexDirection: 'row', width: 0, flexGrow: 1, flexShrink: 1, minWidth: 0, columnGap: 1, marginRight: 2,
             alignItems: 'center', children: active && !connecting && line ? [
               // The voice's words lead with its orb; the user's need no mark.
-              ...(line.speaker === 'Voice' ? [Svg({ source: voiceOrb(media.speakerMuted ? [] : media.outputLevels, vt('orb.speaking')), width: 24, height: 24, alt: vt('orb.speaking') })] : []),
+              ...(line.speaker === 'Voice' ? [Svg({ source: voiceOrb(media.speakerMuted ? [] : media.outputLevels, vt('orb.speaking')), width: ORB_SIZE, height: ORB_SIZE, alt: vt('orb.speaking') })] : []),
               words,
             ] : [
               // No words to show. Still speaking (a provider's words ran ahead of its audio): the orb keeps
               // pulsing. Nobody talking: it rests and breathes, and names Claude's work while a turn runs.
               media.phase === 'speaking'
-                ? Svg({ source: voiceOrb(media.speakerMuted ? [] : media.outputLevels, vt('orb.speaking')), width: 24, height: 24, alt: vt('orb.speaking') })
+                ? Svg({ source: voiceOrb(media.speakerMuted ? [] : media.outputLevels, vt('orb.speaking')), width: ORB_SIZE, height: ORB_SIZE, alt: vt('orb.speaking') })
                 // In standby the voice is not listening, so the orb holds still: blue beside Claude's work,
                 // gray when nothing is running.
-                : Svg({ source: restingOrb(parked || connecting || !active ? 0 : Date.now(), orbGray, orbLabel), width: 24, height: 24,
+                : Svg({ source: restingOrb(parked || connecting || !active ? 0 : Date.now(), orbGray, orbLabel), width: ORB_SIZE, height: ORB_SIZE,
                   alt: orbLabel }),
               ...(working ? [Text({ dimColor: true, wrap: 'truncate', children: [vt('status.working')] })] : []),
             ] })] : []),
@@ -751,12 +792,13 @@ function voiceStrip($, e, original) {
           Box({
             position: 'relative',
             width: 4,
-            height: 1.7,
+            height: BUTTON_ROWS,
+            justifyContent: 'center',
             children: [
-              Svg({ source: voiceButtonIcon(media.phase, media.muted, media.theme), width: 34, height: 34, alt: vt(active ? 'control.stop' : 'control.start') }),
+              Svg({ source: voiceButtonIcon(media.phase, media.muted, media.theme), width: BUTTON_SIZE, height: BUTTON_SIZE, alt: vt(active ? 'control.stop' : 'control.start') }),
               Box({
                 position: 'absolute', top: 0, left: 0,
-                children: [Client({ key: 'voice-toggle', module: './voice-toggle-client.js', width: 4, height: 1.7 })],
+                children: [Client({ key: 'voice-toggle', module: './voice-toggle-client.js', width: 4, height: BUTTON_ROWS })],
               }),
             ],
           }),
@@ -769,7 +811,7 @@ function voiceStrip($, e, original) {
 // Drawing errors, with the session's folder, in a file to read after a failure.
 async function recordDrawError($, error) {
   try {
-    const file = `${await $.env.get('HOME')}/.claude/voicemesh-controls/draw-errors.log`
+    const file = `${await $.env.get('HOME') ?? await $.env.get('USERPROFILE')}/.claude/voicemesh-controls/draw-errors.log`
     const previous = await $.fs.read(file).catch(() => '')
     const line = `${new Date().toISOString()} ${await $.session.cwd().catch(() => '?')} ${error?.stack ?? error}`
     await $.fs.write(file, (previous + line + '\n').slice(-20000))
@@ -829,6 +871,12 @@ async function ensurePackagedHost($) {
   })()
 }
 
+const VOICE_CONTINUITY = `# VoiceMesh voice
+
+The user may be talking to you by voice through the VoiceMesh Mod. Its host runs locally; its address and token are in ~/.claude/voicemesh-controls/connection.json ({ "url", "token" }).
+
+If voice is on and you deliberately do something that interrupts it (restarting or killing the VoiceMesh host or its browser, reinstalling or reloading the Mod), you are responsible for turning it back on: restore it yourself straight afterwards, as it comes back from standby; do not leave the user to press start. This covers only interruptions you cause; voice the user turned off stays off. Before the disruptive step, note whether GET <url>/api/state (header Authorization: Bearer <token>) reports a phase other than offline, idle, error or needs-activation. If it did, once the host answers again (its media page connects about 3 seconds after a host start; until then /api/control answers 409), POST <url>/api/control with JSON {"action":"start"} and the same header, then confirm /api/state shows the voice listening.`
+
 export function register(on) {
   on('ui.message', async ($, e, next) => {
     if (e.element === 'voice-toggle' && e.data?.action === 'toggle') {
@@ -849,6 +897,12 @@ export function register(on) {
     if (e.surface === 'desktop') await ensurePackagedHost($).catch(() => {})
     if (e.surface === 'desktop') await selectThisSession($).catch(() => {})
     return next(e)
+  })
+
+  // Wherever the Mod runs, Claude knows that its own work can cut off a voice conversation, and restores it.
+  on('prompt.compose', async ($, e, next) => {
+    const composed = await next(e)
+    return { sections: [...composed.sections, { id: 'voicemesh-voice-continuity', scope: 'session', text: VOICE_CONTINUITY }] }
   })
 
   on('session.start', async ($, e, next) => {
@@ -967,7 +1021,7 @@ export function register(on) {
       const { Box, Client, Text } = $.ui.resolve(e)
       return Box({ flexDirection: 'column', children: [original, Box({ flexDirection: 'row', justifyContent: 'flex-end', columnGap: 1, alignItems: 'center', children: [
         Text({ dimColor: true, children: ['Voice row error (logged)'] }),
-        Box({ position: 'relative', width: 4, height: 1.7, children: [Client({ key: 'voice-toggle', module: './voice-toggle-client.js', width: 4, height: 1.7 })] }),
+        Box({ position: 'relative', width: 4, height: BUTTON_ROWS, children: [Client({ key: 'voice-toggle', module: './voice-toggle-client.js', width: 4, height: BUTTON_ROWS })] }),
       ] })] })
     }
   })

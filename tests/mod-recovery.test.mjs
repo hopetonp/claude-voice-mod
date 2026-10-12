@@ -15,7 +15,7 @@ async function exerciseRecovery(task) {
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
     command: { register: async () => {} },
-    store: { get: async () => [] },
+    store: { get: async () => [], set: async () => {} },
     clock: { every() {} },
     ui: { invalidate() {}, log: async () => {} },
     prompt: { submit: async () => { submitted += 1 } },
@@ -66,7 +66,7 @@ test('a new pre-submit claim is released on Mod reload without replaying the pro
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
     command: { register: async () => {} },
-    store: { get: async () => [] },
+    store: { get: async () => [], set: async () => {} },
     clock: { every() {} },
     ui: { invalidate() {}, log() {}, toast() {} },
     prompt: { submit: async () => { submitted += 1 } },
@@ -134,7 +134,7 @@ test('a cleared Claude session takes the voice for its new id when the desktop s
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => currentSession, cwd: async () => '/p/project' },
     command: { register: async () => {} },
-    store: { get: async () => [] },
+    store: { get: async () => [], set: async () => {} },
     clock: { every() {} },
     ui: { invalidate() {}, log: async () => {} },
     http: { fetch: async (url, options = {}) => {
@@ -165,7 +165,7 @@ test('a voice-owned tool step forwards chunks and reports only its visible miles
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
     command: { register: async () => {} },
-    store: { get: async () => [] },
+    store: { get: async () => [], set: async () => {} },
     clock: { every() {} },
     ui: { invalidate() {}, log: async () => {} },
     http: { fetch: async (url, options = {}) => {
@@ -242,6 +242,40 @@ async function orphanHarness(tag) {
   await handlers.get('session.start')($, {}, async () => {})
   return { handlers, $, posts, tick: async () => { clock(); await new Promise(setImmediate) }, polls: () => polls }
 }
+
+test('host-side recovery clears stale local turn ownership and admits the next request', async () => {
+  const { register } = await import('../hooks/register.js?orphan=host-recovered')
+  const handlers = new Map()
+  register((name, options, handler) => handlers.set(name, handler ?? options))
+  let task = { id: 'voice-old', text: 'Old request', mode: 'submit', status: 'running', turnId: 'old-turn' }
+  const posts = []
+  let clock
+  const $ = {
+    env: { get: async () => '/tmp' },
+    fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
+    session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
+    command: { register: async () => {} },
+    store: { get: async () => [], set: async () => {} },
+    clock: { every(_ms, callback) { clock = callback } },
+    ui: { invalidate() {}, log: async () => {}, toast() {} },
+    prompt: { submit: async () => {} },
+    http: { fetch: async (url, options = {}) => {
+      const route = new URL(url).pathname
+      if (options.method === 'POST') {
+        posts.push({ path: route, body: JSON.parse(options.body) })
+        return { ok: true, text: '{}' }
+      }
+      return { ok: true, text: JSON.stringify(route === '/api/state'
+        ? { phase: 'speaking', mediaConnected: true } : route === '/api/claude/request' ? { task } : {}) }
+    } },
+  }
+  await handlers.get('session.start')($, {}, async () => {})
+  task = { id: 'voice-next', text: 'New request', mode: 'submit', status: 'queued', turnId: null }
+  clock()
+  for (let i = 0; i < 5; i++) await new Promise(setImmediate)
+  assert(posts.some(post => post.path === '/api/claude/claim' && post.body.id === 'voice-next'))
+  assert(!posts.some(post => post.path === '/api/claude/result'), 'host recovery must not fabricate another completion or cancel a turn')
+})
 
 test('a fresh Claude session aborts a voice turn left running before the restart', async () => {
   const run = await orphanHarness('restart')

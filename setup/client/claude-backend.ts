@@ -40,6 +40,22 @@ async function request(path: string, init: RequestInit = {}): Promise<any> {
   if (!response.ok) throw new Error(value.error || 'VoiceMesh host request failed')
   return value
 }
+
+export interface CodingDiagnostics {
+  sessionId: string | null
+  clientSynced: boolean | null
+  task: { id: string; turnId: string | null; status: string; request: string;
+    recoveryEvidence: string | null; canRelease: boolean } | null
+}
+
+export const codingDiagnostics = {
+  check: (): Promise<CodingDiagnostics> => request('/api/claude/diagnostics'),
+  release: (diagnostics: CodingDiagnostics) => request('/api/claude/release', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId: diagnostics.sessionId, id: diagnostics.task?.id,
+      turnId: diagnostics.task?.turnId, confirmRelease: true }),
+  }),
+}
 const current = ({ providers, selectedProvider, voiceMode, pipeline, classifier }: { providers: any[], selectedProvider: string,
   voiceMode?: 'pipeline' | 'sts', pipeline?: VoicePreferences['pipeline'], classifier?: VoicePreferences['classifier'] }): VoicePreferences => {
   const provider = selectedProvider || 'openai-live'

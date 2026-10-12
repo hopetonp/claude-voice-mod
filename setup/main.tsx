@@ -1,10 +1,10 @@
 import { createRoot } from 'react-dom/client'
 import { useLayoutEffect } from 'react'
-import { VoiceSettingsShell } from '@voicemesh/settings-editor'
-import { claudeBackend, closePreviewSession } from './client/claude-backend.ts'
+import { closePreviewSession } from './client/claude-backend.ts'
 import { dismissSettings, settingsReady, type SettingsWindowApi } from '@voicemesh/composer/desktop'
 import '@voicemesh/settings-editor/style.css'
 import './shell.css'
+import { SettingsShell } from './client/settings-shell.tsx'
 
 declare global {
   interface Window {
@@ -34,9 +34,7 @@ function SettingsApp() {
       console.debug('Settings ready signal unavailable', error)
     })
   }, [])
-  return <VoiceSettingsShell backend={claudeBackend} locale={locale} hostName="Claude" voiceSelector="dropdown"
-    providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }}
-    onClose={window.__TAURI__ ? () => { void closeSettings() } : undefined} />
+  return <SettingsShell locale={locale} onClose={window.__TAURI__ ? () => { void closeSettings() } : undefined} />
 }
 
 createRoot(document.getElementById('app')!).render(<SettingsApp />)

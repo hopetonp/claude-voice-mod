@@ -1,14 +1,17 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { CLAIM_START_TIMEOUT_MS } from '../host/claim-recovery.js'
+import { finishedTranscript } from './host-recovery-fixture.js'
 
 // The real host on a free port, with its files in a temporary folder and no media browser.
-async function startHost({ transcripts, tasks } = {}) {
+async function startHost({ transcripts, tasks, claudeTranscript } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'voicemesh-host-'))
+  await mkdir(join(dir, 'claude-projects', 'fixture'), { recursive: true })
+  if (claudeTranscript) await writeFile(join(dir, 'claude-projects', 'fixture', `${claudeTranscript.sessionId}.jsonl`), claudeTranscript.text)
   if (transcripts) await writeFile(join(dir, 'transcripts.json'), JSON.stringify(transcripts))
   if (tasks) await writeFile(join(dir, 'task.json'), JSON.stringify({ tasks }))
   const port = 20000 + Math.floor(Math.random() * 20000)
@@ -16,7 +19,7 @@ async function startHost({ transcripts, tasks } = {}) {
     VOICE_HOST_PORT: String(port), VOICE_MEDIA_BROWSER: '/usr/bin/true',
     VOICEMESH_CONNECTION_FILE: join(dir, 'connection.json'), COMPOSER_SETTINGS_FILE: join(dir, 'providers.json'),
     VOICEMESH_TASK_FILE: join(dir, 'task.json'), VOICEMESH_RESULT_FILE: join(dir, 'results.json'),
-    VOICEMESH_TRANSCRIPT_FILE: join(dir, 'transcripts.json') } })
+    VOICEMESH_TRANSCRIPT_FILE: join(dir, 'transcripts.json'), VOICEMESH_CLAUDE_PROJECTS: join(dir, 'claude-projects') } })
   let connection
   for (let i = 0; i < 100 && !connection; i++) {
     await new Promise(resolve => setTimeout(resolve, 50))
@@ -32,6 +35,59 @@ async function startHost({ transcripts, tasks } = {}) {
 }
 
 const request = (sessionId, id) => ({ id, text: `Work for ${sessionId}`, mode: 'submit', sessionId })
+
+test('a completed turn missed during reload heals from its exact Claude transcript', async () => {
+  const task = { ...request('session-a', 'lost-completion'), status: 'running', turnId: 'desktop-turn',
+    claimedAt: 1000, result: null, playbackId: 1 }
+  const host = await startHost({ tasks: { 'session-a': task },
+    claudeTranscript: { sessionId: task.sessionId, text: finishedTranscript(task) } })
+  try {
+    await host.call('POST', '/api/claude/select', { sessionId: task.sessionId })
+    assert.equal((await host.call('GET', '/api/claude/status')).body.taskStatus, 'complete')
+    const diagnostics = (await host.call('GET', '/api/claude/diagnostics')).body
+    assert.equal(diagnostics.task.recoveryEvidence, 'claude-transcript-completion')
+    assert.equal(diagnostics.task.canRelease, false)
+    assert.equal((await host.call('GET', '/api/pipeline/owed')).body.result.text, 'Recovered answer.')
+    await host.call('POST', '/api/pipeline/played', { playbackId: 1 })
+    assert.equal((await host.call('POST', '/api/claude/request', request('session-a', 'next-request'))).status, 202)
+  } finally { await host.stop() }
+})
+
+test('result acknowledgements are idempotent without overwriting a newer task', async () => {
+  const host = await startHost()
+  try {
+    await host.call('POST', '/api/claude/select', { sessionId: 'session-a' })
+    await host.call('POST', '/api/claude/request', request('session-a', 'first-request'))
+    await host.call('POST', '/api/claude/claim', { id: 'first-request', sessionId: 'session-a' })
+    await host.call('POST', '/api/claude/started', { id: 'first-request', sessionId: 'session-a', turnId: 'first-turn' })
+    const result = { id: 'first-request', sessionId: 'session-a', turnId: 'first-turn', status: 'complete', text: 'Done.' }
+    assert.equal((await host.call('POST', '/api/claude/result', result)).status, 200)
+    await host.call('POST', '/api/pipeline/played', { playbackId: 1 })
+    await host.call('POST', '/api/claude/request', request('session-a', 'next-request'))
+    assert.equal((await host.call('POST', '/api/claude/result', result)).status, 200)
+    assert.equal((await host.call('GET', '/api/claude/request?sessionId=session-a')).body.task.id, 'next-request')
+    assert.equal((await host.call('POST', '/api/claude/result', { ...result, turnId: 'wrong-turn' })).status, 409)
+    assert.equal((await host.call('POST', '/api/claude/result', { ...result, text: 'Different result.' })).status, 409)
+  } finally { await host.stop() }
+})
+
+test('manual backup requires confirmation and the exact selected task; age does not release it', async () => {
+  const task = { ...request('session-a', 'running-request'), status: 'running', turnId: 'active-turn',
+    claimedAt: 1000, result: null, playbackId: 1 }
+  const host = await startHost({ tasks: { 'session-a': task } })
+  try {
+    await host.call('POST', '/api/claude/select', { sessionId: 'session-a' })
+    assert.equal((await host.call('GET', '/api/claude/status')).body.taskStatus, 'running')
+    const release = { sessionId: 'session-a', id: task.id, turnId: task.turnId, confirmRelease: true }
+    for (const invalid of [{ ...release, confirmRelease: false }, { ...release, id: 'outdated-request' },
+      { ...release, sessionId: 'session-b' }, { ...release, turnId: 'outdated-turn' }]) {
+      assert.equal((await host.call('POST', '/api/claude/release', invalid)).status, 409)
+    }
+    assert.equal((await host.call('POST', '/api/claude/release', release)).status, 200)
+    assert.equal((await host.call('GET', '/api/pipeline/owed')).body.result, null)
+    assert.equal((await host.call('POST', '/api/claude/request', request('session-a', 'new-request'))).status, 202)
+  } finally { await host.stop() }
+})
 
 test('claim and submit-start are separate durable handoff steps', async () => {
   const host = await startHost()

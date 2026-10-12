@@ -5,6 +5,7 @@ import { SETTINGS_PANE, settingsPane } from './settings-pane.js'
 import { voiceBubble } from './voice-bubble.js'
 import { english as voiceEnglish, voiceText } from './voice-status-i18n.js'
 import { voiceDuration } from './voice-duration.js'
+import { createCompletionOutbox } from './completion-outbox.js'
 
 let connection = null
 let status = 'Voice host not connected'
@@ -20,6 +21,7 @@ let sessionId = null
 let voiceTask = null
 // The main agent's turn in progress, if any: with voice live and nobody talking, the strip names it.
 let claudeTurn = null
+let completionOutbox = null
 // Results finished in other sessions: each announced once (toast and chime), only when it finishes while
 // this plugin runs. Results already waiting when it loads (an app restart) were announced before.
 let announced = new Set()
@@ -256,8 +258,19 @@ async function abandonVoiceTask($) {
   const task = voiceTask
   voiceTask = null
   if (!task?.turnId || !connection) return
-  await postBridge($, '/api/claude/result', { id: task.id, sessionId, turnId: task.turnId, status: 'aborted', text: '' })
+  await reportCompletion($, { id: task.id, sessionId, turnId: task.turnId, status: 'aborted', text: '' })
     .catch(() => show($, vt('status.resultBridgeUnavailable')))
+}
+
+async function reportCompletion($, result) {
+  if (!completionOutbox) {
+    completionOutbox = createCompletionOutbox({
+      load: () => $.store.get('voice-completions').catch(() => []),
+      save: rows => $.store.set('voice-completions', rows),
+      deliver: item => postBridge($, '/api/claude/result', item),
+    })
+  }
+  await completionOutbox.queue(result)
 }
 
 // A spoken stop or correction while a voice turn runs: Composer steers the host, and the host records
@@ -299,18 +312,26 @@ async function deliverNotes($, result) {
 }
 
 async function pollVoiceTask($) {
-  if (!connection || !sessionId || voiceTask?.turnId) return
-  const response = await $.http.fetch(`${connection.url}/api/claude/request?sessionId=${encodeURIComponent(sessionId)}`, {
+  if (!connection || !sessionId) return
+  const response = await $.http.fetch(`${connection.url}/api/claude/request?sessionId=${encodeURIComponent(sessionId)}&recoveryProtocol=2`, {
     headers: { Authorization: `Bearer ${connection.token}` },
   })
   if (!response.ok) throw new Error(`Voice bridge returned ${response.status}`)
   const task = JSON.parse(response.text).task
   if (voiceTask) {
     if (task?.id === voiceTask.id) return
+    const previousTurn = voiceTask.turnId
     voiceTask = null
-    const warning = vt('status.handoffNotStarted')
-    show($, warning)
-    $.ui.toast(warning)
+    if (previousTurn) {
+      // The host may have recovered a completion while this Mod missed the
+      // event. Drop only that stale local ownership, without cancelling Claude.
+      if (claudeTurn === previousTurn) claudeTurn = null
+      $.ui.invalidate('ui.render')
+    } else {
+      const warning = vt('status.handoffNotStarted')
+      show($, warning)
+      $.ui.toast(warning)
+    }
   }
   if (!task) return
   if (task.status === 'running' && sessionFresh) {
@@ -490,6 +511,7 @@ async function tick($) {
   ticking = true
   try {
     await refresh($)
+    if (connection) await completionOutbox?.flush()
     // A restarted host has no selected session: the one on screen takes it back, so its own results are
     // not taken for another session's.
     if (media.selectedSession === null && sessionId
@@ -908,6 +930,11 @@ export function register(on) {
   on('session.start', async ($, e, next) => {
     await ensurePackagedHost($).catch(() => {})
     sessionId = await $.session.id()
+    completionOutbox = createCompletionOutbox({
+      load: () => $.store.get('voice-completions').catch(() => []),
+      save: rows => $.store.set('voice-completions', rows),
+      deliver: item => postBridge($, '/api/claude/result', item),
+    })
     historyRevision = -1
     await loadHistory($)
     await tick($)
@@ -989,10 +1016,17 @@ export function register(on) {
     }
     if (voiceTask?.turnId === e.turnId && e.agentId === undefined) {
       const status = e.reason === 'answer' ? 'complete' : e.isAborted ? 'aborted' : 'failed'
-      await postBridge($, '/api/claude/result', { id: voiceTask.id, sessionId, turnId: e.turnId, status, text: e.answer }).catch(() => show($, vt('status.resultBridgeUnavailable')))
+      await reportCompletion($, { id: voiceTask.id, sessionId, turnId: e.turnId, status, text: e.answer ?? '' }).catch(() => show($, vt('status.resultBridgeUnavailable')))
       voiceTask = null
     }
     return next(e)
+  })
+
+  // Settings changed while voice runs take effect on its next connection; closing settings reconnects it once.
+  on('ui.close', async ($, e, next) => {
+    const closed = await next(e)
+    if (e.id === SETTINGS_PANE) await settingsHost($).then(api => api.closed()).catch(() => {})
+    return closed
   })
 
   on('ui.render', { component: 'Pane', requestId: SETTINGS_PANE }, async ($, e) =>

@@ -34,7 +34,8 @@ test('unplayed coding results survive a restart and playback clears only their o
     assert.equal(recovered.latest('claude-one').text, 'The follow-up is complete.')
     assert.equal(recovered.latest('claude-two').text, 'The task failed.')
     assert.equal(recovered.latest('unknown'), null)
-    assert.equal((await stat(file)).mode & 0o777, 0o600)
+    // Windows exposes DOS file attributes rather than POSIX permission bits.
+    if (process.platform !== 'win32') assert.equal((await stat(file)).mode & 0o777, 0o600)
   } finally { await rm(dir, { recursive: true, force: true }) }
 })
 

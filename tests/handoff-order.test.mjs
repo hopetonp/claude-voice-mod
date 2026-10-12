@@ -44,7 +44,8 @@ async function handOff({ name, rows: initialRows, delayTask = false, phase = 'sp
   if (!delayTask) await queue()
   const render = () => handlers.get('ui.render:UserMessage')($, { props: { text: 'Read the README title', isExpanded: false } },
     async () => ({ type: 'Text', children: ['Read the README title'] }))
-  const grow = async next => { rows = next; revision += 1; task = null; clock(); await settle() }
+  // A caption update does not discard the host's already-claimed request.
+  const grow = async next => { rows = next; revision += 1; clock(); await settle() }
   return { events, render, grow, queue }
 }
 

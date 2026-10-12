@@ -47,6 +47,8 @@ export async function createResultLedger(path) {
   }
   const record = async task => {
     const row = { id: task.id, sessionId: task.sessionId, playbackId: task.playbackId,
+      ...(task.turnId ? { turnId: task.turnId } : {}),
+      ...(task.recoveryEvidence ? { recoveryEvidence: task.recoveryEvidence } : {}),
       status: task.status, text: task.result ?? '', played: false }
     if (!validRow(row)) throw new Error('Invalid terminal voice result')
     const existing = state.rows.find(item => item.id === row.id)
@@ -72,5 +74,6 @@ export async function createResultLedger(path) {
     return true
   }
   const owedSessions = () => [...new Set(state.rows.filter(row => !row.played).map(row => row.sessionId))]
-  return { allocate, record, owed, owedSessions, latest, markPlayed }
+  const find = (id, sessionId) => state.rows.find(row => row.id === id && row.sessionId === sessionId) ?? null
+  return { allocate, record, owed, owedSessions, latest, markPlayed, find }
 }

@@ -8,6 +8,7 @@ import { WebSocketServer } from 'ws'
 import { createSettings } from './provider-settings.js'
 import { createTaskLedger } from './task-ledger.js'
 import { unstartedClaimExpired } from './claim-recovery.js'
+import { createClaudeTaskRecovery } from './claude-task-recovery.js'
 import { createResultLedger } from './result-ledger.js'
 import { createTranscriptLedger } from './transcript-ledger.js'
 import { createVoiceSessions } from './voice-sessions.js'
@@ -120,7 +121,8 @@ const availableConnections = () => {
 }
 // Each session's own voice request; a background session's job keeps its slot while another is selected.
 const taskOf = sessionId => sessionId ? taskLedger.get(sessionId) : null
-const active = task => !!task && !['complete', 'aborted', 'failed', 'reviewed'].includes(task.status)
+const settlingTasks = new Set()
+const active = task => !!task && (settlingTasks.has(task.sessionId) || !['complete', 'aborted', 'failed', 'reviewed'].includes(task.status))
 const persistTask = task => taskLedger.save(task)
 // An uncertain submit is never replayed. Once the claim has failed to produce a
 // turn, fail that request so it cannot steer or block every later request.
@@ -149,6 +151,68 @@ const finishedAway = new Map()
 const pendingSteers = new Map()
 let milestoneTaskId = ''
 const milestoneSteps = new Set()
+const inspectTaskCompletion = createClaudeTaskRecovery({ projects: process.env.VOICEMESH_CLAUDE_PROJECTS })
+const recoveryInFlight = new Map()
+const recoveredClients = new Set()
+
+async function finishClaudeTask(task, status, text, recoveryEvidence) {
+  const current = taskOf(task.sessionId)
+  if (settlingTasks.has(task.sessionId) || current?.id !== task.id || current.turnId !== task.turnId || current.status !== 'running') return false
+  settlingTasks.add(task.sessionId)
+  try {
+    const sessionId = task.sessionId
+    const steered = pendingSteers.get(sessionId)?.parentId === task.id ? pendingSteers.get(sessionId) : null
+    const finished = { ...task, status, result: text.slice(0, 16000),
+      ...(recoveryEvidence ? { recoveryEvidence, recoveredAt: Date.now() } : {}) }
+    await persistTask(finished)
+    if (finished.playbackId && steered?.kind !== 'stop') {
+      await resultLedger.record(finished)
+      if (recoveryEvidence === 'manual-release') await resultLedger.markPlayed(finished.playbackId, sessionId)
+    }
+    const followUp = steerFollowUp(steered)
+    if (followUp) {
+      const playbackId = await resultLedger.allocate()
+      await persistTask({ id: followUp.id, text: followUp.text, mode: 'submit', status: 'queued',
+        sessionId, turnId: null, result: null, playbackId })
+    }
+    if (steered) pendingSteers.delete(sessionId)
+    if (sessionId !== sessions.selected()) {
+      if (sessions.selected() && finished.playbackId && steered?.kind !== 'stop') {
+        const away = { at: Date.now(), title: '' }
+        finishedAway.set(sessionId, away)
+        away.title = await sessionTitle(sessionId, sessions.cwd(sessionId)).catch(() => '')
+        const folder = sessions.folder(sessionId)
+        void activeLive?.notice?.(`By the way, the work in the ${folder ? `${folder} ` : 'other '}session is finished.`)?.catch(() => {})
+      }
+    } else {
+      const connected = activeLive
+      void connected?.completed().then(() => connected.replayOwed()).catch(() => {})
+    }
+    return true
+  } finally { settlingTasks.delete(task.sessionId) }
+}
+
+async function recoverCompletedTask(sessionId) {
+  if (recoveryInFlight.has(sessionId)) return recoveryInFlight.get(sessionId)
+  const operation = (async () => {
+    const task = taskOf(sessionId)
+    if (task?.status !== 'running') return false
+    const completion = await inspectTaskCompletion(task, sessions.cwd(sessionId))
+    if (!completion) return false
+    const recovered = await finishClaudeTask(task, completion.status, completion.text, completion.evidence)
+    if (recovered) console.info('Recovered completed Claude voice request from its session transcript')
+    return recovered
+  })()
+  recoveryInFlight.set(sessionId, operation)
+  try { return await operation } finally { recoveryInFlight.delete(sessionId) }
+}
+
+// Missing callbacks must heal even when the voice is idle or the Mod has reloaded.
+setInterval(() => {
+  for (const task of taskLedger.all()) void recoverCompletedTask(task.sessionId).catch(error => {
+    console.error(`Claude task recovery failed: ${error.message}`)
+  })
+}, 5000).unref()
 
 // The voice's coding tools, bound to the session that owns one voice conversation.
 const liveTasksFor = owner => ({
@@ -168,6 +232,7 @@ const liveTasksFor = owner => ({
   async dispatch(id, { instruction }) {
     if (!owner) throw new Error('No Claude session connected')
     await releaseExpiredClaim(owner)
+    await recoverCompletedTask(owner)
     if (resultLedger.owed(owner).length) throw new Error('A previous Claude result is waiting to be spoken')
     if (active(taskOf(owner))) throw new Error('Claude is busy')
     const playbackId = await resultLedger.allocate()
@@ -180,6 +245,7 @@ const liveTasksFor = owner => ({
     if (!owner) throw new Error('No Claude session connected')
     if (typeof instruction !== 'string' || !instruction.trim()) throw new Error('Invalid steering instruction')
     await releaseExpiredClaim(owner)
+    await recoverCompletedTask(owner)
     const task = taskOf(owner)
     if (!task || !['queued', 'claimed', 'submitting', 'running'].includes(task.status)) return this.dispatch(id, { instruction })
     if (task.status === 'queued') {
@@ -245,7 +311,7 @@ const server = createServer(async (request, response) => {
       if (request.headers.authorization !== `Bearer ${token}`) return send(response, 401, { error: 'Unauthorized' })
       if (request.headers.origin && ![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(request.headers.origin)) return send(response, 403, { error: 'Origin not allowed' })
       const { id } = await readJson(request)
-      if (!['idle', 'offline', 'standby', 'error', 'needs-activation'].includes(mediaState.phase)) return send(response, 409, { error: 'Stop Voice before changing providers' })
+      settingsChanging()
       await providerStore.select(id)
       send(response, 200, { providers: providerStore.publicSettings(), selectedProvider: providerStore.selectedProvider(),
         voiceMode: providerStore.voiceMode(), pipeline: providerStore.pipeline(), classifier: providerStore.classifier() })
@@ -253,8 +319,8 @@ const server = createServer(async (request, response) => {
     }
     if (request.method === 'POST' && url.pathname === '/api/voice-mode') {
       if (request.headers.authorization !== `Bearer ${token}`) return send(response, 401, { error: 'Unauthorized' })
-      if (!['idle', 'offline', 'standby', 'error', 'needs-activation'].includes(mediaState.phase)) return send(response, 409, { error: 'Stop Voice before changing modes' })
       const { mode } = await readJson(request)
+      settingsChanging()
       await providerStore.selectVoiceMode(mode)
       send(response, 200, { providers: providerStore.publicSettings(), selectedProvider: providerStore.selectedProvider(),
         voiceMode: providerStore.voiceMode(), pipeline: providerStore.pipeline(), classifier: providerStore.classifier() })
@@ -287,9 +353,9 @@ const server = createServer(async (request, response) => {
     }
     if (request.method === 'POST' && url.pathname === '/api/classifier/settings') {
       if (request.headers.authorization !== `Bearer ${token}`) return send(response, 401, { error: 'Unauthorized' })
-      if (!['idle', 'offline', 'standby', 'error', 'needs-activation'].includes(mediaState.phase))
-        return send(response, 409, { error: 'Stop Voice before changing the classifier' })
-      await providerStore.saveClassifier(await readJson(request))
+      const changes = await readJson(request)
+      settingsChanging()
+      await providerStore.saveClassifier(changes)
       return send(response, 200, { providers: providerStore.publicSettings(), selectedProvider: providerStore.selectedProvider(),
         voiceMode: providerStore.voiceMode(), pipeline: providerStore.pipeline(), classifier: providerStore.classifier() })
     }
@@ -657,8 +723,28 @@ const server = createServer(async (request, response) => {
     }
     if (request.method === 'GET' && url.pathname === '/api/claude/status') {
       await releaseExpiredClaim(sessions.selected())
+      await recoverCompletedTask(sessions.selected())
       send(response, 200, { sessionConnected: !!sessions.selected(), taskStatus: taskOf(sessions.selected())?.status ?? null })
       return
+    }
+    if (request.method === 'GET' && url.pathname === '/api/claude/diagnostics') {
+      const selected = sessions.selected()
+      await recoverCompletedTask(selected)
+      const task = taskOf(selected)
+      return send(response, 200, { sessionId: selected, clientSynced: selected ? recoveredClients.has(selected) : null, task: task ? {
+        id: task.id, turnId: task.turnId, status: task.status, request: task.text.slice(0, 300),
+        recoveryEvidence: task.recoveryEvidence ?? null, canRelease: task.status === 'running' && !!task.turnId,
+      } : null })
+    }
+    if (request.method === 'POST' && url.pathname === '/api/claude/release') {
+      const { sessionId, id, turnId, confirmRelease } = await readJson(request)
+      const task = taskOf(sessionId)
+      if (!task || confirmRelease !== true || sessionId !== sessions.selected() || task.id !== id
+        || task.turnId !== turnId || task.status !== 'running') {
+        return send(response, 409, { error: 'The selected voice task changed or release was not confirmed' })
+      }
+      if (!await finishClaudeTask(task, 'aborted', '', 'manual-release')) return send(response, 409, { error: 'Voice task changed during release' })
+      return send(response, 200, { ok: true })
     }
     if (request.method === 'GET' && url.pathname === '/api/voice/standby') {
       const selected = sessions.selected()
@@ -671,7 +757,14 @@ const server = createServer(async (request, response) => {
       await readJson(request)
       const params = new URLSearchParams({ theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale() })
       const page = `http://localhost:${server.address().port}/setup/?${params}`
-      await openSettingsWindow(page)
+      await openSettingsWindow(page, { onClosed: settingsClosed })
+      send(response, 200, { ok: true })
+      return
+    }
+    // The Mod's own settings pane closed (the desktop window reports its own close).
+    if (request.method === 'POST' && url.pathname === '/api/settings/closed') {
+      if (request.headers.authorization !== `Bearer ${token}`) return send(response, 401, { error: 'Unauthorized' })
+      settingsClosed()
       send(response, 200, { ok: true })
       return
     }
@@ -705,8 +798,10 @@ const server = createServer(async (request, response) => {
     if (request.method === 'GET' && url.pathname === '/api/claude/request') {
       const sessionId = url.searchParams.get('sessionId')
       if (!sessionId) return send(response, 400, { error: 'Missing session' })
+      if (url.searchParams.get('recoveryProtocol') === '2') recoveredClients.add(sessionId)
       sessions.seen(sessionId)
       await releaseExpiredClaim(sessionId)
+      await recoverCompletedTask(sessionId)
       const claudeTask = taskOf(sessionId)
       if (providerStore.voiceMode() === 'pipeline' && claudeTask?.mode === 'submit'
         && ['queued', 'claimed'].includes(claudeTask.status)) {
@@ -723,6 +818,7 @@ const server = createServer(async (request, response) => {
       const sessionId = url.searchParams.get('sessionId')
       if (!sessionId) return send(response, 400, { error: 'Missing session' })
       sessions.seen(sessionId)
+      await recoverCompletedTask(sessionId)
       const steer = pendingSteers.get(sessionId)
       send(response, 200, { steer: steer ? { parentId: steer.parentId, kind: steer.kind,
         notes: steer.notes.map(note => ({ id: note.id, text: steerNote(note.text) })) } : null })
@@ -811,42 +907,22 @@ const server = createServer(async (request, response) => {
     if (request.method === 'POST' && url.pathname === '/api/claude/result') {
       const { id, sessionId, turnId, status, text } = await readJson(request)
       const claudeTask = typeof sessionId === 'string' ? taskOf(sessionId) : null
+      const savedResult = resultLedger.find(id, sessionId)
+      if (claudeTask && claudeTask.id === id && claudeTask.turnId === turnId && typeof text === 'string'
+        && ((claudeTask.status === status && claudeTask.result === text.slice(0, 16000)) || claudeTask.recoveryEvidence === 'manual-release')
+        && ['complete', 'aborted', 'failed'].includes(claudeTask.status)) {
+        return send(response, 200, { ok: true, alreadyRecorded: true })
+      }
+      if (savedResult && typeof text === 'string' && savedResult.turnId === turnId
+        && ((savedResult.status === status && (savedResult.text === text.slice(0, 16000) || savedResult.recoveryEvidence === 'claude-transcript-completion'))
+          || savedResult.recoveryEvidence === 'manual-release')) {
+        return send(response, 200, { ok: true, alreadyRecorded: true })
+      }
       if (!claudeTask || claudeTask.id !== id || claudeTask.sessionId !== sessionId || claudeTask.turnId !== turnId || claudeTask.status !== 'running' || !['complete', 'aborted', 'failed'].includes(status) || typeof text !== 'string') {
         return send(response, 409, { error: 'Voice request result did not match the running turn' })
       }
-      const steered = pendingSteers.get(sessionId)?.parentId === claudeTask.id ? pendingSteers.get(sessionId) : null
-      if (steered) pendingSteers.delete(sessionId)
-      const finished = { ...claudeTask, status, result: text.slice(0, 16000) }
-      await persistTask(finished)
-      // A turn cancelled by the person's own stop owes no spoken result; a turn that finished before
-      // reading a note still does. Either way, what Claude has not read yet is the next request.
-      if (finished.playbackId && steered?.kind !== 'stop') await resultLedger.record(finished)
-      const followUp = steerFollowUp(steered)
-      if (followUp) {
-        const playbackId = await resultLedger.allocate()
-        await persistTask({ id: followUp.id, text: followUp.text, mode: 'submit', status: 'queued',
-          sessionId, turnId: null, result: null, playbackId })
-      }
+      if (!await finishClaudeTask(claudeTask, status, text)) return send(response, 409, { error: 'Voice request changed while recording its result' })
       send(response, 200, { ok: true })
-      // Only the selected session's voice speaks a result now; another session's waits for its return,
-      // and the voice here only mentions that it finished, never what it found.
-      // With no session selected (a restarted host), nothing is away: the result waits to be spoken.
-      if (sessionId !== sessions.selected()) {
-        if (sessions.selected() && finished.playbackId && steered?.kind !== 'stop') {
-          const away = { at: Date.now(), title: '' }
-          finishedAway.set(sessionId, away)
-          // Read after the time is recorded; a plugin polling in those few milliseconds names only the project.
-          away.title = await sessionTitle(sessionId, sessions.cwd(sessionId)).catch(() => '')
-          const folder = sessions.folder(sessionId)
-          void activeLive?.notice?.(`By the way, the work in the ${folder ? `${folder} ` : 'other '}session is finished.`)
-            ?.catch(() => {})
-        }
-        return
-      }
-      const connected = activeLive
-      void connected?.completed().then(() => connected.replayOwed()).catch(() => {
-        // The durable result remains owed if this voice connection cannot receive it.
-      })
       return
     }
     if (request.method === 'GET' && url.pathname === '/api/claude/result') {
@@ -919,6 +995,34 @@ function closeRetiring(server) {
   for (const socket of server.clients) if (retiring.has(socket)) socket.close()
 }
 
+// Hands the page's open sockets over to a quiet stop: the page closes them itself when it takes the stop;
+// any it has not closed in two seconds are closed then.
+function retireSockets() {
+  for (const socket of [...voiceSockets.clients, ...pipelineSockets.clients]) {
+    retiring.add(socket)
+    setTimeout(() => { if (socket.readyState === socket.OPEN) socket.close() }, 2000).unref()
+  }
+}
+
+// A provider, mode or classifier change made while voice runs takes effect on the next connection. Settings
+// are saved as they change, and the voice reconnects once when settings close, not once per change, and only
+// when those values differ from what they were before the first save: opening settings to look, re-saving a
+// value, or changing one and changing it back reconnects nothing.
+const VOICE_LIVE = ['connecting', 'listening', 'speaking', 'thinking']
+const connectionSettings = () => JSON.stringify({ provider: providerStore.selectedProvider(), mode: providerStore.voiceMode(), classifier: providerStore.classifier() })
+let settingsBefore = null
+function settingsChanging() {
+  if (settingsBefore === null && VOICE_LIVE.includes(mediaState.phase)) settingsBefore = connectionSettings()
+}
+function settingsClosed() {
+  const before = settingsBefore
+  settingsBefore = null
+  if (before === null || before === connectionSettings() || !VOICE_LIVE.includes(mediaState.phase)) return
+  retireSockets()
+  for (const action of ['stop', 'start']) commands.push({ id: ++sequence, action, quiet: true })
+  while (commands.length > 64) commands.shift()
+}
+
 function switchVoice(previous) {
   const wasOn = VOICE_ON.includes(mediaState.phase) || liveSockets(voiceSockets) > 0 || liveSockets(pipelineSockets) > 0
   if (previous) voiceOn.set(previous, wasOn)
@@ -928,12 +1032,8 @@ function switchVoice(previous) {
     while (commands.length > 64) commands.shift()
   }
   if (wasOn) {
-    // Closing the page's sockets here made it report a failed connection before the stop reached it. The page
-    // closes them itself when it takes the stop; any it has not closed in two seconds are closed then.
-    for (const socket of [...voiceSockets.clients, ...pipelineSockets.clients]) {
-      retiring.add(socket)
-      setTimeout(() => { if (socket.readyState === socket.OPEN) socket.close() }, 2000).unref()
-    }
+    // Closing the page's sockets here made it report a failed connection before the stop reached it.
+    retireSockets()
     queue('stop')
   }
   if (voiceOn.get(sessions.selected()) === true) queue('start')

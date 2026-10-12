@@ -34,7 +34,7 @@ test('caption revisions and delegation survive a host restart', async () => {
       instructions: 'Test', startupHistory: second.history('claude-1') })
     assert.deepEqual(protocol.setup.session.input.map(message => message.role), ['user', 'assistant', 'user'])
     assert.equal(protocol.setup.session.input[0].content[0].text, 'Read the README title')
-    assert.equal((await stat(file)).mode & 0o777, 0o600)
+    if (process.platform !== 'win32') assert.equal((await stat(file)).mode & 0o777, 0o600)
   } finally { await rm(dir, { recursive: true, force: true }) }
 })
 

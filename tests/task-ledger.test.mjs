@@ -17,7 +17,7 @@ test('a claimed voice request survives host restart without becoming queued agai
     await first.save(task('claude-1', 'voice-1', 'claimed'))
     const second = await createTaskLedger(file)
     assert.equal(second.get('claude-1').status, 'claimed')
-    assert.equal((await stat(file)).mode & 0o777, 0o600)
+    if (process.platform !== 'win32') assert.equal((await stat(file)).mode & 0o777, 0o600)
   } finally { await rm(dir, { recursive: true, force: true }) }
 })
 

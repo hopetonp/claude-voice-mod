@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createTranslator, VoiceSettingsEditor } from '@voicemesh/settings-editor'
 import { claudeBackend } from './claude-backend.ts'
 import { CodingDiagnostics } from './coding-diagnostics.tsx'
+import { voiceText } from '../../hooks/voice-status-i18n.js'
 
 const sections = ['display', 'provider', 'conversation', 'troubleshooting'] as const
 const labels = { display: 'shell.general', provider: 'shell.provider', conversation: 'shell.conversation' }
@@ -24,13 +25,13 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
               : id === 'troubleshooting' ? <><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 16v1" /></>
               : <><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4M2 12h4m12 0h4M5 5l3 3m8 8 3 3M5 19l3-3M16 8l3-3" /></>}
           </svg>
-          <span>{id === 'troubleshooting' ? 'Troubleshooting' : t(labels[id])}</span>
+          <span>{id === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[id])}</span>
         </button>)}
       </nav>
       <div className="settings-main">
-        <header className="settings-section-header"><h1>{section === 'troubleshooting' ? 'Troubleshooting' : t(labels[section])}</h1>
-          <p>{section === 'troubleshooting' ? 'Resolve voice requests that are waiting for a coding response.' : t(descriptions[section])}</p></header>
-        {section === 'troubleshooting' ? <CodingDiagnostics /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
+        <header className="settings-section-header"><h1>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[section])}</h1>
+          <p>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.summary') : t(descriptions[section])}</p></header>
+        {section === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
           activeSection={section} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
           providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }} />}
       </div>

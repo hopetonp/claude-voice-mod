@@ -46,6 +46,16 @@ export const english = {
   'control.start': 'Start voice',
   'control.stop': 'Stop voice',
   'control.micLevels': 'Microphone levels',
+  // The settings window's Troubleshooting tab.
+  'troubleshooting.tab': 'Troubleshooting',
+  'troubleshooting.summary': 'Resolve voice requests that are waiting for a coding response.',
+  'troubleshooting.cause': 'Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.',
+  'troubleshooting.instruction': 'If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.',
+  'troubleshooting.fix': 'Fix voice coding requests',
+  'troubleshooting.fixing': 'Fixing…',
+  'troubleshooting.fixed': 'Fixed. Try your voice request again.',
+  'troubleshooting.fixFailed': 'Couldn’t fix it. Make sure voice is connected, then try again.',
+  'troubleshooting.checkFailed': 'Couldn’t check. Make sure voice is connected, then reopen this tab.',
 }
 
 export function catalogLocale(locale = 'en') {

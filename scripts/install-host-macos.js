@@ -56,11 +56,11 @@ try { execFileSync('launchctl', ['bootout', `${domain}/${label}`], { stdio: 'ign
 await rename(temporary, plist)
 // launchd may still be tearing down the old service just after bootout returns.
 let bootstrapError
-for (let attempt = 0; attempt < 10; attempt++) {
+for (let attempt = 0; attempt < 30; attempt++) {
   try { execFileSync('launchctl', ['bootstrap', domain, plist], { stdio: 'ignore' }); bootstrapError = null; break }
   catch (error) {
     bootstrapError = error
-    if (attempt < 9) await new Promise(resolve => setTimeout(resolve, 100))
+    if (attempt < 29) await new Promise(resolve => setTimeout(resolve, 250))
   }
 }
 if (bootstrapError) throw bootstrapError

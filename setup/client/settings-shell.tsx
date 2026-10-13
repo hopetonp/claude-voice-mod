@@ -51,7 +51,8 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
       </nav>
       <div className="settings-main">
         <header className="settings-section-header"><h1>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[section])}</h1>
-          <p>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.summary') : t(descriptions[section])}</p></header>
+          {section === 'troubleshooting' ? <p>{voiceText(locale, 'troubleshooting.summary')}</p>
+            : t(descriptions[section]) && <p>{t(descriptions[section])}</p>}</header>
         {section === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
           activeSection={section} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
           providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }} />}

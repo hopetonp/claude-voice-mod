@@ -44,7 +44,6 @@ async function request(path: string, init: RequestInit = {}): Promise<any> {
 export interface CodingDiagnostics {
   sessionId: string | null
   clientSynced: boolean | null
-  stuck: boolean
   task: { id: string; turnId: string | null; status: string; request: string;
     recoveryEvidence: string | null; canRelease: boolean } | null
 }

@@ -14,27 +14,27 @@ const descriptions = { display: 'shell.generalSummary', provider: 'shell.provide
 /** Claude-specific recovery belongs in the harness, alongside the shared editor. */
 export function SettingsShell({ locale, onClose }: { locale: string; onClose?: () => void }) {
   const [section, setSection] = useState<typeof sections[number]>('display')
-  const [stuck, setStuck] = useState(false)
+  const [canRelease, setCanRelease] = useState(false)
   useEffect(() => {
     let active = true
     async function check() {
       try {
         const data = await codingDiagnostics.check()
-        if (active) setStuck(data.stuck)
-      } catch { if (active) setStuck(false) }
+        if (active) setCanRelease(!!data.task?.canRelease)
+      } catch { if (active) setCanRelease(false) }
     }
     void check()
     const timer = setInterval(() => { void check() }, 3000)
     return () => { active = false; clearInterval(timer) }
   }, [])
-  useEffect(() => { if (!stuck && section === 'troubleshooting') setSection('display') }, [stuck, section])
+  useEffect(() => { if (!canRelease && section === 'troubleshooting') setSection('display') }, [canRelease, section])
   const t = createTranslator(locale)
   return <div className="vm-settings-shell">
     {onClose && <div className="window-chrome"><button className="window-close" type="button" aria-label={t('shell.close')} onClick={onClose}>✕</button></div>}
     <div className="settings-layout">
       <nav className="settings-sidebar" aria-label={t('shell.navigation')}>
         <div className="settings-sidebar-label">{t('shell.title')}</div>
-        {sections.filter(id => id !== 'troubleshooting' || stuck).map(id => <button key={id} type="button" className={`settings-nav-item${section === id ? ' selected' : ''}`}
+        {sections.filter(id => id !== 'troubleshooting' || canRelease).map(id => <button key={id} type="button" className={`settings-nav-item${section === id ? ' selected' : ''}`}
           aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
             {id === 'provider' ? <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 10a6 6 0 0 0 12 0M12 16v5M8 21h8" /></>

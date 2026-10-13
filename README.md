@@ -1,146 +1,68 @@
 # Claude Voice Mod
 
-**Mac installation:** Give Claude Code [these installation instructions](INSTALL_WITH_CLAUDE.md), or download the latest GitHub Release ZIP and run `./install.sh` from the extracted folder. The release download must be published before either route is available to other users.
+Claude Voice Mod adds VoiceMesh voice controls to Claude Code on macOS and Windows. It connects the active Claude coding session to VoiceMesh Composer, which handles microphone capture, speech recognition, voice conversation, and playback. Coding requests from voice are sent to Claude; Claude's results can be spoken back.
 
-## Purpose
+The package includes two Claude Mods, a local VoiceMesh host, and a settings window. Provider keys and voice settings are stored on the user's computer.
 
-Host the existing VoiceMesh Composer experience for Claude Code and connect it to the active coding session through a Claude Code Mod. The Mod presents controls like those in the DeepSeek Harness voice integration. Composer already provides the speech pipeline, voice conversation, capture, playback, captions, and turn coordination; this project does not need to recreate them.
+## Install on macOS
 
-## Current division of responsibility
+Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or download the ZIP for your Mac's architecture from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest). Extract it and run `./install.sh` from the extracted folder. Restart Claude after installation.
 
-| Part | Responsibility |
+The installer places the package under `~/Library/Application Support/VoiceMesh/ClaudeVoice`, registers the local host and Claude marketplace, and installs both Mods. Run `./uninstall.sh` from the same package to remove the host and Mods. Saved voice settings and credentials are preserved.
+
+Claude Code and Chrome are required.
+
+## Install on Windows
+
+Extract the complete Windows package, open PowerShell in the extracted `voicemesh-claude-win-x64` or `voicemesh-claude-win-arm64` folder, and run:
+
+```powershell
+.\install.ps1
+claude plugin marketplace add "$env:LOCALAPPDATA\VoiceMesh\ClaudeVoice\plugin-marketplace"
+claude plugin install voicemesh-controls@voicemesh-local
+claude plugin install voicemesh-said@voicemesh-local
+```
+
+Restart Claude, then open Voice settings to configure a provider key. The installer copies the host to `%LOCALAPPDATA%\VoiceMesh\ClaudeVoice`, starts it, and creates a shortcut to start it at sign-in. It includes its own Node runtime; Claude Code and Chrome are required separately. Run `uninstall.ps1` from the installed folder to remove the host and startup shortcut. That script leaves Claude plugins, voice settings, and credentials in place.
+
+Windows is supported; the installer has worked on a Windows machine. No GitHub Release has been published yet, so a downloadable package will be available only after the release assets are uploaded.
+
+## Build from source
+
+The repository pins VoiceMesh Composer and the settings editor in `vendor/`. To build the macOS package on an arm64 or x64 Mac, install Node.js 22.19 or later, npm, Rust, and Cargo, then run:
+
+```sh
+npm ci
+npm run media:build
+npm run settings:window:build
+npm run plugin:stage
+npm run release:macos
+```
+
+The ZIP is created in `release/` for the build machine's architecture. Build separately on each architecture. For local development, `npm run host:install:macos` installs the per-user host service; `npm run host:install:macos -- --remove` removes it.
+
+To build the Windows package on Windows, install Node.js 22.19 or later, npm, Rust/Cargo, Visual Studio C++ build tools, and the Windows SDK. Extract an official Windows Node distribution of the same architecture as the build machine. From this repository, run:
+
+```powershell
+npm ci
+npm run media:build
+npm run setup:build
+npm run settings:window:build
+npm run plugin:stage
+npm run release:windows -- --node-dir "C:\path\to\node-distribution"
+```
+
+The release builder creates `release/voicemesh-claude-win-x64` or `release/voicemesh-claude-win-arm64`. Distribute the complete folder as one archive; users do not need build tools or a system Node installation.
+
+## Repository layout
+
+| Path | Purpose |
 | --- | --- |
-| `@voicemesh/composer` | Speech capture and playback components, speech pipeline, realtime protocols, turn coordination, captions, and voice lifecycle. It does not own a coding harness session. |
-| Claude Code Mod | Observe Claude Code session activity; submit or fill prompts; expose voice controls, captions, and status in Claude Code's UI; translate Claude events into VoiceMesh application events. |
-| VoiceMesh media host | Run the existing Composer experience in an environment with microphone capture and playback, and supply its provider credentials. This is VoiceMesh infrastructure, not a Claude Code audio adapter. |
+| `hooks/`, `.claude-plugin/`, `said-plugin/` | Claude Mod controls and plugin manifests |
+| `host/` | Local VoiceMesh host and Claude session bridge |
+| `media/` | Composer browser audio runtime |
+| `setup/`, `settings-window/` | Voice provider settings UI and native window |
+| `macos/`, `windows/`, `scripts/` | Installers and release builders |
+| `vendor/` | Pinned VoiceMesh package archives |
 
-The existing DeepSeek Harness voice integration follows the same broad split: Composer supplies reusable voice behavior, while the harness plugins own settings, credentials, coding policy, and persisted session history. The Claude implementation needs its own adapter rather than importing DeepSeek-specific policy or session types.
-
-## Claude Code Mod approach
-
-Claude Code Mods are plugins with JavaScript or TypeScript event handlers. A Mod can draw a pane or a band above the prompt, add buttons and inputs, redraw supported Claude Code UI elements, register commands, run processes, and make network requests. Its hooks can observe or change prompts, tool calls, turns, and session records. The UI renders in the Claude Code terminal and the Code tab of Claude Desktop; Mod UI does not render in the VS Code chat panel or noninteractive sessions.
-
-For a first Claude implementation:
-
-1. Show DeepSeek-style voice buttons, state, and captions in a Mod-owned Claude UI surface.
-2. Identify the owning session with the Mod's session ID and lifecycle events.
-3. When VoiceMesh delegates a coding request, pass that request to the Claude session through `$.prompt.fill()` for review or `$.prompt.submit({ text, asUser: true })` when submission is intended. Without `asUser`, Claude sees the Mod as the sender. Submission waits until the session is idle; it is not an active-turn steering API. Ordinary voice conversation remains in VoiceMesh. Preserve the review/submission distinction so speech is never silently sent as an unintended coding task.
-4. Observe `turn.start`, `turn.step`, and `turn.complete` for the owned main coding turn. The installed Mod declarations define visible text and tool chunks; the optional milestone setting forwards only visible text from a step that continues into a tool call. The final answer or interruption settles the spoken turn.
-5. Run VoiceMesh capture and playback in a suitable media host. Connect it to the Mod for session input, output, and UI state. Verify how that connection works in the target Claude surface; Claude Code does not need to supply or translate audio frames.
-
-Claude Code retains its own prompt and permission UI. Mods can fill or submit prompts and restyle many render sites, but the documented interface does not allow replacing the permission prompt. Voice controls should report that a permission decision is pending and leave the decision in Claude Code unless a supported API is verified for handling it safely.
-
-## Verified Mod behavior and local prerequisite
-
-- A Mod is a Claude Code plugin with a manifest, `hooks/hooks.json`, and a JavaScript or TypeScript module exporting `register(on)`. Claude Code writes version-specific declarations into `.claude-plugin/types/` when it loads a local Mod. Those declarations, not the online reference alone, must settle event shapes and UI props.
-- `Pane` and `AbovePrompt` can show buttons, inputs, and text in the terminal and Desktop Code tab. They are Claude UI element trees, not the DeepSeek browser's React/CSS dock. A functionally similar control is plausible; visual parity is not established. Mod UI does not render in the VS Code chat panel or noninteractive sessions.
-- `$.http.fetch`, `$.process.spawn`, and `$.clock.every` offer possible ways to connect and monitor a separate media host. The documentation does not establish microphone capture in the Mod or a ready-made bidirectional VoiceMesh transport. The connection needs a local prototype.
-- `session.start` runs on initial load and Mod reload, but not after `/clear`, `/resume`, or `/branch`. Session rebinding and saved control state need the corresponding lifecycle handling; `classic.SessionStart` fires for those resets.
-- Hooks have a 10-second own-execution limit, and UI invalidations are throttled. Keep long-lived audio and network work in the media host; a Mod hook should exchange bounded state and return.
-- Claude Code was updated from `2.1.101` to `2.1.288` on 2026-10-02. This meets Anthropic's documented Mod minimum of `2.1.287`. An earlier load attempt was refused by a rollout switch; a later local Desktop Code session loaded the Mod controls. The current Start action reaches Composer's background audio runtime without opening a media page.
-
-## Gaps against the DeepSeek integration
-
-| Existing DeepSeek behavior | Claude path and gap | Focused way to close it |
-| --- | --- | --- |
-| Composer browser capture, playback, pipeline, and realtime modes run with host credential and signaling routes. | A Mod does not document microphone capture or a provider credential host. | Reuse Composer in a media-capable VoiceMesh host. Prototype one authenticated local connection between that host and the Mod; keep provider keys in the host. |
-| The MicDock exposes an always-visible voice control, mute, status, and active-time feedback. | Mod `Button`, `Text`, `Pane`, and `AbovePrompt` cover the verbs and status, with different layout and interaction from the browser dock. | Implement the same start/stop, standby/resume, mute, status, and timer semantics with native Mod elements. Test in a local Desktop Code session. |
-| The pipeline transport submits to a bound Harness session with a request ID, optimistic transcript echo, and queue or steer mode. | `$.prompt.fill()` and `$.prompt.submit()` cover review and idle-time submission. The documented Mod API does not provide the same request ID, optimistic echo, or active-turn steer operation. | Use fill for review and `submit({ text, asUser: true })` for explicit dispatch. Track one outstanding voice dispatch per session in the bridge and verify the submission/turn correlation in generated types. Treat steering as an explicit prototype question, not parity already achieved. |
-| Realtime task dispatch records an intent and accepted receipt, deduplicates provider calls, reconstructs queued/running/completed state, and only stops or steers exclusively owned work. | Claude's published Mod API does not document equivalent durable admission receipts or ownership checks. `$.turn.abort()` can end a turn but is not a substitute for scoped steering. | Give the media host durable voice request IDs and deduplicate requests at the bridge. Acknowledge only after Mod submission is confirmed; never automatically retry an ambiguous submission because Claude admission has no verified idempotency key. Do not abort a turn that may contain unrelated work; establish ownership and cancellation behavior experimentally. |
-| Harness session events drive completion, cancellation, last-output read-back, and voice transcript rows that do not become coding prompts. | `turn.complete`, `session.append`, and `$.session.messages()` expose useful data, but their exact correlation and persistence behavior for this use need a prototype. | Filter to the main turn, forward the final answer/abort outcome, persist voice-only conversation in the host, and test read-back and reload without resubmitting work. |
-| The live voice conversation answers ordinary questions itself and dispatches coding requests through a tool. | This policy belongs with VoiceMesh, not in Claude's prompt. | Reuse Composer's conversation/delegation flow; translate only coding task requests and Claude results at the Mod bridge. |
-
-The current DeepSeek reference is `/Users/hgp/DeepSeek/deepseek-harness-latest/packages/client/voice-client` and `/Users/hgp/DeepSeek/deepseek-harness-latest/packages/host/voice-host`. Its `sts-controller.ts`, `sts-settings.ts`, `VoiceOrb.tsx`, `sts-live.ts`, and `sts-tasks.ts` show the voice controls, provider setup, task handoff, and result playback. The older `voicemesh-dsh-voice/integration` copy differs in current visuals and standby behavior. Both are references only; this project uses the built Composer package.
-
-## Proposed first bridge
-
-Use a local VoiceMesh host that launches Composer's browser audio runtime in a background Chrome process, with a loopback service for credentials, signaling, and Mod communication. No visible media tab is required. This reuses Composer's browser and server entry points. The Mod stays responsible for Claude session identity, controls, and coding events. Bind the service to loopback, authenticate the connection, and allow only the owning Claude session to consume a voice request.
-
-The Mod opens a local settings editor. The optional `@voicemesh/settings-editor` React package owns the form and voice picker; Claude supplies a `VoiceSettingsBackend` adapter that saves choices and write-only credentials in its local host. DeepSeek's settings remain unchanged. The editor offers GPT Live, OpenAI Realtime, xAI Grok, and Gemini Live, each with its own key, model, and voice choices. GPT Live has passed a spoken Claude coding request; OpenAI Realtime has passed a voice preview; the other realtime modes have only offline adapter checks so far.
-
-The bridge should exchange explicit, bounded messages: voice control and state snapshots; transcript/caption updates; a coding request with a VoiceMesh request ID and review-or-submit choice; an admission outcome; and a correlated Claude turn result or interruption. Sequence numbers and acknowledgments let either side reconnect without replaying an uncertain coding submission. Keep one coding dispatch outstanding per Claude session until the Mod types and prototype prove stronger correlation. Submit only when the session is idle, and do not await a submission that is waiting for idle inside an active hook. Forward only changes to the Mod UI, within its redraw rate limit.
-
-Voice stop and Claude task stop are separate controls. Stopping VoiceMesh releases its media resources. A request to stop Claude work may use `$.turn.abort()` only after the prototype establishes that the active turn belongs exclusively to that voice request; otherwise the user must stop it in Claude Code. A correction spoken while Claude is busy should remain in VoiceMesh for review or queued submission unless a supported active-turn steering path is verified.
-
-This arrangement uses a background Chrome process for audio. It still needs a real microphone and speaker check in Claude Desktop to establish whether the one-button experience matches DeepSeek closely enough.
-
-## Delivery sequence
-
-1. **Desktop Mod seam prototype:** install the Mod in a local Claude Desktop Code session; generate the installed version's declarations; validate a button there, an authenticated media-host exchange, `fill` versus `submit({ text, asUser: true })`, and correlation of one submitted request with a main-turn result and interruption.
-2. **Voice integration:** host Composer and connect its existing speech input, transcript, playback, interruption, and lifecycle behavior to the Mod controls and Claude events. Verify reload, read-back, and permission-pending feedback in Desktop Code.
-3. **Parity decisions:** test whether active-turn steering and voice-owned cancellation are supported safely. If not, document the narrower behavior plainly and keep submitted requests queued until Claude is idle.
-
-## Run the current prototype
-
-The prototype consumes the pinned `@voicemesh/composer` and `@voicemesh/settings-editor` packages in `vendor/`; it does not modify Composer's voice runtime. From this directory, run `npm ci`, `npm run media:build`, and `npm run settings:window:build` (requires Rust). On macOS, `npm run host:install:macos` installs a per-user login service for development. The host starts Composer's audio runtime in a background Chrome process; no separate tab or Enable audio step is needed. Claude's Voice button calls Composer's realtime controller for the selected provider; GPT Live is the proven path. The host uses a stable local port and persistent browser profile for microphone access. Open Voice settings in Claude to save the provider key, model, voice, standby duration, connection sounds, and assistant-cloud choice to this harness's private local settings file. The settings editor opens in a small Tauri window that stays above Claude and is refocused on each Settings click. On macOS the build creates `VoiceMesh Settings.app`; on Windows it creates a Tauri `.exe`, but that build and its Desktop behavior have not been verified here. `VOICE_SETTINGS_WINDOW_BINARY` can override the executable path. `npm run host:install:macos -- --remove` removes the development login service.
-
-### macOS release package
-
-On an arm64 or x64 Mac with Node >=22.19, npm, and Rust/Cargo, run `npm ci`, `npm run media:build`, `npm run settings:window:build`, `npm run plugin:stage`, and `npm run release:macos`. The last command creates one ZIP in `release/` for the build machine's architecture. It contains the private Node runtime and license, production dependencies, the settings app, host, and both Claude Mods. After extracting the ZIP, run `./install.sh` inside its folder. It installs under `~/Library/Application Support/VoiceMesh/ClaudeVoice`, registers the login service and local Claude marketplace, and installs both Mods; restart Claude to load them. `./uninstall.sh` removes the host and Mods while preserving saved voice settings and credentials. Claude CLI and Chrome remain external requirements. Build separately for arm64 and x64. A clean-machine installation should be verified before publishing.
-
-### Windows release package
-
-Build on Windows with Node >=22.19, npm, Rust/Cargo, Visual Studio C++ tools, and the Windows SDK. Run `npm ci`, `npm run media:build`, `npm run settings:window:build`, and `npm run plugin:stage`. Extract the official Windows Node distribution for the machine's architecture, then run `npm run release:windows -- --node-dir C:\path\to\node-distribution`. The release builder requires the matching native settings `.exe`, copies the private Node runtime and its license, installs production JavaScript dependencies from the pinned `vendor/` packages, and checks that the host imports resolve. It creates `release/voicemesh-claude-win-<architecture>`; choose a fresh `--output` path for another build. Build x64 and arm64 separately.
-
-For an end user, extract the complete release and run `install.ps1`. It copies the release under `%LOCALAPPDATA%\VoiceMesh\ClaudeVoice`, starts the host, and creates a per-user startup shortcut. The host uses the package's own `runtime\node.exe` and npm; users do not install Node. Chrome and a supported Claude Code/Desktop installation remain external requirements. Add the bundled `plugin-marketplace` to Claude and install its two plugins. `uninstall.ps1` removes the host and startup shortcut; it leaves Claude plugin installation and saved voice credentials intact. Windows build and clean-machine behavior must be validated before publishing this release.
-
-In Desktop, the Voice settings control asks the local host to open the React editor in the native Tauri window. The window opens on the display where Settings was clicked, with the click location inside the window; this keeps it over Claude even when Claude moves between displays. The React editor supports light and dark themes. Windows behavior remains unverified.
-
-The Mod source is in `.claude-plugin/` and `hooks/`. Version 0.1.17 passed strict marketplace validation and loaded in a local Claude Desktop Code session. Its settings button opened a dark macOS window matching the current Claude theme. The copied picker loaded twelve GPT Live voices from Composer's catalog. Choosing a voice saved it to a private local file (`0600`); the temporary development key was not copied into that file. An isolated credential-store check passed write-only public redaction and private file permissions. Version 0.1.18 adds recovery for a claimed or running voice-owned turn after a Mod reload without resubmitting it; focused tests passed, while live mid-turn reload remains unverified.
-
-One generated spoken request reached GPT Live, produced a Composer delegation event, was submitted by the Mod to the active Claude coding session, and caused Claude to read this README and answer with its title. The Mod then showed Composer speaking, and the user heard the answer. The test audio loop caused a second identical request before it was stopped; the test-only audio source was changed to play once, but that change was not rerun against the provider. After the host returned to its real microphone configuration, the user spoke with the attendant and further coding requests reached Claude. The Desktop session exposed a defect: later requests included earlier transcript lines. The host had joined all Composer transcript lines; it now selects the latest non-empty user line, as the DeepSeek integration does. In a new Claude Code session after that fix, a real-microphone request appeared as only the new sentence, Claude read the README, the task completed, and Composer displayed its spoken reply. Connection-sound audibility, recovery during an active task, and other provider modes remain unverified. The Claude request/result bridge remains application code; Composer supplies voice and Live delegation. See [the implementation plan](IMPLEMENTATION_PLAN.md) for the current evidence.
-
-Version 0.1.23 moves ordinary voice lines out of the control area and into Claude's transcript area as model-invisible `You:` and `Voice:` log rows. A generated speech turn produced both rows, and they reappeared after a Desktop restart. Claude Mods do not expose DeepSeek's custom chat-bubble insertion API, so these rows use Claude's transcript style. The assistant cloud, microphone waveform, and 30-second inactivity standby were also visible in Desktop. Version 0.1.24 adds separate microphone and speaker mute controls plus elapsed time; its host speaker-mute round trip, media build, focused tests, strict Mod validation, and installation passed. The Mac locked before its active Desktop visual check. A macOS login service was installed on this development machine and reported an idle, connected Composer runtime. It temporarily reads the existing development connection file rather than copying its key; ordinary installs use the key saved in Voice settings. A full login restart of that service has not been tested.
-
-Version 0.1.29 adds a private host transcript ledger so multiple Composer caption rows can be recovered after a Mod disconnect or restart, following DeepSeek's persisted transcript behavior. Focused ledger and Mod history tests pass. Its Desktop behavior still needs a check after the Mac is unlocked.
-
-The host also uses Composer's `prepareTranscriptHistory()` to provide recent speech context when GPT Live reconnects. A focused offline check confirms those rows enter the provider's startup input; a live reconnect check is still pending.
-
-The GPT Live instructions identify that restored context as past conversation and tell the attendant to act on the newest live request. This follows DeepSeek's reconnect policy; a live provider check remains pending.
-
-The host's spoken coding policy now follows DeepSeek's current rule for project questions: explanations, debugging, configuration checks, and code changes go to the linked Claude coding session. An offline Composer adapter check confirms the policy enters GPT Live's setup message. Its behavior on a fresh spoken request still needs a Desktop check.
-
-Coding results now have a private host ledger. If Claude finishes after the voice connection closes, the result remains owed and is offered on the next connection. The ledger clears it only after Composer reports completed playback. Focused recovery and Composer playback-contract tests pass; this reconnect behavior has not yet been verified with a live spoken result.
-
-When several results are owed, the host offers them one at a time. It temporarily declines a new voice coding task until the prior result is heard. DeepSeek likewise allows only one queued or running voice coding task, but it can admit a new one after the prior task ends even if that result has not yet been spoken.
-
-Each provider request and caption receives a harness ID scoped to its Claude session and voice connection, so repeated provider IDs cannot overwrite earlier tasks or transcript rows.
-
-Version 0.1.31 follows the current DeepSeek controls: the waveform shows microphone input when the assistant cloud is enabled, or combined microphone and reply levels when it is disabled. The main button stops Voice in standby, while a separate Resume action restarts it. The copied setup adds the assistant-cloud choice and a connection-sound choice. Focused settings validation, media and setup builds, strict Mod validation, and the local install passed; Desktop still needs to load this version after the Mac is unlocked for a visual and audible check.
-
-Version 0.1.32 adds DeepSeek-style coding progress choice: outcome only (the default) or visible milestones before Claude tool calls. The Mod forwards matching main-turn text chunks without altering them; the host announces at most the latest pending milestone while the voice connection is idle. Focused Mod, settings, and OpenAI Realtime playback tests, the setup build, strict Mod validation, local plugin update, and an idle/connected host restart passed. The settings field rendered in the local dark setup view. Spoken milestone delivery and the updated Mod UI in Claude Desktop remain unverified while the Mac is locked.
-
-The current DeepSeek browser setup was inspected directly. Its realtime provider menu contains xAI Grok, Gemini Live, GPT Live, and OpenAI Realtime, and it also offers a separate voice pipeline. This Claude host now has Composer connections and coding-tool wiring for all four realtime choices, with GPT Live the default. GPT Live and OpenAI Realtime share one saved OpenAI credential, as in DeepSeek. An isolated OpenAI Realtime test fed generated speech to Composer, observed its finalized coding request, completed that request through the host bridge, and confirmed Composer spoke the saved result and marked it played. The test used a simulated Claude result, so an actual Claude Desktop turn on OpenAI Realtime is still unverified. The optional spoken-end tool follows DeepSeek's non-GPT realtime behavior: a goodbye ends voice without stopping Claude's coding task. Non-GPT providers also have a readback tool for the last session-bound saved coding result without rerunning work. The setup offers separate Test connection and Test audio and tools actions. The latter uses fixed synthetic speech and a simulated coding task, without the microphone or Claude; it passed live provider checks for GPT Live and OpenAI Realtime. xAI and Gemini have only offline diagnostic tests because they are not configured. Pipeline mode and wake phrase remain functional gaps; coding progress has offline checks but no spoken Desktop check. The setup saves speech verbosity and backchannel choices and passes them into GPT Live instructions. The test and progress fields rendered in the local dark setup view; native Claude Desktop appearance of the latest changes remains unverified while macOS is locked.
-
-## Main risks and decisions
-
-The strongest reason to use a Mod is direct access to Claude Code's session events, prompt operations, and interactive UI. The strongest limitation against DeepSeek parity is that documented Mod submission waits for an idle session, while DeepSeek's session controller supports queue, steer, and scoped cancellation with durable request ownership. The implementation questions are where VoiceMesh runs its existing media code, how the media host and Mod exchange state, and how much of the DeepSeek coding-task behavior Claude's installed Mod API can safely reproduce. The documented Mod hooks do not establish a microphone capture API, but this does not make audio a Claude adapter responsibility.
-
-The first target surface is a local session in the Code tab of Claude Desktop. Inspect the installed Mod version's generated event types before implementing deeper Claude integration.
-
-## Sources
-
-- [Claude Code Mods overview](https://code.claude.com/docs/en/plugins/mods/overview)
-- [Claude Code Mods reference](https://code.claude.com/docs/en/plugins/mods/reference)
-- [Draw in the interface with a Mod](https://code.claude.com/docs/en/plugins/mods/interface)
-- [React to events with a Mod](https://code.claude.com/docs/en/plugins/mods/events)
-- [Use the Mods API](https://code.claude.com/docs/en/plugins/mods/api)
-- [Test a Mod](https://code.claude.com/docs/en/plugins/mods/test)
-- Local VoiceMesh Composer source: `/Users/hgp/DeepSeek/voicemesh-composer/README.md`.
-# Shared desktop behavior
-
-Claude consumes the desktop lifecycle and platform helpers from the existing
-`@voicemesh/composer` package. Composer owns OS theme lookup, hidden background
-process launches on Windows, ready/reveal, bounded close cleanup, and native
-focus-loss dismissal. Claude supplies its saved theme preference, settings URL,
-display position, window dimensions, and narrowly scoped Tauri capability.
-
-The checked-in Composer 0.2.9 archive preserves all 113 runtime files from the
-previous 0.2.8 archive and adds the desktop JavaScript, declarations, and native
-helper built from `C:/Development/Projects/voicemesh-compose`. The source checkout
-started at 0.2.0, so replacing its entire voice bundle would lose later fixes.
-`scripts/pack-composer-desktop.js <composer-source>` reproduces this archive after
-building that source's JavaScript and types, and verifies every existing runtime
-file's hash before packing. The desktop support remains part of Composer, with
-no second npm package to maintain. Subsequent unified Composer releases should
-reconcile the voice runtime source with this preserved runtime baseline.
+Claude's Mod UI is available in the Claude Code terminal and the Code tab of Claude Desktop. Voice controls do not appear in the VS Code chat panel or noninteractive sessions.

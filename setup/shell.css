@@ -6,7 +6,7 @@ html, body, #app { margin: 0; width: 100%; height: 100%; overflow: hidden; }
 body, #app { background: inherit; }
 .settings-sidebar { display: flex; flex-direction: column; }
 .settings-sidebar > .settings-nav-item { flex-shrink: 0; }
-.settings-sidebar-versions { margin-top: auto; padding: 16px 14px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; line-height: 1.5; }
+.settings-sidebar-versions { margin-top: auto; padding: 16px 14px; border-top: 1px solid var(--border); color: var(--muted); font-size: 9px; line-height: 1.5; }
 .settings-sidebar-versions span { white-space: nowrap; }
 .coding-diagnostics { padding: 0 30px 24px; font: 13px system-ui; color: #242424; }
 .coding-diagnostics button { cursor: pointer; padding: 6px 10px; border: 1px solid #c8c8c8; border-radius: 6px; background: #fcfcfb; color: inherit; }

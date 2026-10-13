@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createSettings } from '../host/provider-settings.js'
@@ -14,7 +14,7 @@ test('DeepSeek-style voice choices persist and shape GPT Live guidance without e
   try {
     const store = await createSettings(path, {})
     await store.save({ id: 'openai-live', key: 'test-key', model: 'test-model', voice: 'test-voice',
-      statusSounds: false, assistantOrbEnabled: false, responseDetail: 'detailed', progressMode: 'milestones', backchannelEnabled: true })
+      statusSounds: false, assistantOrbEnabled: false, responseDetail: 'detailed', progressMode: 'milestones', plainLanguageSummaries: true, backchannelEnabled: true })
     assert.equal(store.publicSettings().find(row => row.id === 'openai-live').key, undefined)
     assert.deepEqual(configuredConnections(store).map(({ statusSounds, assistantOrbEnabled }) => ({ statusSounds, assistantOrbEnabled })),
       [{ statusSounds: false, assistantOrbEnabled: false }])
@@ -23,9 +23,13 @@ test('DeepSeek-style voice choices persist and shape GPT Live guidance without e
     assert.equal(restored.get('openai-live').assistantOrbEnabled, false)
     assert.equal(restored.get('openai-live').responseDetail, 'detailed')
     assert.equal(restored.get('openai-live').progressMode, 'milestones')
+    assert.equal(restored.get('openai-live').plainLanguageSummaries, true)
+    assert.equal(restored.get('xai').plainLanguageSummaries, true)
     assert.equal(restored.get('openai-live').backchannelEnabled, true)
     assert.match(liveInstructions(restored.get('openai-live')), /fuller conversational explanation/)
     assert.match(liveInstructions(restored.get('openai-live')), /listening acknowledgment/)
+    assert.match(liveInstructions(restored.get('openai-live')), /simple everyday language/)
+    assert.doesNotMatch(liveInstructions({}), /simple everyday language/)
     assert.doesNotMatch(liveInstructions({}), /listening acknowledgment/)
     const live = openaiLiveProvider.create({ ...restored.get('openai-live'),
       instructions: liveInstructions(restored.get('openai-live')) })
@@ -33,12 +37,33 @@ test('DeepSeek-style voice choices persist and shape GPT Live guidance without e
     assert.match(live.setup.session.instructions, /listening acknowledgment/)
     const contents = await readFile(path, 'utf8')
     assert.equal(JSON.parse(contents)['openai-live'].statusSounds, false)
+    assert.equal(JSON.parse(contents).plainLanguageSummaries, true)
+    assert.equal(JSON.parse(contents)['openai-live'].plainLanguageSummaries, undefined)
     await assert.rejects(restored.save({ id: 'openai-live', statusSounds: 'off' }), /Invalid statusSounds/)
     await assert.rejects(restored.save({ id: 'openai-live', responseDetail: 'verbose' }), /Invalid speech verbosity/)
     await assert.rejects(restored.save({ id: 'openai-live', progressMode: 'filler' }), /Invalid coding progress mode/)
+    await assert.rejects(restored.save({ id: 'openai-live', plainLanguageSummaries: 'yes' }), /Invalid plainLanguageSummaries setting/)
   } finally {
     await rm(directory, { recursive: true, force: true })
   }
+})
+
+test('existing provider choice becomes a shared plain-language preference', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'voice-plain-language-'))
+  const path = join(directory, 'providers.json')
+  try {
+    await writeFile(path, JSON.stringify({ 'openai-live': { plainLanguageSummaries: true }, xai: { plainLanguageSummaries: false } }))
+    const store = await createSettings(path, {})
+    assert.equal(store.get('openai-live').plainLanguageSummaries, true)
+    assert.equal(store.get('xai').plainLanguageSummaries, true)
+    await store.save({ id: 'xai', plainLanguageSummaries: false })
+    const restored = await createSettings(path, {})
+    assert.ok(restored.publicSettings().every(row => row.plainLanguageSummaries === false))
+    const saved = JSON.parse(await readFile(path, 'utf8'))
+    assert.equal(saved.plainLanguageSummaries, false)
+    assert.equal(saved['openai-live'].plainLanguageSummaries, undefined)
+    assert.equal(saved.xai.plainLanguageSummaries, undefined)
+  } finally { await rm(directory, { recursive: true, force: true }) }
 })
 
 test('provider selection is separate from each provider credential and connection', async () => {

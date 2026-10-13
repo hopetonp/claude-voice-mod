@@ -12,7 +12,7 @@ const find = (tree, key) => tree == null || typeof tree !== 'object' ? null
     : tree.key === key ? tree : find(tree.children, key)
 
 const prefs = { provider: 'openai-live', model: 'gpt-realtime', voice: 'marin', voiceStandbySec: 30, statusSounds: true,
-  responseDetail: 'concise', progressMode: 'outcome', backchannelEnabled: false, endConversationEnabled: false, configured: true }
+  responseDetail: 'concise', progressMode: 'outcome', plainLanguageSummaries: false, backchannelEnabled: false, endConversationEnabled: false, configured: true }
 const view = open => ({ prefs, models: ['gpt-realtime'], voices: [{ id: 'marin', name: 'Marin' }], catalogLoading: false, keyDraft: '',
   open: { general: false, speech: false, ...open }, notice: '' })
 const calls = []
@@ -66,6 +66,14 @@ test('General hides End voice by speaking for GPT Live and lists Standby as an o
   find(grok, 'standby').onSelect('60')
   find(grok, 'backchannel').onSelect('on')
   assert.deepEqual(calls, [['saveStandby', 60], ['saveOptions', { backchannelEnabled: true }]])
+})
+
+test('Plain-language summaries can be enabled in General', () => {
+  calls.length = 0
+  const toggle = find(settingsPane(el, view({ general: true }), act), 'plain-language-summaries')
+  assert.equal(toggle.value, 'off')
+  toggle.onSelect('on')
+  assert.deepEqual(calls, [['saveOptions', { plainLanguageSummaries: true }]])
 })
 
 test('before settings load, the pane shows the notice or a loading line', () => {

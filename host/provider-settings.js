@@ -34,12 +34,14 @@ export async function createSettings(path, env = process.env) {
     return saved.pipelineKeys?.[provider] || env[`${provider.toUpperCase()}_API_KEY`] || '';
   };
   const selectedProvider = () => ids.includes(saved.selectedProvider) ? saved.selectedProvider : 'openai-live';
+  const plainLanguageSummaries = () => saved.plainLanguageSummaries === true
+    || (saved.plainLanguageSummaries === undefined && ids.some(id => saved[id]?.plainLanguageSummaries === true));
   const get = id => {
     const prefix=id==='openai-live'?'OPENAI':id.toUpperCase();
     const fields = { model:env[`${prefix}_MODEL`] || '', voice:env[`${prefix}_VOICE`] || '', voiceStandbySec:30, statusSounds:true, assistantOrbEnabled:true,
       responseDetail:'concise', progressMode:'outcome', backchannelEnabled:false, endConversationEnabled:false,
       backendModel:'', transcriptionModel:id==='openai' ? env.OPENAI_TRANSCRIPTION_MODEL || '' : '', ...saved[id] };
-    return { ...fields, key: ['openai', 'openai-live'].includes(id)
+    return { ...fields, plainLanguageSummaries: plainLanguageSummaries(), key: ['openai', 'openai-live'].includes(id)
       ? saved.openai?.key || saved['openai-live']?.key || env.OPENAI_API_KEY || ''
       : saved[id]?.key || env[`${prefix}_API_KEY`] || '' };
   };
@@ -85,7 +87,14 @@ export async function createSettings(path, env = process.env) {
         if (typeof value.backchannelEnabled !== 'boolean') throw new Error('Invalid backchannel setting');
         next.backchannelEnabled = value.backchannelEnabled;
       }
-      const updated={...saved,[value.id]:next};
+      if (value.plainLanguageSummaries !== undefined && typeof value.plainLanguageSummaries !== 'boolean') throw new Error('Invalid plainLanguageSummaries setting');
+      const updated={...saved,[value.id]:next,
+        plainLanguageSummaries: value.plainLanguageSummaries ?? plainLanguageSummaries()};
+      for (const id of ids) {
+        if (updated[id]?.plainLanguageSummaries === undefined) continue;
+        updated[id]={...updated[id]};
+        delete updated[id].plainLanguageSummaries;
+      }
       if (value.key !== undefined && ['openai', 'openai-live'].includes(value.id)) {
         const openai={...(updated.openai ?? {})};
         if (value.key.trim()) openai.key=value.key.trim();

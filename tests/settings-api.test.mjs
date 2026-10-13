@@ -9,7 +9,7 @@ const reply = { selectedProvider: 'xai', providers: [
 
 test('preferences reads the selected provider and fills defaults', () => {
   assert.deepEqual(preferences(reply), { provider: 'xai', model: 'grok-voice', voice: 'Ara', voiceStandbySec: 60,
-    statusSounds: true, responseDetail: 'detailed', progressMode: 'outcome', backchannelEnabled: false,
+    statusSounds: true, responseDetail: 'detailed', progressMode: 'outcome', plainLanguageSummaries: false, backchannelEnabled: false,
     endConversationEnabled: false, configured: true })
   assert.equal(preferences({}).provider, 'openai-live')
   assert.equal(preferences({}).configured, false)

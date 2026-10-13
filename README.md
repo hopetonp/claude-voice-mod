@@ -1,8 +1,22 @@
 # Claude Voice Mod
 
-Claude Voice Mod adds VoiceMesh voice controls to Claude Code on macOS and Windows. It connects the active Claude coding session to VoiceMesh Composer, which handles microphone capture, speech recognition, voice conversation, and playback. Coding requests from voice are sent to Claude; Claude's results can be spoken back.
+Claude Voice Mod brings two-way, natural voice conversation to Claude Code on macOS and Windows. Ask questions or give coding requests by voice, then hear a conversational summary of Claude's results. Choose whether to hear progress milestones as Claude works or wait for the outcome.
 
-The package includes two Claude Mods, a local VoiceMesh host, and a settings window. Provider keys and voice settings are stored on the user's computer.
+For less technical spoken results, turn on **Plain-language summaries** in Voice Settings → Conversation. This prompts the voice model to use everyday language, explain necessary technical terms, and keep the key findings and next steps. The setting is off by default and applies to every voice provider.
+
+## Voice modes and models
+
+**Realtime speech (recommended)** uses one live voice model to listen, converse, and speak in the same session. Start here for simpler setup and more fluid turn-taking. VoiceMesh supports GPT Live, OpenAI Realtime, xAI Grok, and Gemini Live; choose a model and voice in Voice settings.
+
+**Voice pipeline** lets you choose speech recognition, a conversation model, and speech synthesis separately. It supports selected local speech models and custom conversation endpoints. Use it when you need that flexibility; the extra stages require more configuration and may add delay.
+
+In either mode, the conversation model handles ordinary spoken replies, while coding requests go to the active Claude coding session. **Request classification** is an optional, separate model that helps decide whether a completed spoken request should get a voice reply, a clarifying question, or a Claude coding task. It supports Jev (TypeSafe) and OpenAI Decisions (GPT-6 Luna). It is off by default. Enable it when you want a dedicated model to make that routing decision. It requires a classifier provider key; the extra decision typically takes milliseconds, and provider usage charges may apply.
+
+## Security and API keys
+
+Keys entered in Voice settings are saved locally with Claude's user data in `~/.claude/voicemesh-controls/providers.json` on macOS or `%USERPROFILE%\.claude\voicemesh-controls\providers.json` on Windows. The host writes the file with owner-only permissions on macOS and omits keys from settings responses. The host listens on `127.0.0.1`.
+
+The keys are **not encrypted by this Mod or stored in your Claude account**. They are sent to the providers you configure when those services are used; voice audio and text may also be sent to those providers. Enabling request classification sends the spoken request and context to its selected provider. Uninstalling preserves saved keys and settings; remove the `voicemesh-controls` data directory above if you want to erase them.
 
 ## Install with an AI agent
 

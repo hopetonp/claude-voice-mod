@@ -63,6 +63,7 @@ export function settingsPane(el, view, act) {
     row('Coding progress', Select({ key: 'progress-mode', value: prefs.progressMode,
       options: [{ value: 'outcome', label: 'Outcome only' }, { value: 'milestones', label: 'Milestones and outcome' }],
       onSelect: value => act.saveOptions({ progressMode: value }) })),
+    row('Plain-language summaries', onOff('plain-language-summaries', 'plainLanguageSummaries')),
     row('Backchannel while speaking', onOff('backchannel', 'backchannelEnabled')),
     ...(prefs.provider === 'openai-live' ? [] : [row('End voice by speaking', onOff('end-conversation', 'endConversationEnabled'))]),
     row('Connection sounds', onOff('status-sounds', 'statusSounds')),
@@ -109,4 +110,3 @@ export function settingsPane(el, view, act) {
     ...(view.notice ? [Text({ dimColor: true, wrap: 'wrap', children: [view.notice] })] : []),
   ] })
 }
-

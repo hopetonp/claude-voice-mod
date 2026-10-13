@@ -66,7 +66,7 @@ const current = ({ providers, selectedProvider, voiceMode, pipeline, classifier 
     classifier: classifier ?? { enabled: false, provider: 'jev', model: 'jev-latest' },
     provider, model: value?.model ?? '', voice: value?.voice ?? '', voiceStandbySec: value?.voiceStandbySec ?? 30,
     statusSounds: value?.statusSounds ?? true, assistantOrbEnabled: value?.assistantOrbEnabled ?? true,
-    responseDetail: value?.responseDetail ?? 'concise', progressMode: value?.progressMode ?? 'outcome', backchannelEnabled: value?.backchannelEnabled ?? false,
+    responseDetail: value?.responseDetail ?? 'concise', progressMode: value?.progressMode ?? 'outcome', plainLanguageSummaries: value?.plainLanguageSummaries ?? false, backchannelEnabled: value?.backchannelEnabled ?? false,
     endConversationEnabled: value?.endConversationEnabled ?? false,
     configured: !!value?.configured }
 }

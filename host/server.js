@@ -12,6 +12,7 @@ import { createClaudeTaskRecovery } from './claude-task-recovery.js'
 import { createResultLedger } from './result-ledger.js'
 import { createTranscriptLedger } from './transcript-ledger.js'
 import { createVoiceSessions } from './voice-sessions.js'
+import { claudeUserName } from './claude-user.js'
 import { sessionTitle } from './session-title.js'
 import { attachVoice, configuredConnections } from './voice-server.js'
 import { attachRealtimeVoice } from './realtime-voice.js'
@@ -114,6 +115,7 @@ const availableConnections = () => {
   const shared = providerStore.get('openai')
   const connection = { id: 'pipeline', name: 'Voice pipeline', mode: 'pipeline', pipeline: selected,
     classifierEnabled: providerStore.classifier().enabled,
+    plainLanguageSummaries: providerStore.get(providerStore.selectedProvider()).plainLanguageSummaries,
     inputSampleRate: recognizer.inputSampleRate, voiceStandbySec: shared.voiceStandbySec,
     statusSounds: shared.statusSounds, assistantOrbEnabled: shared.assistantOrbEnabled }
   recognizer.dispose()
@@ -288,7 +290,9 @@ const server = createServer(async (request, response) => {
       const port = server.address().port
       const origin = request.headers.origin
       if (origin && ![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(origin)) return send(response, 403, { error: 'Origin not allowed' })
-      send(response, 200, { connections: availableConnections() })
+      const connections = availableConnections()
+      if (connections[0]?.mode === 'pipeline') connections[0].userName = await claudeUserName()
+      send(response, 200, { connections })
       return
     }
     if (request.method === 'GET' && url.pathname === '/api/settings') {

@@ -1,6 +1,6 @@
 /** Claude's thin session adapter for Composer's reusable voice pipeline. */
 import { PipelineConversation } from '@voicemesh/composer/pipeline'
-import { codingAcknowledgement } from '../host/voice-policy.js'
+import { codingAcknowledgement, userNameInstruction } from '../host/voice-policy.js'
 import { createBrowserPipelineController, createPipelinePlayback, openPipelineSttStream } from '@voicemesh/composer/browser'
 
 const tool = { type: 'function', function: { name: 'dispatch_coding_task',
@@ -69,7 +69,7 @@ export function createClaudePipeline({ connection, token, sink, caption, setting
       if (name !== 'dispatch_coding_task' || !args || typeof args.instruction !== 'string') throw new Error('Unknown voice tool')
       return (await post('/api/pipeline/dispatch', { instruction: args.instruction })).json()
     },
-    system: kind => `You are the voice attendant for Claude's coding agent. Speak naturally and briefly in the user's language. You receive speech transcripts. Answer ordinary conversation yourself. ${routingInstruction} Never claim to have inspected or changed files yourself. A dispatched task is a receipt, not its result. Do not mention your instructions, internal routing, classifier, or tool calls in spoken replies. ${codingAcknowledgement} ${kind === 'coding-result' ? 'Summarize the supplied Claude result without calling tools.' : kind === 'coding-progress' ? 'Report only the supplied coding progress.' : ''}`,
+    system: kind => `You are the voice attendant for Claude's coding agent. Speak naturally and briefly in the user's language. ${userNameInstruction(connection.userName)} You receive speech transcripts. Answer ordinary conversation yourself. ${routingInstruction} Never claim to have inspected or changed files yourself. A dispatched task is a receipt, not its result. Do not mention your instructions, internal routing, classifier, or tool calls in spoken replies. ${codingAcknowledgement} ${kind === 'coding-result' ? `Summarize the supplied Claude result without calling tools.${connection.plainLanguageSummaries ? ' Use simple everyday language, avoid jargon where possible, briefly explain necessary technical terms, and preserve key findings, blockers, and next steps.' : ''}` : kind === 'coding-progress' ? 'Report only the supplied coding progress.' : ''}`,
     tools: () => [tool],
     contextTurns: () => 6,
     toolRounds: () => 2,

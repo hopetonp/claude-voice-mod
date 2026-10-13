@@ -4,6 +4,7 @@ import { LiveDelegation } from '@voicemesh/composer'
 import { openaiLiveProvider, openaiStsProvider, xaiStsProvider, geminiStsProvider, openStsChannel } from '@voicemesh/composer/server'
 import { latestLiveUserRequest } from './live-task-instruction.js'
 import { liveInstructions } from './voice-policy.js'
+import { claudeUserName } from './claude-user.js'
 import { classifyForVoice } from './classifier.js'
 
 export function liveClassification(store, classify = classifyForVoice) {
@@ -232,7 +233,7 @@ export function attachVoice(socket, store, tasks, onLive, onCaption = async () =
         const settings = {
           key: store.get('openai-live').key, model: connection.model, voice: connection.voice,
           startupHistory: history(),
-          instructions: `${liveInstructions(store.get('openai-live'))}${store.classifier?.().enabled === true
+          instructions: `${liveInstructions({ ...store.get('openai-live'), userName: await claudeUserName() })}${store.classifier?.().enabled === true
             ? ' For each completed new user request, delegate to the client for classification before deciding whether to answer, clarify, or request coding work. Wait for the client routing result. Do not treat the classification itself as a coding task. Past transcript messages saying the classifier was unavailable describe earlier requests; do not treat them as its current status. If asked whether it works now, delegate the question and use the current result.' : ''}`,
           commands: { timeoutMs: 10000, maxPending: 32 }, tools: [],
           connectTimeoutMs: 15000, maxQueuedBytes: 4 * 1024 * 1024, closeTimeoutMs: 5000,

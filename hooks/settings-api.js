@@ -2,7 +2,7 @@
 // saved key never comes back, only whether one is configured.
 
 const DEFAULTS = { provider: 'openai-live', model: '', voice: '', voiceStandbySec: 30, statusSounds: true,
-  responseDetail: 'concise', progressMode: 'outcome', backchannelEnabled: false, endConversationEnabled: false }
+  responseDetail: 'concise', progressMode: 'outcome', plainLanguageSummaries: false, backchannelEnabled: false, endConversationEnabled: false }
 
 /** The selected provider's preferences from a host settings reply. */
 export function preferences({ providers = [], selectedProvider } = {}) {
@@ -10,7 +10,7 @@ export function preferences({ providers = [], selectedProvider } = {}) {
   const value = providers.find(item => item.id === provider) ?? {}
   const pick = field => value[field] ?? DEFAULTS[field]
   return { provider, model: pick('model'), voice: pick('voice'), voiceStandbySec: pick('voiceStandbySec'),
-    statusSounds: pick('statusSounds'), responseDetail: pick('responseDetail'), progressMode: pick('progressMode'),
+    statusSounds: pick('statusSounds'), responseDetail: pick('responseDetail'), progressMode: pick('progressMode'), plainLanguageSummaries: pick('plainLanguageSummaries'),
     backchannelEnabled: pick('backchannelEnabled'), endConversationEnabled: pick('endConversationEnabled'),
     configured: !!value.configured }
 }

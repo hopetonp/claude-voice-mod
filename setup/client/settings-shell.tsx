@@ -41,7 +41,7 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
   useEffect(() => { if (canRelease === false && section === 'troubleshooting') setSection('display') }, [canRelease, section])
   const visibleSection = section === 'troubleshooting' && canRelease !== true ? 'display' : section
   const t = createTranslator(locale)
-  return <div className={`vm-settings-shell${navigator.userAgent.includes('Macintosh') ? ' macos-window' : ''}`}>
+  return <div className={`vm-settings-shell${navigator.userAgent.includes('Macintosh') ? ' macos-window' : navigator.userAgent.includes('Windows') ? ' windows-window' : ''}`}>
     {onClose && <div className="window-chrome"><button className="window-close" type="button" aria-label={t('shell.close')} onClick={onClose}>✕</button></div>}
     <div className="settings-layout">
       <nav className="settings-sidebar" aria-label={t('shell.navigation')}>

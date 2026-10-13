@@ -19,34 +19,6 @@ fn hide_native_window_buttons(window: &WebviewWindow) {
     }
 }
 
-#[cfg(target_os = "windows")]
-fn round_native_window(window: &WebviewWindow) {
-    use std::ffi::c_void;
-
-    #[link(name = "gdi32")]
-    unsafe extern "system" {
-        fn CreateRoundRectRgn(left: i32, top: i32, right: i32, bottom: i32, ellipse_width: i32, ellipse_height: i32) -> *mut c_void;
-        fn DeleteObject(object: *mut c_void) -> i32;
-    }
-    #[link(name = "user32")]
-    unsafe extern "system" {
-        fn SetWindowRgn(window: *mut c_void, region: *mut c_void, redraw: i32) -> i32;
-    }
-
-    let (Ok(hwnd), Ok(size)) = (window.hwnd(), window.outer_size()) else { return };
-    let scale = window.scale_factor().unwrap_or(1.0);
-    let diameter = (26.0 * scale).round() as i32;
-    unsafe {
-        let region = CreateRoundRectRgn(0, 0, size.width as i32, size.height as i32, diameter, diameter);
-        if region.is_null() {
-            eprintln!("Could not create the rounded settings window region");
-        } else if SetWindowRgn(hwnd.0 as *mut c_void, region, 0) == 0 {
-            eprintln!("Could not apply the rounded settings window region");
-            DeleteObject(region);
-        }
-    }
-}
-
 // The launch click identifies Claude's display. Center Settings on that
 // display so moving the pointer does not move the window toward an edge.
 fn place_over_invoking_screen(window: &WebviewWindow) {
@@ -137,8 +109,6 @@ fn main() {
             #[cfg(target_os = "macos")]
             hide_native_window_buttons(&window);
             place_over_invoking_screen(&window);
-            #[cfg(target_os = "windows")]
-            round_native_window(&window);
             Ok(())
         })
         .run(tauri::generate_context!())

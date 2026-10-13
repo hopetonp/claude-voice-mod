@@ -29,6 +29,45 @@ test('a classified turn stays out of history until its routing event, regardless
   assert.equal(history.note('Read the README title'), 'Checking.')
 })
 
+test('an already posted acknowledgement does not absorb the coding result', () => {
+  const history = new VoiceHistory()
+  history.observe('user', 'u1', 'Check files', 100, 100)
+  const acknowledgement = history.observe('assistant', 'a1', 'Checking.', 200, 200)
+  history.complete(acknowledgement, 200)
+  history.delivered(acknowledgement)
+  history.attach('Check files', 300)
+  history.handOff('Check files')
+  const result = history.observe('assistant', 'r1', 'Three files changed.', 400, 400)
+  history.complete(result, 400)
+  assert.equal(history.note('Check files'), '')
+  assert.deepEqual(shown(history, 400), ['assistant: Three files changed.'])
+})
+
+test('coding completion ends an unfilled acknowledgement slot before result speech', () => {
+  const history = new VoiceHistory()
+  history.observe('user', 'u1', 'Check files', 100, 100)
+  history.attach('Check files', 200)
+  history.handOff('Check files')
+  history.stopWaiting()
+  const result = history.observe('assistant', 'r1', 'Three files changed.', 400, 400)
+  history.complete(result, 400)
+  assert.equal(history.note('Check files'), '')
+  assert.deepEqual(shown(history, 400), ['assistant: Three files changed.'])
+})
+
+test('reloaded history releases a coding result after its acknowledgement was already saved', () => {
+  const history = new VoiceHistory()
+  const request = history.observe('user', 'u1', 'Check files', 100, 100)
+  request.delegated = true
+  history.delivered(request)
+  const acknowledgement = history.observe('assistant', 'a1', 'Checking.', 200, 200)
+  history.complete(acknowledgement, 200)
+  history.delivered(acknowledgement)
+  const result = history.observe('assistant', 'r1', 'Three files changed.', 300, 300)
+  history.complete(result, 300)
+  assert.deepEqual(shown(history, 300), ['assistant: Three files changed.'])
+})
+
 test('nothing is written while a turn is still being spoken', () => {
   const history = new VoiceHistory()
   history.observe('user', 'u1', 'So I was thinking about', 100)

@@ -93,6 +93,8 @@ test('the voice row does not draw an inner border or fill', async () => {
     const row = tree => find(tree, node => node.type === 'Box' && node.columnGap === 0.5 && node.paddingX === 0)
     const lightTree = await ui.render()
     const light = row(lightTree)
+    assert.equal(lightTree.children.length, 1, 'an empty next(e) does not reserve a row')
+    assert.equal(light?.height, 1, 'the outer voice row controls band content height')
     assert.deepEqual([lightTree.borderStyle, lightTree.borderColor], [undefined, undefined])
     assert.deepEqual([light?.borderStyle, light?.borderColor, light?.backgroundColor], [undefined, undefined, undefined])
     assert.equal(light?.paddingY, 0)
@@ -107,14 +109,17 @@ test('the voice row does not draw an inner border or fill', async () => {
   } finally { Date.now = realNow }
 })
 
-test('the voice button is drawn at its 28 pixel size, its seat and click target 1.4 rows tall', async () => {
+test('the voice button, seat, and client keep the row at 1 row', async () => {
   const ui = await strip('voice-button-size', { phase: 'idle' })
   const tree = await ui.render()
   const button = find(tree, node => node.type === 'Svg' && node.source?.includes('<circle cx="17" cy="17" r="16"'))
   const target = find(tree, node => node.type === 'Client' && node.key === 'voice-toggle')
   assert.deepEqual([button?.width, button?.height], [28, 28])
   assert.match(button.source, /width="28" height="28" viewBox="0 0 34 34"/)
-  assert.deepEqual([target?.width, target?.height], [4, 1.4])
+  assert.deepEqual([target?.width, target?.height], [4, 1])
+  const { default: VoiceToggle } = await import('../hooks/voice-toggle-client.js')
+  const client = VoiceToggle({}, { onPointer() {}, elements: { Box: element('Box') } })
+  assert.deepEqual([client.width, client.height], [4, 1])
 })
 
 test('the live clock uses the selected locale’s numerals', async () => {

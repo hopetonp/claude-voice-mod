@@ -55,6 +55,99 @@ test('optional realtime classifier advises the voice model before any coding dis
   socket.close()
 })
 
+test('coding classification still dispatches when Gemini only speaks an acknowledgement', async () => {
+  const socket = new EventEmitter()
+  socket.readyState = WebSocket.OPEN
+  socket.bufferedAmount = 0
+  socket.send = () => {}
+  socket.close = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  const sent = []
+  const dispatches = []
+  const routes = []
+  let owner, live, owed = []
+  attachRealtimeVoice(socket, {
+    selectedProvider: () => 'gemini', classifier: () => ({ enabled: true }),
+    get: () => ({ key: 'test-key', model: 'gemini-3.8-live-extended-thinking', voice: 'test-voice' }),
+  }, {
+    states: () => [], owed: () => owed,
+    async dispatch(_id, input) { dispatches.push(input.instruction); return { requestId: 'coding-1' } },
+  }, value => { live = value }, async () => {}, () => [], {
+    classify: async () => 'coding',
+    turns: { async open(id) { routes.push({ id, state: 'pending' }) },
+      async settle(id, outcome) { routes.push({ id, ...outcome }) }, async close() {} },
+    providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
+    openChannel: async (_settings, inbound) => {
+      owner = inbound
+      return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
+    },
+  })
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'gemini' })))
+  await flush()
+  await owner.receive({ type: 'input_audio_buffer.speech_started' })
+  await owner.receive({ type: 'conversation.item.input_audio_transcription.completed', item_id: 'spoken', transcript: 'Check the Git changes' })
+  await owner.receive({ type: 'input_audio_buffer.speech_stopped' })
+  await owner.receive({ type: 'response.done', response: { id: 'classify', status: 'completed', output: [
+    { type: 'function_call', call_id: 'classifier-call', name: 'classify_spoken_request', arguments: '{}' },
+  ] } })
+  await flush()
+  await owner.receive({ type: 'response.output_audio_transcript.done', response_id: 'ack', transcript: 'Let me check.' })
+  await owner.receive({ type: 'response.done', response: { id: 'ack', status: 'completed', output: [] } })
+  await owner.receive({ type: 'voice.interaction-status', status: 'IN_PROGRESS' })
+  await flush()
+  assert.deepEqual(dispatches, [], 'audio completion is not the end of Extended Thinking')
+  await owner.receive({ type: 'voice.interaction-status', status: 'IDLE' })
+  await flush()
+  assert.deepEqual(dispatches, ['Check the Git changes'])
+  assert.equal(routes.at(-1).state, 'coding')
+  owed = [{ id: 'coding-1', playbackId: 1, status: 'complete', text: 'Two files changed.' }]
+  await live.replayOwed()
+  assert.ok(sent.some(event => event.type === 'conversation.item.create'), 'result uses the normal spoken reply path')
+  socket.close()
+})
+
+test('a late Gemini coding tool call wins over the classified-request fallback', async () => {
+  const socket = new EventEmitter()
+  socket.readyState = WebSocket.OPEN
+  socket.bufferedAmount = 0
+  socket.send = () => {}
+  socket.close = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  let owner
+  const dispatches = []
+  attachRealtimeVoice(socket, {
+    selectedProvider: () => 'gemini', classifier: () => ({ enabled: true }),
+    get: () => ({ key: 'test-key', model: 'gemini-3.8-live-extended-thinking', voice: 'test-voice' }),
+  }, {
+    states: () => [], owed: () => [],
+    async dispatch(_id, input) { dispatches.push(input.instruction); return { requestId: 'coding-2' } },
+  }, () => {}, async () => {}, () => [], {
+    classify: async () => 'coding',
+    providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
+    openChannel: async (_settings, inbound) => {
+      owner = inbound
+      return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) }
+    },
+  })
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'gemini' })))
+  await flush()
+  await owner.receive({ type: 'conversation.item.input_audio_transcription.completed', item_id: 'spoken', transcript: 'Check the Git changes' })
+  await owner.receive({ type: 'response.done', response: { id: 'classify', status: 'completed', output: [
+    { type: 'function_call', call_id: 'classifier-call', name: 'classify_spoken_request', arguments: '{}' },
+  ] } })
+  await flush()
+  await owner.receive({ type: 'response.output_audio_transcript.done', response_id: 'ack', transcript: 'Let me check.' })
+  await owner.receive({ type: 'response.done', response: { id: 'ack', status: 'completed', output: [] } })
+  await owner.receive({ type: 'voice.interaction-status', status: 'IN_PROGRESS' })
+  await owner.receive({ type: 'response.done', response: { id: 'late-tool', status: 'completed', output: [
+    { type: 'function_call', call_id: 'coding-call', name: 'dispatch_coding_task',
+      arguments: '{"instruction":"Check the Git changes"}' },
+  ] } })
+  await flush()
+  await owner.receive({ type: 'voice.interaction-status', status: 'IDLE' })
+  await flush()
+  assert.deepEqual(dispatches, ['Check the Git changes'])
+  socket.close()
+})
+
 test('OpenAI Realtime delegates to Claude and marks the WebRTC result after playback', async () => {
   const socket = new EventEmitter()
   const outgoing = []
@@ -158,6 +251,100 @@ test('Gemini tool results use Composer automatic response scheduling', async () 
   await flush()
   assert.equal(sent.filter(event => event.type === 'voice.tool-results').length, 1)
   assert.equal(sent.filter(event => event.type === 'response.create').length, 0)
+  socket.close()
+})
+
+test('Gemini Extended Thinking waits for the coding result before continuing its tool call', async () => {
+  const socket = new EventEmitter()
+  socket.readyState = WebSocket.OPEN
+  socket.bufferedAmount = 0
+  socket.send = () => {}
+  socket.close = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  const sent = []
+  let owner, live
+  let owed = []
+  const played = []
+  const turns = []
+  const captions = []
+  attachRealtimeVoice(socket, {
+    selectedProvider: () => 'gemini',
+    get: () => ({ key: 'test-key', model: 'gemini-3.8-live-extended-thinking', voice: 'test-voice' }),
+  }, {
+    states: () => [], owed: () => owed, async played(id) { played.push(id) },
+    async dispatch() { return { requestId: 'scoped-gemini' } },
+  }, value => { live = value }, async row => { captions.push(row) }, () => [], {
+    turns: { async open(id, at) { turns.push({ id, at }) }, async settle(id, outcome) { turns.push({ id, outcome }) }, async close() {} },
+    providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
+    openChannel: async (_settings, inbound) => {
+      owner = inbound
+      return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
+    },
+  })
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'gemini' })))
+  await flush()
+  await owner.receive({ type: 'input_audio_buffer.speech_started' })
+  await owner.receive({ type: 'input_audio_buffer.speech_stopped' })
+  await owner.receive({ type: 'conversation.item.input_audio_transcription.completed', item_id: 'gemini-input-1', transcript: 'Inspect code' })
+  assert.ok(captions[0].at <= turns[0].at, 'a late transcript belongs to the open spoken turn')
+  await owner.receive({ type: 'response.done', response: { id: 'gemini-tool', status: 'completed', output: [{
+    type: 'function_call', call_id: 'gemini-call', name: 'dispatch_coding_task', arguments: '{"instruction":"Inspect code"}',
+  }] } })
+  await flush()
+  assert.equal(turns.length, 2)
+  assert.deepEqual(turns[1], { id: turns[0].id, outcome: { state: 'coding', requestId: 'scoped-gemini', mode: 'dispatch' } })
+  assert.equal(sent.filter(event => event.type === 'voice.tool-results').length, 0)
+  owed = [{ id: 'scoped-gemini', playbackId: 1, status: 'complete', text: 'The file exists.' }]
+  await live.replayOwed()
+  const result = sent.find(event => event.type === 'voice.tool-results')
+  assert.equal(result.items[0].call_id, 'gemini-call')
+  assert.equal(JSON.parse(result.items[0].output).text, 'The file exists.')
+  assert.equal(sent.filter(event => event.type === 'response.create').length, 0)
+  await owner.receive({ type: 'response.created', response: { id: 'final-voice' } })
+  await owner.receive({ type: 'response.output_audio.delta', response_id: 'final-voice', delta: 'audio' })
+  await owner.receive({ type: 'response.done', response: { id: 'final-voice', status: 'completed', output: [{ type: 'message' }] } })
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'voice.playback-caption', responseId: 'final-voice', final: true })))
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'voice.playback-idle', responseId: 'final-voice' })))
+  await flush()
+  assert.deepEqual(played, [1])
+  socket.close()
+})
+
+test('Gemini speech with an empty response output settles a voice-only turn', async () => {
+  const socket = new EventEmitter()
+  socket.readyState = WebSocket.OPEN
+  socket.bufferedAmount = 0
+  socket.send = () => {}
+  socket.close = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  let owner
+  const turns = []
+  attachRealtimeVoice(socket, {
+    selectedProvider: () => 'gemini',
+    get: () => ({ key: 'test-key', model: 'gemini-3.8-live-extended-thinking', voice: 'test-voice' }),
+  }, { states: () => [], owed: () => [], async dispatch() { return { requestId: 'second-request' } } },
+  () => {}, async () => {}, () => [], {
+    turns: { async open(id) { turns.push({ id, state: 'pending' }) }, async settle(id, outcome) { turns.push({ id, state: outcome.state }) }, async close() {} },
+    providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
+    openChannel: async (_settings, inbound) => {
+      owner = inbound
+      return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) }
+    },
+  })
+  socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'gemini' })))
+  await flush()
+  await owner.receive({ type: 'input_audio_buffer.speech_started' })
+  await owner.receive({ type: 'input_audio_buffer.speech_stopped' })
+  await owner.receive({ type: 'response.output_audio_transcript.done', response_id: 'voice-reply', transcript: 'You are welcome.' })
+  await owner.receive({ type: 'response.done', response: { id: 'voice-reply', status: 'completed', output: [] } })
+  await owner.receive({ type: 'voice.interaction-status', status: 'IDLE' })
+  await owner.receive({ type: 'input_audio_buffer.speech_started' })
+  await owner.receive({ type: 'input_audio_buffer.speech_stopped' })
+  await owner.receive({ type: 'response.done', response: { id: 'coding-reply', status: 'completed', output: [{
+    type: 'function_call', call_id: 'coding-call', name: 'dispatch_coding_task', arguments: '{"instruction":"Inspect code"}',
+  }] } })
+  await flush()
+  assert.deepEqual(turns.map(turn => turn.state), ['pending', 'voice', 'pending', 'coding'])
+  assert.equal(turns[1].id, turns[0].id)
+  assert.equal(turns[3].id, turns[2].id, 'the coding route belongs to the second utterance')
   socket.close()
 })
 

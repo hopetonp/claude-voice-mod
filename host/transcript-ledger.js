@@ -55,6 +55,17 @@ export async function createTranscriptLedger(path) {
     tail = operation.catch(() => {})
     return operation
   }
+  // A voice socket cannot survive a host restart. Close turns left pending by an abrupt stop
+  // so an old call cannot hold the next call's captions behind a routing decision forever.
+  const interrupted = state.turns.filter(turn => turn.state === 'pending')
+  if (interrupted.length) {
+    for (const turn of interrupted) {
+      turn.state = 'closed'
+      turn.settledAt = Date.now()
+      turn.revision = ++state.revision
+    }
+    await persist()
+  }
   // In the order things were said. Rows saved before `spokenAt` existed are older than any with it.
   const rows = sessionId => state.rows.filter(row => row.sessionId === sessionId)
     .sort((a, b) => (a.spokenAt ?? 0) - (b.spokenAt ?? 0) || a.createdRevision - b.createdRevision)

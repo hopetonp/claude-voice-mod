@@ -176,6 +176,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "माइक्रोफोन स्तर"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "समस्या निवारण"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "कोडिंग जवाब के इंतज़ार में रुकल वॉयस रिक्वेस्ट के ठीक करीं।"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "कबहूँ-कबहूँ Claude के पूरा भइला के बादो पहिले के कोडिंग रिक्वेस्ट चालू (रनिंग) देखात रहेला। एहसे नया वॉयस कोडिंग रिक्वेस्ट शुरू होखे से रुक सकेला।"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "अगर नीचे दिहल बटन चालू बा, त पहिले के रिक्वेस्ट हटावे खातिर एकरा के दबाईं ताकि नया वॉयस कोडिंग रिक्वेस्ट शुरू हो सके। एहसे Claude के काम रद्द ना होई।"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "वॉयस कोडिंग रिक्वेस्ट ठीक करीं"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "ठीक कइल जा रहल बा…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ठीक हो गइल। आपन वॉयस रिक्वेस्ट दोबारा आजमाईं।"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ठीक ना हो सकल। पक्का करीं कि वॉयस कनेक्ट बा, फेर दोबारा कोशिश करीं।"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "जाँच ना हो सकल। पक्का करीं कि वॉयस कनेक्ट बा, फेर ई टैब दोबारा खोलीं।"
     }
   },
   "am": {
@@ -354,6 +390,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "የማይክሮፎን መጠኖች"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "ችግር መፍቻ"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "የኮዲንግ ምላሽ በመጠባበቅ ላይ ያሉ የድምጽ ጥያቄዎችን ይፍቱ።"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "አንዳንድ ጊዜ ቀደም ሲል የቀረበ የኮዲንግ ጥያቄ Claude ከጨረሰ በኋላም እንደቀጠለ ተደርጎ ምልክት ሊደረግበት ይችላል። ይህም አዲስ የድምጽ ኮዲንግ ጥያቄዎች እንዳይጀምሩ ሊያግድ ይችላል።"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "ከታች ያለው አዝራር ነቅቶ ከሆነ፣ አዲስ የድምጽ ኮዲንግ ጥያቄዎች መጀመር እንዲችሉ የቀደመውን ጥያቄ ለማጽዳት ይጫኑት። ይህ የClaudeን ሥራ አይሰርዘውም።"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "የድምጽ ኮዲንግ ጥያቄዎችን ያስተካክሉ"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "በማስተካከል ላይ…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ተስተካክሏል። የድምጽ ጥያቄዎን እንደገና ይሞክሩ።"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ማስተካከል አልተቻለም። ድምጽ መገናኘቱን ያረጋግጡና እንደገና ይሞክሩ።"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "መፈተሽ አልተቻለም። ድምጽ መገናኘቱን ያረጋግጡና ይህን ትር እንደገና ይክፈቱ።"
     }
   },
   "bn": {
@@ -532,6 +604,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "মাইক্রোফোনের মাত্রা"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "সমস্যা সমাধান"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "কোডিং প্রতিক্রিয়ার জন্য অপেক্ষারত ভয়েস অনুরোধগুলো সমাধান করুন।"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "কখনও কখনও Claude-এর কাজ শেষ হওয়ার পরেও পূর্ববর্তী কোনো কোডিং অনুরোধ চলমান হিসেবে চিহ্নিত থাকতে পারে। এর ফলে নতুন ভয়েস কোডিং অনুরোধ শুরু হতে বাধা পেতে পারে।"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "নিচের বোতামটি সক্রিয় থাকলে, আগের অনুরোধটি মুছে ফেলতে এটিতে চাপ দিন যাতে নতুন ভয়েস কোডিং অনুরোধ শুরু হতে পারে। এটি Claude-এর কাজ বাতিল করে না।"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "ভয়েস কোডিং অনুরোধ ঠিক করুন"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "ঠিক করা হচ্ছে…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ঠিক করা হয়েছে। আপনার ভয়েস অনুরোধটি আবার চেষ্টা করুন।"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ঠিক করা যায়নি। ভয়েস সংযুক্ত আছে কিনা নিশ্চিত করুন, তারপর আবার চেষ্টা করুন।"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "যাচাই করা যায়নি। ভয়েস সংযুক্ত আছে কিনা নিশ্চিত করুন, তারপর এই ট্যাবটি আবার খুলুন।"
     }
   },
   "zh-Hans": {
@@ -710,6 +818,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "麦克风电平"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "故障排除"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "解决正在等待编程响应的语音请求。"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "有时在 Claude 完成后，先前的编程请求仍被标记为正在运行。这可能会导致新的语音编程请求无法启动。"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "如果下方按钮可用，点击即可清除先前的请求，以便开始新的语音编程请求。这不会取消 Claude 的工作。"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "修复语音编程请求"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "正在修复…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "已修复。请重试语音请求。"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "无法修复。请确保语音已连接，然后重试。"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "无法检查。请确保语音已连接，然后重新打开此标签页。"
     }
   },
   "zh-Hant": {
@@ -888,6 +1032,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "麥克風音量"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "疑難排解"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "解決正在等待程式碼回應的語音請求。"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "有時在 Claude 完成後，先前的程式碼請求仍會被標記為執行中。這可能會導致新的語音程式碼請求無法啟動。"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "如果下方按鈕已啟用，請點擊以清除先前的請求，以便開始新的語音程式碼請求。這不會取消 Claude 的工作。"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "修復語音程式碼請求"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "修復中…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "已修復。請再次嘗試您的語音請求。"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "無法修復。請確認語音已連線，然後再試一次。"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "無法檢查。請確認語音已連線，然後重新開啟此分頁。"
     }
   },
   "da": {
@@ -1066,6 +1246,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofonniveauer"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Fejlfinding"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Løs taleanmodninger, der venter på et kodesvar."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Nogle gange forbliver en tidligere kodeanmodning markeret som kørende, efter Claude er færdig. Dette kan forhindre nye talekodeanmodninger i at starte."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Hvis knappen nedenfor er aktiveret, skal du trykke på den for at rydde den tidligere anmodning, så nye talekodeanmodninger kan starte. Dette annullerer ikke Claudes arbejde."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Løs talekodeanmodninger"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Løser…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Løst. Prøv din taleanmodning igen."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Kunne ikke løses. Sørg for, at tale er tilsluttet, og prøv igen."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Kunne ikke kontrollere. Sørg for, at tale er tilsluttet, og genåbn derefter denne fane."
     }
   },
   "fil": {
@@ -1244,6 +1460,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mga antas ng mikropono"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Pag-troubleshoot"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Lutasin ang mga voice request na naghihintay ng tugon sa coding."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Kung minsan, nananatiling minamarkahang tumatakbo ang naunang coding request pagkatapos matapos ni Claude. Maaari nitong pigilan ang pagsisimula ng mga bagong voice coding request."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Kung naka-enable ang button sa ibaba, pindutin ito upang i-clear ang naunang request para makapagsimula ang mga bagong voice coding request. Hindi nito kinakansela ang gawain ni Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Ayusin ang mga voice coding request"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Inaayos…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Naayos na. Subukan muli ang iyong voice request."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Hindi naayos. Tiyaking nakakonekta ang boses, pagkatapos ay subukan muli."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Hindi masuri. Tiyaking nakakonekta ang boses, pagkatapos ay buksan muli ang tab na ito."
     }
   },
   "fi": {
@@ -1422,6 +1674,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofonitasot"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Vianmääritys"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Ratkaise äänipyynnöt, jotka odottavat koodausvastausta."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Joskus aiempi koodauspyyntö jää käynnissä-tilaan sen jälkeen, kun Claude on valmistunut. Tämä voi estää uusien äänikoodauspyyntöjen käynnistymisen."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Jos alla oleva painike on aktiivinen, paina sitä tyhjentääksesi aiemman pyynnön, jotta uudet äänikoodauspyynnöt voivat alkaa. Tämä ei peruuta Clauden työtä."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Korjaa äänikoodauspyynnöt"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Korjataan…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Korjattu. Yritä äänipyyntöä uudelleen."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Korjaus epäonnistui. Varmista, että ääni on yhdistetty, ja yritä uudelleen."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Tarkistus epäonnistui. Varmista, että ääni on yhdistetty, ja avaa tämä välilehti uudelleen."
     }
   },
   "nl": {
@@ -1600,6 +1888,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Microfoonniveaus"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Probleemoplossing"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Los spraakverzoeken op die wachten op een codeerrespons."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Soms blijft een eerder codeerverzoek gemarkeerd als actief nadat Claude klaar is. Dit kan voorkomen dat nieuwe gesproken codeerverzoeken starten."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Als de onderstaande knop actief is, druk er dan op om het eerdere verzoek te wissen zodat nieuwe gesproken codeerverzoeken kunnen starten. Dit annuleert het werk van Claude niet."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Gesproken codeerverzoeken herstellen"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Herstellen…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Hersteld. Probeer je spraakverzoek opnieuw."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Kon niet worden hersteld. Zorg dat spraak is verbonden en probeer het opnieuw."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Kon niet worden gecontroleerd. Zorg dat spraak is verbonden en open dit tabblad opnieuw."
     }
   },
   "fr-FR": {
@@ -1778,6 +2102,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Niveaux du microphone"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Dépannage"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Résoudre les requêtes vocales en attente d'une réponse de codage."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Parfois, une requête de codage antérieure reste marquée comme étant en cours d'exécution une fois que Claude a terminé. Cela peut empêcher le lancement de nouvelles requêtes vocales de codage."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Si le bouton ci-dessous est activé, cliquez dessus pour effacer la requête précédente afin que de nouvelles requêtes vocales de codage puissent démarrer. Cela n'annule pas le travail de Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Corriger les requêtes vocales de codage"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Correction en cours…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Corrigé. Réessayez votre requête vocale."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Impossible de corriger. Assurez-vous que la voix est connectée, puis réessayez."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Impossible de vérifier. Assurez-vous que la voix est connectée, puis rouvrez cet onglet."
     }
   },
   "gu": {
@@ -1956,6 +2316,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "માઇક્રોફોન સ્તર"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "મુશ્કેલીનિવારણ"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "કોડિંગ પ્રતિસાદની રાહ જોઈ રહેલી વૉઇસ વિનંતીઓનું નિરાકરણ લાવો."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "કેટલીકવાર Claude કાર્ય પૂર્ણ કરે તે પછી પણ અગાઉની કોડિંગ વિનંતી ચાલુ હોવાનું દર્શાવતી રહે છે. આ નવી વૉઇસ કોડિંગ વિનંતીઓ શરૂ થતાં અટકાવી શકે છે."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "જો નીચેનું બટન સક્ષમ હોય, તો અગાઉની વિનંતી સાફ કરવા માટે તેને દબાવો જેથી નવી વૉઇસ કોડિંગ વિનંતીઓ શરૂ થઈ શકે. આ Claude નું કાર્ય રદ કરતું નથી."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "વૉઇસ કોડિંગ વિનંતીઓ ઠીક કરો"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "ઠીક કરી રહ્યું છે…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ઠીક થઈ ગયું. તમારી વૉઇસ વિનંતી ફરી અજમાવો."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ઠીક કરી શકાયું નથી. ખાતરી કરો કે વૉઇસ કનેક્ટેડ છે, પછી ફરી પ્રયાસ કરો."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "ચકાસી શકાયું નથી. ખાતરી કરો કે વૉઇસ કનેક્ટેડ છે, પછી આ ટૅબ ફરી ખોલો."
     }
   },
   "de-DE": {
@@ -2134,6 +2530,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofonpegel"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Fehlerbehebung"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Sprachanfragen beheben, die auf eine Coding-Antwort warten."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Manchmal bleibt eine frühere Coding-Anfrage als aktiv markiert, nachdem Claude fertig ist. Dies kann verhindern, dass neue Sprach-Coding-Anfragen gestartet werden."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Wenn die Schaltfläche unten aktiviert ist, klicken Sie darauf, um die frühere Anfrage zu bereinigen, damit neue Sprach-Coding-Anfragen starten können. Dadurch wird die Arbeit von Claude nicht abgebrochen."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Sprach-Coding-Anfragen beheben"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Wird behoben…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Behoben. Versuchen Sie Ihre Sprachanfrage erneut."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Konnte nicht behoben werden. Stellen Sie sicher, dass die Sprachverbindung besteht, und versuchen Sie es erneut."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Konnte nicht geprüft werden. Stellen Sie sicher, dass die Sprachverbindung besteht, und öffnen Sie diesen Tab erneut."
     }
   },
   "ha": {
@@ -2312,6 +2744,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Matsayin makirufo"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Warware Matsaloli"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Warware buƙatun murya da ke jiran amsar coding."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Wani lokaci buƙatar coding ta baya tana ci gaba da nuna tana aiki bayan Claude ya gama. Wannan na iya hana sabbin buƙatun coding na murya farawa."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Idan maballin da ke ƙasa yana aiki, danna shi don share buƙatar da ta gabata domin sabbin buƙatun coding na murya su fara. Wannan ba zai soke aikin Claude ba."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Gyara buƙatun coding na murya"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Ana gyarawa…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "An gyara. Sake gwada buƙatar muryarka."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Ba a iya gyarawa ba. Tabbatar murya tana haɗe, sannan ka sake gwadawa."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Ba a iya dubawa ba. Tabbatar murya tana haɗe, sannan ka sake buɗe wannan shafin."
     }
   },
   "hi-IN": {
@@ -2490,6 +2958,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "माइक्रोफ़ोन स्तर"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "समस्या निवारण"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "कोडिंग प्रतिक्रिया की प्रतीक्षा कर रहे वॉइस अनुरोधों का समाधान करें।"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "कभी-कभी Claude के पूरा होने के बाद भी पिछला कोडिंग अनुरोध चालू स्थिति में बना रहता है। इससे नए वॉइस कोडिंग अनुरोध शुरू होने में रुकावट आ सकती है।"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "यदि नीचे दिया गया बटन सक्षम है, तो पिछले अनुरोध को हटाने के लिए इसे दबाएं ताकि नए वॉइस कोडिंग अनुरोध शुरू हो सकें। इससे Claude का काम रद्द नहीं होता है।"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "वॉइस कोडिंग अनुरोध ठीक करें"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "ठीक किया जा रहा है…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ठीक हो गया। अपना वॉइस अनुरोध पुनः आज़माएं।"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ठीक नहीं किया जा सका। सुनिश्चित करें कि वॉइस कनेक्ट है, फिर पुनः प्रयास करें।"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "जाँच नहीं की जा सकी। सुनिश्चित करें कि वॉइस कनेक्ट है, फिर इस टैब को दोबारा खोलें।"
     }
   },
   "ja-JP": {
@@ -2668,6 +3172,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "マイクレベル"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "トラブルシューティング"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "コーディング応答待ちの音声リクエストを解決します。"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Claude の処理が完了した後も、以前のコーディングリクエストが実行中のまま残ることがあります。これにより、新しい音声コーディングリクエストが開始できなくなる場合があります。"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "下のボタンが有効な場合は、押して以前のリクエストをクリアすると、新しい音声コーディングリクエストを開始できるようになります。これにより Claude の作業がキャンセルされることはありません。"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "音声コーディングリクエストを修復"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "修復中…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "修復完了。もう一度音声リクエストをお試しください。"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "修復できませんでした。音声が接続されていることを確認し、再試行してください。"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "確認できませんでした。音声が接続されていることを確認し、このタブを再度開いてください。"
     }
   },
   "id-ID": {
@@ -2846,6 +3386,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Tingkat mikrofon"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Pemecahan Masalah"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Selesaikan permintaan suara yang menunggu respons pengodean."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Terkadang permintaan pengodean sebelumnya tetap ditandai berjalan setelah Claude selesai. Hal ini dapat mencegah permintaan pengodean suara baru dimulai."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Jika tombol di bawah aktif, tekan untuk menghapus permintaan sebelumnya agar permintaan pengodean suara baru dapat dimulai. Ini tidak membatalkan pekerjaan Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Perbaiki permintaan pengodean suara"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Memperbaiki…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Berhasil diperbaiki. Coba lagi permintaan suara Anda."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Gagal memperbaiki. Pastikan suara terhubung, lalu coba lagi."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Gagal memeriksa. Pastikan suara terhubung, lalu buka kembali tab ini."
     }
   },
   "it-IT": {
@@ -3024,6 +3600,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Livelli microfono"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Risoluzione problemi"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Risolvi le richieste vocali in attesa di una risposta di programmazione."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "A volte una precedente richiesta di programmazione rimane contrassegnata come in esecuzione dopo che Claude ha terminato. Ciò può impedire l'avvio di nuove richieste vocali di programmazione."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Se il pulsante sottostante è abilitato, premilo per cancellare la richiesta precedente e consentire l'avvio di nuove richieste vocali di programmazione. Questa operazione non annulla il lavoro di Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Risolvi le richieste vocali di programmazione"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Risoluzione in corso…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Risolto. Riprova con la richiesta vocale."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Impossibile risolvere. Assicurati che la voce sia connessa, quindi riprova."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Impossibile verificare. Assicurati che la voce sia connessa, quindi riapri questa scheda."
     }
   },
   "ko-KR": {
@@ -3202,6 +3814,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "마이크 볼륨"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "문제 해결"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "코딩 응답을 대기 중인 음성 요청을 해결합니다."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Claude 작업이 완료된 후에도 이전 코딩 요청이 실행 중으로 표시된 상태로 유지될 수 있습니다. 이로 인해 새로운 음성 코딩 요청이 시작되지 않을 수 있습니다."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "아래 버튼이 활성화되어 있으면 클릭하여 이전 요청을 지우고 새 음성 코딩 요청을 시작할 수 있습니다. 이는 Claude의 작업을 취소하지 않습니다."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "음성 코딩 요청 해결"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "해결 중…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "해결되었습니다. 음성 요청을 다시 시도해 보세요."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "해결할 수 없습니다. 음성이 연결되어 있는지 확인한 후 다시 시도해 보세요."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "확인할 수 없습니다. 음성이 연결되어 있는지 확인한 후 이 탭을 다시 여세요."
     }
   },
   "kn": {
@@ -3380,6 +4028,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "ಮೈಕ್ರೊಫೋನ್ ಮಟ್ಟಗಳು"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "ದೋಷನಿವಾರಣೆ"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "ಕೋಡಿಂಗ್ ಪ್ರತಿಕ್ರಿಯೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ವಾಯ್ಸ್ ವಿನಂತಿಗಳನ್ನು ಪರಿಹರಿಸಿ."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "ಕೆಲವೊಮ್ಮೆ Claude ಮುಗಿಸಿದ ನಂತರವೂ ಹಿಂದಿನ ಕೋಡಿಂಗ್ ವಿನಂತಿಯು ಚಾಲನೆಯಲ್ಲಿದೆ ಎಂದು ಗುರುತಿಸಲ್ಪಟ್ಟಿರುತ್ತದೆ. ಇದು ಹೊಸ ವಾಯ್ಸ್ ಕೋಡಿಂಗ್ ವಿನಂತಿಗಳು ಪ್ರಾರಂಭವಾಗುವುದನ್ನು ತಡೆಯಬಹುದು."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "ಕೆಳಗಿನ ಬಟನ್ ಸಕ್ರಿಯವಾಗಿದ್ದರೆ, ಹೊಸ ವಾಯ್ಸ್ ಕೋಡಿಂಗ್ ವಿನಂತಿಗಳು ಪ್ರಾರಂಭವಾಗಲು ಹಿಂದಿನ ವಿನಂತಿಯನ್ನು ತೆರವುಗೊಳಿಸಲು ಅದನ್ನು ಒತ್ತಿರಿ. ಇದು Claude ನ ಕೆಲಸವನ್ನು ರದ್ದುಗೊಳಿಸುವುದಿಲ್ಲ."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "ವಾಯ್ಸ್ ಕೋಡಿಂಗ್ ವಿನಂತಿಗಳನ್ನು ಸರಿಪಡಿಸಿ"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "ಸರಿಪಡಿಸಲಾಗುತ್ತಿದೆ…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "ಸರಿಪಡಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ವಾಯ್ಸ್ ವಿನಂತಿಯನ್ನು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ಸರಿಪಡಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ವಾಯ್ಸ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ ಎಂಬುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "ಪರಿಶೀಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ವಾಯ್ಸ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ ಎಂಬುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ, ನಂತರ ಈ ಟ್ಯಾಬ್ ಅನ್ನು ಮತ್ತೆ ತೆರೆಯಿರಿ."
     }
   },
   "ml": {
@@ -3558,6 +4242,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "മൈക്രോഫോൺ ലെവലുകൾ"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "പ്രശ്നപരിഹാരം"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "കോഡിംഗ് പ്രതികരണത്തിനായി കാത്തിരിക്കുന്ന വോയ്‌സ് അഭ്യർത്ഥനകൾ പരിഹരിക്കുക."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Claude പൂർത്തിയാക്കിയ ശേഷവും ചിലപ്പോൾ മുമ്പത്തെ കോഡിംഗ് അഭ്യർത്ഥന പ്രവർത്തിക്കുന്നതായി കാണിച്ചേക്കാം. ഇത് പുതിയ വോയ്‌സ് കോഡിംഗ് അഭ്യർത്ഥനകൾ ആരംഭിക്കുന്നതിനെ തടഞ്ഞേക്കാം."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "താഴെയുള്ള ബട്ടൺ പ്രവർത്തനക്ഷമമാണെങ്കിൽ, പുതിയ വോയ്‌സ് കോഡിംഗ് അഭ്യർത്ഥനകൾ ആരംഭിക്കാൻ കഴിയുന്നതിനായി മുമ്പത്തെ അഭ്യർത്ഥന ഒഴിവാക്കാൻ അത് അമർത്തുക. ഇത് Claude-ന്റെ ജോലിയെ റദ്ദാക്കില്ല."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "വോയ്‌സ് കോഡിംഗ് അഭ്യർത്ഥനകൾ പരിഹരിക്കുക"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "പരിഹരിക്കുന്നു…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "പരിഹരിച്ചു. നിങ്ങളുടെ വോയ്‌സ് അഭ്യർത്ഥന വീണ്ടും ശ്രമിക്കുക."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "പരിഹരിക്കാനായില്ല. വോയ്‌സ് കണക്റ്റ് ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പുവരുത്തി വീണ്ടും ശ്രമിക്കുക."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "പരിശോധിക്കാനായില്ല. വോയ്‌സ് കണക്റ്റ് ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പുവരുത്തി ഈ ടാബ് വീണ്ടും തുറക്കുക."
     }
   },
   "mr": {
@@ -3736,6 +4456,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "मायक्रोफोन पातळी"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "समस्यानिवारण"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "कोडिंग प्रतिसादाची वाट पाहत असलेल्या व्हॉइस विनंत्यांचे निराकरण करा."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "कधीकधी Claude ने काम पूर्ण केल्यानंतरही आधीची कोडिंग विनंती सुरू असल्याचे दाखवले जाते. यामुळे नवीन व्हॉइस कोडिंग विनंत्या सुरू होण्यास अडथळा येऊ शकतो."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "खालील बटण सक्षम असल्यास, आधीची विनंती साफ करण्यासाठी त्यावर दाबा जेणेकरून नवीन व्हॉइस कोडिंग विनंत्या सुरू होऊ शकतील. यामुळे Claude चे काम रद्द होत नाही."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "व्हॉइस कोडिंग विनंत्या दुरुस्त करा"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "दुरुस्त करत आहे…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "दुरुस्त झाले. तुमची व्हॉइस विनंती पुन्हा करून पहा."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "दुरुस्त करता आले नाही. व्हॉइस कनेक्ट असल्याची खात्री करा, नंतर पुन्हा प्रयत्न करा."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "तपासता आले नाही. व्हॉइस कनेक्ट असल्याची खात्री करा, नंतर हा टॅब पुन्हा उघडा."
     }
   },
   "pt-BR": {
@@ -3914,6 +4670,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Níveis do microfone"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Solução de problemas"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Resolva solicitações de voz que estão aguardando uma resposta de código."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Às vezes, uma solicitação de código anterior continua marcada em execução após o Claude terminar. Isso pode impedir o início de novas solicitações de código por voz."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Se o botão abaixo estiver ativado, pressione-o para limpar a solicitação anterior e permitir novas solicitações de código por voz. Isso não cancela o trabalho do Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Corrigir solicitações de código por voz"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Corrigindo…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Corrigido. Tente sua solicitação de voz novamente."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Não foi possível corrigir. Verifique se a voz está conectada e tente novamente."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Não foi possível verificar. Verifique se a voz está conectada e reabra esta aba."
     }
   },
   "nb": {
@@ -4092,6 +4884,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofonnivåer"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Feilsøking"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Løs taleforespørsler som venter på et kodesvar."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Noen ganger forblir en tidligere kodeforespørsel markert som kjørende etter at Claude er ferdig. Dette kan hindre nye talekodeforespørsler i å starte."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Hvis knappen nedenfor er aktivert, trykker du på den for å fjerne den forrige forespørselen slik at nye talekodeforespørsler kan starte. Dette avbryter ikke Claudes arbeid."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Fiks talekodeforespørsler"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Fikser…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Fikset. Prøv taleforespørselen på nytt."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Kunne ikke fikse det. Sørg for at tale er tilkoblet, og prøv igjen."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Kunne ikke sjekke. Sørg for at tale er tilkoblet, og åpne denne fanen på nytt."
     }
   },
   "ru": {
@@ -4270,6 +5098,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Уровень микрофона"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Устранение неполадок"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Устранение проблем с голосовыми запросами, ожидающими ответа по коду."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Иногда предыдущий запрос по коду остается со статусом выполнения после завершения работы Claude. Это может блокировать запуск новых голосовых запросов по коду."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Если кнопка ниже активна, нажмите ее, чтобы сбросить предыдущий запрос и разрешить запуск новых голосовых запросов по коду. Это не отменит работу Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Исправить голосовые запросы по коду"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Исправление…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Исправлено. Повторите голосовой запрос."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Не удалось исправить. Убедитесь, что голосовая связь подключена, и повторите попытку."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Не удалось проверить. Убедитесь, что голосовая связь подключена, и откройте эту вкладку снова."
     }
   },
   "es-ES": {
@@ -4448,6 +5312,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Niveles del micrófono"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Solución de problemas"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Resuelve las solicitudes de voz que están esperando una respuesta de código."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "A veces, una solicitud de código anterior sigue marcada como en ejecución después de que Claude termina. Esto puede impedir que se inicien nuevas solicitudes de código por voz."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Si el botón inferior está habilitado, púlsalo para borrar la solicitud anterior y permitir que comiencen nuevas solicitudes de código por voz. Esto no cancela el trabajo de Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Solucionar solicitudes de código por voz"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Solucionando…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Solucionado. Vuelve a intentar tu solicitud por voz."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "No se pudo solucionar. Asegúrate de que la voz esté conectada e inténtalo de nuevo."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "No se pudo comprobar. Asegúrate de que la voz esté conectada y vuelve a abrir esta pestaña."
     }
   },
   "es-419": {
@@ -4626,6 +5526,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Niveles del micrófono"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Solución de problemas"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Resuelve solicitudes por voz que esperan una respuesta de código."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "A veces, una solicitud de código anterior queda marcada como en ejecución después de que Claude finaliza. Esto puede impedir que comiencen nuevas solicitudes de código por voz."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Si el botón de abajo está habilitado, presiónalo para borrar la solicitud anterior y permitir que comiencen nuevas solicitudes de código por voz. Esto no cancela el trabajo de Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Corregir solicitudes de código por voz"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Corrigiendo…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Solucionado. Vuelve a intentar tu solicitud por voz."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "No se pudo solucionar. Asegúrate de que la voz esté conectada y vuelve a intentarlo."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "No se pudo verificar. Asegúrate de que la voz esté conectada y vuelve a abrir esta pestaña."
     }
   },
   "sw": {
@@ -4804,6 +5740,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Viwango vya maikrofoni"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Utatuzi wa matatizo"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Tatua maombi ya sauti yanayosubiri jibu la msimbo."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Wakati mwingine ombi la awali la msimbo hubaki likionekana linaendelea baada ya Claude kumaliza. Hii inaweza kuzuia maombi mapya ya sauti ya msimbo kuanza."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Ikiwa kitufe kilicho hapa chini kimewezeshwa, kibonyeze ili kuondoa ombi la awali ili maombi mapya ya sauti ya msimbo yaweze kuanza. Hii haifutilii mbali kazi ya Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Rekebisha maombi ya sauti ya msimbo"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Inarekebisha…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Imerekebishwa. Jaribu tena ombi lako la sauti."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Haikuweza kurekebishwa. Hakikisha sauti imeunganishwa, kisha jaribu tena."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Haikuweza kuangaliwa. Hakikisha sauti imeunganishwa, kisha fungua tena kichupo hiki."
     }
   },
   "sv": {
@@ -4982,6 +5954,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofonnivåer"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Felsökning"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Åtgärda röstförfrågningar som väntar på ett kodningssvar."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Ibland förblir en tidigare kodningsförfrågan markerad som pågående efter att Claude är klar. Detta kan förhindra att nya röstkodningsförfrågningar startar."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Om knappen nedan är aktiverad trycker du på den för att rensa den tidigare förfrågan så att nya röstkodningsförfrågningar kan starta. Detta avbryter inte Claudes arbete."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Åtgärda röstkodningsförfrågningar"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Åtgärdar…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Åtgärdat. Prova din röstförfrågan igen."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Kunde inte åtgärda det. Se till att rösten är ansluten och försök igen."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Kunde inte kontrollera. Se till att rösten är ansluten och öppna sedan den här fliken igen."
     }
   },
   "ta": {
@@ -5160,6 +6168,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "மைக்ரோஃபோன் அளவுகள்"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "சிக்கல் தீர்த்தல்"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "கோடிங் பதிலுக்காகக் காத்திருக்கும் குரல் கோரிக்கைகளைச் சரிசெய்யவும்."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "சில நேரங்களில் Claude முடித்த பிறகும், முந்தைய கோடிங் கோரிக்கை இயங்குவதாகவே குறிக்கப்பட்டிருக்கலாம். இது புதிய குரல் கோடிங் கோரிக்கைகள் தொடங்குவதைத் தடுக்கக்கூடும்."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "கீழே உள்ள பொத்தான் இயக்கப்பட்டிருந்தால், முந்தைய கோரிக்கையை நீக்கி புதிய குரல் கோடிங் கோரிக்கைகளைத் தொடங்க அதை அழுத்தவும். இது Claude-ன் பணியை ரத்து செய்யாது."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "குரல் கோடிங் கோரிக்கைகளைச் சரிசெய்"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "சரிசெய்கிறது…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "சரிசெய்யப்பட்டது. உங்கள் குரல் கோரிக்கையை மீண்டும் முயற்சிக்கவும்."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "சரிசெய்ய முடியவில்லை. குரல் இணைக்கப்பட்டுள்ளதா என உறுதிசெய்து, மீண்டும் முயற்சிக்கவும்."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "சரிபார்க்க முடியவில்லை. குரல் இணைக்கப்பட்டுள்ளதா என உறுதிசெய்து, இந்தத் தாவலை மீண்டும் திறக்கவும்."
     }
   },
   "te": {
@@ -5338,6 +6382,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "మైక్రోఫోన్ స్థాయిలు"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "ట్రబుల్షూటింగ్"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "కోడింగ్ ప్రతిస్పందన కోసం వేచి ఉన్న వాయిస్ అభ్యర్థనలను పరిష్కరించండి."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "కొన్నిసార్లు Claude పూర్తి చేసిన తర్వాత కూడా అంతకుముందు కోడింగ్ అభ్యర్థన రన్ అవుతున్నట్లుగానే గుర్తించబడి ఉంటుంది. దీనివల్ల కొత్త వాయిస్ కోడింగ్ అభ్యర్థనలు ప్రారంభం కాకపోవచ్చు."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "క్రింది బటన్ ఎనేబుల్ చేయబడి ఉంటే, కొత్త వాయిస్ కోడింగ్ అభ్యర్థనలు ప్రారంభమయ్యేలా మునుపటి అభ్యర్థనను తీసివేయడానికి దాన్ని నొక్కండి. ఇది Claude పనిని రద్దు చేయదు."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "వాయిస్ కోడింగ్ అభ్యర్థనలను సరిదిద్దండి"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "సరిదిద్దుతోంది…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "సరిదిద్దబడింది. మీ వాయిస్ అభ్యర్థనను మళ్లీ ప్రయత్నించండి."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "సరిదిద్దడం సాధ్యపడలేదు. వాయిస్ కనెక్ట్ చేయబడిందో లేదో తనిఖీ చేసి, మళ్లీ ప్రయత్నించండి."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "తనిఖీ చేయడం సాధ్యపడలేదు. వాయిస్ కనెక్ట్ చేయబడిందో లేదో తనిఖీ చేసి, ఈ ట్యాబ్‌ను మళ్లీ తెరవండి."
     }
   },
   "tr": {
@@ -5516,6 +6596,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mikrofon seviyeleri"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Sorun Giderme"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Kodlama yanıtı bekleyen sesli istekleri çözün."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Bazen Claude tamamlandıktan sonra bile önceki bir kodlama isteği çalışıyor olarak işaretli kalabilir. Bu durum, yeni sesli kodlama isteklerinin başlamasını engelleyebilir."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Aşağıdaki düğme etkinse, yeni sesli kodlama isteklerinin başlayabilmesi için önceki isteği temizlemek üzere düğmeye basın. Bu işlem Claude’un çalışmasını iptal etmez."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Sesli kodlama isteklerini düzelt"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Düzeltiliyor…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Düzeltildi. Sesli isteğinizi tekrar deneyin."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Düzeltilemedi. Sesin bağlı olduğundan emin olun, ardından tekrar deneyin."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Kontrol edilemedi. Sesin bağlı olduğundan emin olun, ardından bu sekmeyi yeniden açın."
     }
   },
   "th": {
@@ -5694,6 +6810,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "ระดับเสียงไมโครโฟน"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "การแก้ปัญหา"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "แก้ปัญหาคำขอด้วยเสียงที่รอการตอบกลับการเขียนโค้ด"
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "บางครั้งคำขอเขียนโค้ดก่อนหน้ายังคงแสดงสถานะว่ากำลังทำงานอยู่หลังจาก Claude ทำงานเสร็จแล้ว ซึ่งอาจขัดขวางไม่ให้เริ่มคำขอเขียนโค้ดด้วยเสียงใหม่ได้"
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "หากปุ่มด้านล่างเปิดใช้งานอยู่ ให้กดปุ่มเพื่อล้างคำขอก่อนหน้าเพื่อให้เริ่มคำขอเขียนโค้ดด้วยเสียงใหม่ได้ การดำเนินการนี้จะไม่ยกเลิกงานของ Claude"
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "แก้ปัญหาคำขอเขียนโค้ดด้วยเสียง"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "กำลังแก้ไข…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "แก้ไขแล้ว ลองส่งคำขอด้วยเสียงอีกครั้ง"
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "ไม่สามารถแก้ไขได้ ตรวจสอบว่าเชื่อมต่อเสียงแล้ว แล้วลองอีกครั้ง"
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "ไม่สามารถตรวจสอบได้ ตรวจสอบว่าเชื่อมต่อเสียงแล้ว แล้วเปิดแท็บนี้ใหม่อีกครั้ง"
     }
   },
   "uk": {
@@ -5872,6 +7024,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Рівні мікрофона"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Виправлення неполадок"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Вирішення проблеми з голосовими запитами, які очікують на відповідь щодо коду."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Іноді попередній запит на написання коду залишається позначеним як активний після завершення роботи Claude. Це може перешкоджати запуску нових голосових запитів на написання коду."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Якщо кнопка нижче активна, натисніть її, щоб скинути попередній запит і дозволити запуск нових голосових запитів на написання коду. Це не скасує роботу Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Виправити голосові запити на кодування"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Виправлення…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Виправлено. Спробуйте надіслати голосовий запит ще раз."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Не вдалося виправити. Переконайтеся, що голосовий зв’язок підключено, і спробуйте знову."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Не вдалося перевірити. Переконайтеся, що голосовий зв’язок підключено, і відкрийте цю вкладку знову."
     }
   },
   "vi": {
@@ -6050,6 +7238,42 @@ export default {
     "control.micLevels": {
       "source": "Microphone levels",
       "text": "Mức âm lượng micrô"
+    },
+    "troubleshooting.tab": {
+      "source": "Troubleshooting",
+      "text": "Khắc phục sự cố"
+    },
+    "troubleshooting.summary": {
+      "source": "Resolve voice requests that are waiting for a coding response.",
+      "text": "Xử lý các yêu cầu bằng giọng nói đang chờ phản hồi lập trình."
+    },
+    "troubleshooting.cause": {
+      "source": "Sometimes an earlier coding request remains marked as running after Claude finishes. This can prevent new voice coding requests from starting.",
+      "text": "Đôi khi, yêu cầu lập trình trước đó vẫn bị đánh dấu là đang chạy sau khi Claude đã hoàn tất. Điều này có thể ngăn các yêu cầu lập trình bằng giọng nói mới bắt đầu."
+    },
+    "troubleshooting.instruction": {
+      "source": "If the button below is enabled, press it to clear the earlier request so new voice coding requests can start. This does not cancel Claude’s work.",
+      "text": "Nếu nút bên dưới khả dụng, hãy nhấn để xóa yêu cầu trước đó nhằm cho phép các yêu cầu lập trình bằng giọng nói mới bắt đầu. Thao tác này không hủy bỏ công việc của Claude."
+    },
+    "troubleshooting.fix": {
+      "source": "Fix voice coding requests",
+      "text": "Khắc phục yêu cầu lập trình bằng giọng nói"
+    },
+    "troubleshooting.fixing": {
+      "source": "Fixing…",
+      "text": "Đang khắc phục…"
+    },
+    "troubleshooting.fixed": {
+      "source": "Fixed. Try your voice request again.",
+      "text": "Đã khắc phục. Hãy thử lại yêu cầu bằng giọng nói của bạn."
+    },
+    "troubleshooting.fixFailed": {
+      "source": "Couldn’t fix it. Make sure voice is connected, then try again.",
+      "text": "Không thể khắc phục. Hãy đảm bảo giọng nói đã được kết nối, sau đó thử lại."
+    },
+    "troubleshooting.checkFailed": {
+      "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
+      "text": "Không thể kiểm tra. Hãy đảm bảo giọng nói đã được kết nối, sau đó mở lại tab này."
     }
   }
 }

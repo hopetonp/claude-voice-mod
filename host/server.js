@@ -30,7 +30,7 @@ import { attachPipelineSttSession, connectPipelineProvider, synthesizePipeline,
   LocalVoice, LocalInstaller, createPipelineRecognizer, listPipelineEngines,
   conversationProviders, resolveConversationBase, conversationCredentialSlot, listConversationModels, requestPipelineConversation,
   discoverVoices, listLiveBackendModels, listStsModels, previewLive, openLivePreviewSession,
-  listGeminiSpeechModels, listOpenaiSpeechModels } from '@voicemesh/composer/server'
+  listGeminiSpeechModels, listOpenaiSpeechModels, listDeepgramFluxCatalog } from '@voicemesh/composer/server'
 import { withXaiVoiceModels } from './xai-voice-models.js'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -393,6 +393,14 @@ const server = createServer(async (request, response) => {
           const models = (await localVoice.models()).filter(model => model.kind === 'stt' && (model.engine ?? 'vosk') === engine)
           return send(response, 200, { options: models.map(model => ({ id: model.id, label: model.name })) })
         }
+        if (kind === 'stt-model' && engine === 'deepgram-flux') {
+          try { return send(response, 200, { options: (await listDeepgramFluxCatalog(AbortSignal.timeout(20000))).sttModels }) }
+          catch { return send(response, 502, { error: 'Could not load Deepgram Flux models' }) }
+        }
+        if (kind === 'tts-model' && engine === 'deepgram') {
+          try { return send(response, 200, { options: (await listDeepgramFluxCatalog(AbortSignal.timeout(20000))).ttsModels }) }
+          catch { return send(response, 502, { error: 'Could not load Deepgram Flux TTS models' }) }
+        }
         if (kind === 'tts-model' && engine === 'kokoro') {
           const models = (await localVoice.models()).filter(model => model.kind === 'tts')
           return send(response, 200, { options: models.map(model => ({ id: model.id, label: model.name })) })
@@ -440,6 +448,10 @@ const server = createServer(async (request, response) => {
           description: `${model.name} · ${voice.languages.join(', ')}` })))
         return send(response, 200, { voices, source: 'documentation', sourceUrl: models[0]?.sourceUrl || 'https://k2-fsa.github.io/sherpa/onnx/tts/',
           fetchedAt: new Date().toISOString() })
+      }
+      if (selected.ttsEngine === 'deepgram') {
+        try { return send(response, 200, (await listDeepgramFluxCatalog(AbortSignal.timeout(20000))).voices) }
+        catch { return send(response, 502, { error: 'Could not load Deepgram Flux voices' }) }
       }
       const key = pipelineKey(selected.ttsEngine)
       if (!key) return send(response, 409, { error: 'Configure the synthesis provider first' })
@@ -1099,7 +1111,7 @@ server.on('upgrade', (request, socket, head) => {
   closeRetiring(voiceSockets)
   voiceSockets.handleUpgrade(request, socket, head, ws => providerStore.selectedProvider() === 'openai-live'
     ? attachVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history, turns)
-    : attachRealtimeVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history))
+    : attachRealtimeVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history, { turns }))
 })
 
 const listenPort = Number(process.env.VOICE_HOST_PORT ?? 61445)

@@ -100,12 +100,15 @@ export class VoiceHistory {
       else row.closed = true
     }
     const replies = []
+    let alreadyReplied = false
     for (const row of this.rows.slice(index + 1)) {
       if (row.role === 'user') break
-      if (!row.delivered && !row.note && !row.delegated && !listening(row)) replies.push(row)
+      if (row.role !== 'assistant' || listening(row)) continue
+      alreadyReplied = true
+      if (!row.delivered && !row.note && !row.delegated) replies.push(row)
     }
     for (const row of replies) row.note = key
-    this.waiting = replies.length ? null : { key, after: turn }
+    this.waiting = alreadyReplied ? null : { key, after: turn }
   }
 
   /** The voice spoke about Claude's progress: no later reply is the hand-off's. */

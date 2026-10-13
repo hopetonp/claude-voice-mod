@@ -56,6 +56,17 @@ test('a final caption phase is kept so the Mod knows the utterance is complete',
   } finally { await rm(dir, { recursive: true, force: true }) }
 })
 
+test('a host restart closes routing decisions abandoned by the previous voice socket', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'voicemesh-transcripts-'))
+  const file = join(dir, 'transcripts.json')
+  try {
+    const first = await createTranscriptLedger(file)
+    await first.openTurn('claude-1', 'turn-1', 1000, 'call-1')
+    const second = await createTranscriptLedger(file)
+    assert.equal(second.turns('claude-1')[0].state, 'closed')
+  } finally { await rm(dir, { recursive: true, force: true }) }
+})
+
 test('pipeline coding admission links the claimed task to its spoken caption', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'voicemesh-transcripts-'))
   const file = join(dir, 'transcripts.json')

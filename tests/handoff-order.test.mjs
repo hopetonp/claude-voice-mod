@@ -10,7 +10,7 @@ async function handOff({ name, rows: initialRows, delayTask = false, phase = 'sp
   let clock
   let task = null
   let rows = initialRows
-  let turns = delayTask ? [{ id: 'turn:1', state: 'pending', userCaptionIds: [] }] : []
+  let turns = delayTask && !noRoute ? [{ id: 'turn:1', state: 'pending', userCaptionIds: [] }] : []
   let revision = 2
   const $ = {
     env: { get: async () => '/tmp' },
@@ -100,6 +100,18 @@ test('a tool-based realtime coding request submits without a GPT Live routing re
     { id: 'u1', role: 'user', text: 'Read the README title', delegated: false, final: true, spokenAt: 10, createdRevision: 1 },
     { id: 'r1', role: 'assistant', text: 'Checking.', delegated: false, final: true, spokenAt: 900, createdRevision: 2 },
   ] })
+  assert.deepEqual(events, ['submit Read the README title'])
+  assert.match(textOf(await render()), /Read the README title.*Checking\./)
+})
+
+test('a realtime acknowledgement stays under its request when admission arrives after the caption', async () => {
+  const { events, render, queue } = await handOff({ name: 'handoff-realtime-late-admission',
+    delayTask: true, noRoute: true, phase: 'listening', rows: [
+      { id: 'u1', role: 'user', text: 'Read the README title', delegated: true, final: true, spokenAt: 10, createdRevision: 1 },
+      { id: 'r1', role: 'assistant', text: 'Checking.', delegated: false, final: true, spokenAt: 900, createdRevision: 2 },
+    ] })
+  assert.deepEqual(events, [], 'the acknowledgement must wait for the coding request')
+  await queue()
   assert.deepEqual(events, ['submit Read the README title'])
   assert.match(textOf(await render()), /Read the README title.*Checking\./)
 })

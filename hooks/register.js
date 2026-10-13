@@ -71,11 +71,9 @@ function voiceButtonIcon(phase, muted, theme = 'light') {
   const micOff = `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v1.1l5.2 5.2V3.6A2.6 2.6 0 0 0 8 1ZM4.2 8.2c0 .4.05.7.14 1.05l3.66 3.66h-1.6l-4-4 1.1-1.1c.1.15.3.25.7.39ZM7.4 11.7v2.2h1.2v-2.2H7.4ZM2.3 1.4l12.3 12.3-.85.85L1.45 2.25 2.3 1.4Z" fill="${ink}"/>`
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="${BUTTON_FILL}" stroke="${darken(BUTTON_FILL, .25)}" stroke-width="1"/><g transform="translate(9 9)">${muted ? micOff : active ? stop : wave}</g></svg>`
 }
-// The start button's size in pixels: the SVG is drawn at exactly this size. Its seat, which sets the voice
-// row's height, is BUTTON_ROWS tall, with the button centred in it.
+// The outer voice row owns its height; the start button retains its original size.
 const BUTTON_SIZE = 28
-const BUTTON_ROWS = 1.4
-// The voice's orb in pixels, drawn at exactly this size; at most BUTTON_SIZE so the row keeps its height.
+const BUTTON_ROWS = 1
 const ORB_SIZE = 28
 // The start button's colour; its ring is the same colour, a little darker.
 const BUTTON_FILL = '#1d4ed8'
@@ -743,11 +741,11 @@ function voiceStrip($, e, original) {
   const label = !healthy || !connection ? status
     : live ? duration(media.activeSeconds, media.locale) : parked ? vt('status.standby') : connecting ? vt('status.connectingShort') : ''
   const icon = (action, glyph, color, alt) => Box({
-    position: 'relative', width: 3, height: 1.2,
+    position: 'relative', width: 3, height: BUTTON_ROWS,
     children: [
       Svg({ source: voiceIcon(glyph, color), width: 26, height: 26, alt }),
       Box({ position: 'absolute', top: 0, left: 0,
-        children: [Client({ key: `voice-icon-${action}`, module: './voice-hit-client.js', props: { action }, width: 3, height: 1.2 })] }),
+        children: [Client({ key: `voice-icon-${action}`, module: './voice-hit-client.js', props: { action, height: BUTTON_ROWS }, width: 3, height: BUTTON_ROWS })] }),
     ],
   })
   const line = currentLine(Date.now())
@@ -770,9 +768,11 @@ function voiceStrip($, e, original) {
   return Box({
     flexDirection: 'column',
     children: [
-      original,
+      ...(original ? [original] : []),
       Box({
         flexDirection: 'row',
+        height: BUTTON_ROWS,
+        minHeight: 0,
         columnGap: 0.5,
         // Claude's band already frames the row, so the row adds no room of its own at either end: the orb's
         // glow and the start button's ring carry their own margin inside their pictures.
@@ -1016,6 +1016,8 @@ export function register(on) {
     }
     if (voiceTask?.turnId === e.turnId && e.agentId === undefined) {
       const status = e.reason === 'answer' ? 'complete' : e.isAborted ? 'aborted' : 'failed'
+      // The next spoken turn reports Claude's result, never the handoff acknowledgement.
+      history.stopWaiting()
       await reportCompletion($, { id: voiceTask.id, sessionId, turnId: e.turnId, status, text: e.answer ?? '' }).catch(() => show($, vt('status.resultBridgeUnavailable')))
       voiceTask = null
     }

@@ -15,8 +15,8 @@ const descriptions = { display: 'shell.generalSummary', provider: 'shell.provide
 function savedSection(): typeof sections[number] {
   try {
     const saved = localStorage.getItem(sectionStorageKey)
-    return sections.find(section => section === saved) ?? 'display'
-  } catch { return 'display' }
+    return sections.find(section => section === saved) ?? 'provider'
+  } catch { return 'provider' }
 }
 
 /** Claude-specific recovery belongs in the harness, alongside the shared editor. */

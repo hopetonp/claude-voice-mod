@@ -743,7 +743,12 @@ const server = createServer(async (request, response) => {
       const selected = sessions.selected()
       await recoverCompletedTask(selected)
       const task = taskOf(selected)
-      return send(response, 200, { sessionId: selected, clientSynced: selected ? recoveredClients.has(selected) : null, task: task ? {
+      // A running task may be healthy. Offer recovery only after it has stayed
+      // unresolved long enough to be plausibly stuck.
+      const stuck = task?.status === 'running' && !!task.turnId
+        && Number.isSafeInteger(task.claimedAt) && Date.now() - task.claimedAt >= 5 * 60_000
+      return send(response, 200, { sessionId: selected, clientSynced: selected ? recoveredClients.has(selected) : null,
+        stuck: !!stuck, task: task ? {
         id: task.id, turnId: task.turnId, status: task.status, request: task.text.slice(0, 300),
         recoveryEvidence: task.recoveryEvidence ?? null, canRelease: task.status === 'running' && !!task.turnId,
       } : null })

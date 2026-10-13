@@ -47,6 +47,7 @@ test('a completed turn missed during reload heals from its exact Claude transcri
     const diagnostics = (await host.call('GET', '/api/claude/diagnostics')).body
     assert.equal(diagnostics.task.recoveryEvidence, 'claude-transcript-completion')
     assert.equal(diagnostics.task.canRelease, false)
+    assert.equal(diagnostics.stuck, false)
     assert.equal((await host.call('GET', '/api/pipeline/owed')).body.result.text, 'Recovered answer.')
     await host.call('POST', '/api/pipeline/played', { playbackId: 1 })
     assert.equal((await host.call('POST', '/api/claude/request', request('session-a', 'next-request'))).status, 202)
@@ -78,6 +79,7 @@ test('manual backup requires confirmation and the exact selected task; age does 
   try {
     await host.call('POST', '/api/claude/select', { sessionId: 'session-a' })
     assert.equal((await host.call('GET', '/api/claude/status')).body.taskStatus, 'running')
+    assert.equal((await host.call('GET', '/api/claude/diagnostics')).body.stuck, true)
     const release = { sessionId: 'session-a', id: task.id, turnId: task.turnId, confirmRelease: true }
     for (const invalid of [{ ...release, confirmRelease: false }, { ...release, id: 'outdated-request' },
       { ...release, sessionId: 'session-b' }, { ...release, turnId: 'outdated-turn' }]) {
@@ -101,6 +103,7 @@ test('claim and submit-start are separate durable handoff steps', async () => {
       'an uncertain submission cannot be discarded and replayed')
     assert.equal((await host.call('POST', '/api/claude/started', { id: 'voice-one', sessionId: 'session-a', turnId: 'turn-one' })).status, 200)
     assert.equal((await host.call('GET', '/api/claude/status')).body.taskStatus, 'running')
+    assert.equal((await host.call('GET', '/api/claude/diagnostics')).body.stuck, false)
     await host.call('POST', '/api/claude/request', request('session-b', 'voice-two'))
     await host.call('POST', '/api/claude/claim', { id: 'voice-two', sessionId: 'session-b' })
     assert.equal((await host.call('POST', '/api/claude/claim-failed', { id: 'voice-two', sessionId: 'session-b' })).status, 200)

@@ -1,0 +1,114 @@
+name: Build installable packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check release version
+        if: github.ref_type == 'tag'
+        run: |
+          version=$(node -p "require('./.claude-plugin/plugin.json').version")
+          test "$GITHUB_REF_NAME" = "v$version"
+      - run: npm ci
+      - run: npm run media:build
+      - run: npm run settings:window:build
+      - run: npm run plugin:stage
+      - run: npm run release:macos -- --zip
+      - name: Verify package contents
+        run: |
+          archive=$(find release -maxdepth 1 -name '*.zip' -print -quit)
+          test -n "$archive"
+          ditto -x -k "$archive" "$RUNNER_TEMP/voicemesh-verify"
+          package=$(find "$RUNNER_TEMP/voicemesh-verify" -mindepth 1 -maxdepth 1 -type d -print -quit)
+          test -x "$package/runtime/node"
+          test -f "$package/plugin-marketplace/.claude-plugin/marketplace.json"
+          test -d "$package/app/settings-window/src-tauri/target/release/bundle/macos/VoiceMesh Settings.app"
+          test -f "$package/release.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.runner }}
+          path: release/*.zip
+          if-no-files-found: error
+
+  windows:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check release version
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        run: |
+          $version = (Get-Content .claude-plugin/plugin.json | ConvertFrom-Json).version
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw "Tag does not match Mod version $version" }
+      - run: npm ci
+      - run: npm run media:build
+      - run: npm run settings:window:build
+      - run: npm run plugin:stage
+      - name: Build and archive Windows package
+        shell: pwsh
+        run: |
+          $nodeDir = Split-Path (Get-Command node).Source
+          npm run release:windows -- --node-dir "$nodeDir"
+          if ($LASTEXITCODE -ne 0) { throw 'Windows release build failed' }
+          $version = (Get-Content .claude-plugin/plugin.json | ConvertFrom-Json).version
+          $arch = node -p 'process.arch'
+          $package = "voicemesh-claude-win-$arch"
+          $archive = "$package-$version.zip"
+          Push-Location release
+          try {
+            & 7z a -tzip $archive $package
+            if ($LASTEXITCODE -ne 0) { throw 'Windows ZIP creation failed' }
+            & 7z t $archive
+            if ($LASTEXITCODE -ne 0) { throw 'Windows ZIP verification failed' }
+            $hasMarketplace = & 7z l $archive | Select-String -SimpleMatch '.claude-plugin' -Quiet
+            if (-not $hasMarketplace) { throw 'Bundled marketplace metadata is missing from ZIP' }
+          } finally { Pop-Location }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-windows-x64
+          path: release/*.zip
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [macos, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: package-*
+          path: release-assets
+          merge-multiple: true
+      - name: Create draft release with checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cd release-assets
+          test "$(find . -maxdepth 1 -name '*.zip' | wc -l)" -eq 3
+          sha256sum ./*.zip > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" ./*.zip SHA256SUMS --draft --title "VoiceMesh Claude Mod $GITHUB_REF_NAME" --generate-notes

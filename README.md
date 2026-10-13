@@ -1,5 +1,7 @@
 # Claude Voice Mod
 
+**Mac installation:** Give Claude Code [these installation instructions](INSTALL_WITH_CLAUDE.md), or download the latest GitHub Release ZIP and run `./install.sh` from the extracted folder. The release download must be published before either route is available to other users.
+
 ## Purpose
 
 Host the existing VoiceMesh Composer experience for Claude Code and connect it to the active coding session through a Claude Code Mod. The Mod presents controls like those in the DeepSeek Harness voice integration. Composer already provides the speech pipeline, voice conversation, capture, playback, captions, and turn coordination; this project does not need to recreate them.

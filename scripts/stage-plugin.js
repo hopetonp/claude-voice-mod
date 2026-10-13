@@ -15,7 +15,7 @@ await cp(join(root, 'said-plugin'), join(output, 'plugins', 'voicemesh-said'), {
 await mkdir(join(output, '.claude-plugin'), { recursive: true })
 await writeFile(join(output, '.claude-plugin', 'marketplace.json'), JSON.stringify({
   name: 'voicemesh-local',
-  description: 'Local VoiceMesh Mod development',
+  description: 'VoiceMesh voice controls for Claude',
   owner: { name: 'Hopeton Palmer' },
   plugins: [
     { name: 'voicemesh-controls', source: './plugins/voicemesh-controls' },

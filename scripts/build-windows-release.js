@@ -78,7 +78,8 @@ export async function buildWindowsRelease(options, { platform = process.platform
   run(join(output, 'runtime', 'node.exe'), ['--input-type=module', '-e', "await import('@voicemesh/composer/server'); await import('ws')"], {
     cwd: join(output, 'app'), stdio: 'inherit',
   })
-  await writeFile(join(output, 'release.json'), JSON.stringify({ nodeVersion: version, architecture, appVersion: JSON.parse(await readFile(join(root, 'package.json'))).version }, null, 2) + '\n')
+  await writeFile(join(output, 'release.json'), JSON.stringify({ nodeVersion: version, architecture,
+    version: JSON.parse(await readFile(join(root, '.claude-plugin', 'plugin.json'), 'utf8')).version }, null, 2) + '\n')
   console.log(`Windows release staged: ${output}`)
   return output
 }

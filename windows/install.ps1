@@ -5,12 +5,12 @@ $ErrorActionPreference = 'Stop'
 $source = (Resolve-Path -LiteralPath $PSScriptRoot).Path
 $destination = if ($StagingOnly) { Join-Path $env:TEMP 'VoiceMeshPackageSmoke\ClaudeVoice' } else { Join-Path $env:LOCALAPPDATA 'VoiceMesh\ClaudeVoice' }
 $startup = Join-Path ([Environment]::GetFolderPath('Startup')) 'VoiceMesh Claude Voice.lnk'
-if (-not (Test-Path -LiteralPath (Join-Path $source 'runtime\node.exe'))) { throw 'The private Node runtime is missing from this release.' }
-if (-not (Test-Path -LiteralPath (Join-Path $source 'app\dist\index.html'))) { throw 'The built voice page is missing from this release.' }
-if (-not (Test-Path -LiteralPath (Join-Path $source 'app\settings-window\src-tauri\target\release\voicemesh-settings-window.exe'))) { throw 'The settings window is missing from this release.' }
-if (-not (Test-Path -LiteralPath (Join-Path $source 'plugin-marketplace\.claude-plugin\marketplace.json'))) { throw 'The bundled Claude marketplace is missing from this release.' }
+if (-not (Test-Path -LiteralPath (Join-Path $source 'runtime\node.exe'))) { throw 'The private Node runtime is missing from this package.' }
+if (-not (Test-Path -LiteralPath (Join-Path $source 'app\dist\index.html'))) { throw 'The built voice page is missing from this package.' }
+if (-not (Test-Path -LiteralPath (Join-Path $source 'app\settings-window\src-tauri\target\release\voicemesh-settings-window.exe'))) { throw 'The settings window is missing from this package.' }
+if (-not (Test-Path -LiteralPath (Join-Path $source 'plugin-marketplace\.claude-plugin\marketplace.json'))) { throw 'The bundled Claude marketplace is missing from this package.' }
 if (-not $StagingOnly -and -not (Get-Command claude -ErrorAction SilentlyContinue)) { throw 'Claude CLI is required to install the bundled Mods.' }
-if ($source.TrimEnd('\') -eq $destination.TrimEnd('\')) { throw 'Run the installer from the extracted release, not from the installation directory.' }
+if ($source.TrimEnd('\') -eq $destination.TrimEnd('\')) { throw 'Run the installer from the built package directory, not from the installation directory.' }
 
 # Stop only a previous VoiceMesh host from this installation directory.
 Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object {

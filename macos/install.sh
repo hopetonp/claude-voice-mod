@@ -6,7 +6,7 @@ destination="$HOME/Library/Application Support/VoiceMesh/ClaudeVoice"
 marketplace="$destination/plugin-marketplace"
 
 if [ ! -x "$source_dir/runtime/node" ] || [ ! -d "$source_dir/plugin-marketplace" ]; then
-  echo 'Incomplete VoiceMesh release' >&2
+  echo 'Incomplete VoiceMesh package' >&2
   exit 1
 fi
 if ! command -v claude >/dev/null 2>&1; then
@@ -14,7 +14,7 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 if [ "$source_dir" = "$destination" ]; then
-  echo 'Run install.sh from the extracted download' >&2
+  echo 'Run install.sh from the built package directory' >&2
   exit 1
 fi
 

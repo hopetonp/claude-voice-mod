@@ -18,69 +18,19 @@ Keys entered in Voice settings are saved locally with Claude's user data in `~/.
 
 The keys are **not encrypted by this Mod or stored in your Claude account**. They are sent to the providers you configure when those services are used; voice audio and text may also be sent to those providers. Enabling request classification sends the spoken request and context to its selected provider. Uninstalling preserves saved keys and settings; remove the `voicemesh-controls` data directory above if you want to erase them.
 
-## Install with an AI agent
+## Install from GitHub
 
-Give an AI agent with shell access this request. If you already have a prebuilt ZIP, include its full path in the request.
+Give an AI agent with shell access on the target computer this request:
 
-> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md and install VoiceMesh. Use a prebuilt ZIP for this computer's operating system and architecture: either the latest matching GitHub Release asset or the ZIP path I provide. Extract the complete package and run its installer (`./install.sh` on macOS or `.\install.ps1` on Windows). Verify the installation and tell me when to restart Claude. Do not clone the repository, build from source, run npm or Cargo, or follow the "Build from source" section. If no matching prebuilt ZIP is available, stop and ask me for one.
+> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Clone the repository, build VoiceMesh on this computer, install it from the built package directory, and verify both Mods and the local host. Tell me when to restart Claude.
 
-The build instructions below are for people creating release packages, not for installing VoiceMesh.
+The [installation guide for Claude](INSTALL_WITH_CLAUDE.md) has the macOS and Windows commands. The repository includes pinned VoiceMesh dependency packages in `vendor/`; building requires Git, Node.js 22.19 or later, npm, Rust, and Cargo. Windows also requires Visual Studio C++ build tools and the Windows SDK. Claude Code and Chrome are required for use. No release ZIP is needed.
 
-## Install on macOS
+On macOS the build creates `release/voicemesh-claude-macos-<architecture>-<version>/`; run its `install.sh`. On Windows it creates `release/voicemesh-claude-win-<architecture>/`; run its `install.ps1`. Each installer copies the built package to the user's application data, registers the local host and bundled marketplace, and installs both Mods. Restart Claude after installation. Saved voice settings and credentials are preserved during reinstall.
 
-Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or use a prebuilt ZIP for your Mac's architecture from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest) or supplied by the maintainer. Extract it and run `./install.sh` from the extracted folder. Restart Claude after installation.
+Run `uninstall.sh` or `uninstall.ps1` from the built package directory to remove the host and Mods. Saved settings and credentials remain in place.
 
-The installer places the package under `~/Library/Application Support/VoiceMesh/ClaudeVoice`, registers the local host and Claude marketplace, and installs both Mods. Run `./uninstall.sh` from the same package to remove the host and Mods. Saved voice settings and credentials are preserved.
-
-Claude Code and Chrome are required.
-
-## Install on Windows
-
-Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or use a prebuilt ZIP for your PC's architecture (x64 or arm64) from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest) or supplied by the maintainer. Extract the complete archive, open PowerShell in the extracted package folder, and run:
-
-```powershell
-.\install.ps1
-```
-
-Restart Claude after installation. The installer places the package under `%LOCALAPPDATA%\VoiceMesh\ClaudeVoice`, starts the local host, creates a shortcut to start it at sign-in, registers the bundled Claude marketplace, and installs both Mods. Open Voice settings in Claude to configure a provider key, model, and voice. Users do not need Node, npm, Rust, or Visual Studio; the package includes its own Node runtime and native settings window.
-
-Run `.\uninstall.ps1` from the same package to remove the host, sign-in shortcut, and Mods. Saved voice settings and credentials under `%USERPROFILE%\.claude\voicemesh-controls` are preserved. Claude Code and Chrome are required. If PowerShell blocks the installer, unblock the downloaded archive in its file Properties before extracting it again.
-
-Clean-machine installation and live voice behavior with the updated installer still need verification.
-
-## Build from source
-
-The repository pins VoiceMesh Composer and the settings editor in `vendor/`. To build the macOS package on an arm64 or x64 Mac, install Node.js 22.19 or later, npm, Rust, and Cargo, then run:
-
-```sh
-npm ci
-npm run media:build
-npm run settings:window:build
-npm run plugin:stage
-npm run release:macos
-```
-
-The ZIP is created in `release/` for the build machine's architecture. Build separately on each architecture. For local development, `npm run host:install:macos` installs the per-user host service; `npm run host:install:macos -- --remove` removes it.
-
-To build the Windows package on Windows, install Node.js 22.19 or later, npm, Rust/Cargo, Visual Studio C++ build tools, and the Windows SDK. Extract an official Windows Node distribution of the same architecture as the build machine. From this repository, run:
-
-```powershell
-npm ci
-npm run media:build
-npm run settings:window:build
-npm run plugin:stage
-npm run release:windows -- --node-dir "C:\path\to\node-distribution"
-```
-
-`settings:window:build` also builds the settings frontend. The official Node directory must contain `node.exe`, `npm.cmd`, `LICENSE`, and npm's files. Its architecture must match the Node process running the build and the native settings executable.
-
-The Windows release builder creates `release/voicemesh-claude-win-x64` or `release/voicemesh-claude-win-arm64`. Archive the complete directory, including its `.claude-plugin` manifests, for distribution. For example:
-
-```powershell
-tar -a -cf "release\voicemesh-claude-win-x64.zip" -C release voicemesh-claude-win-x64
-```
-
-Build each architecture separately and choose a fresh `--output` directory for subsequent builds; the builder refuses to overwrite an existing release. The `release:windows:mod` command produces a separate marketplace-only development package without the installer or sign-in shortcut.
+Fresh-clone installation and live voice behavior on each platform still need verification.
 
 ## Repository layout
 

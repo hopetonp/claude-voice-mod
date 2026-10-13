@@ -27,7 +27,7 @@ test('optional realtime classifier advises the voice model before any coding dis
     async dispatch() { dispatches++; return { requestId: 'unexpected' } },
   }, () => {}, async () => {}, () => [], {
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } }, classify,
-    openChannel: async (settings, inbound) => {
+    userName: () => '', openChannel: async (settings, inbound) => {
       offered = settings.tools
       owner = inbound
       return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
@@ -76,7 +76,7 @@ test('coding classification still dispatches when Gemini only speaks an acknowle
     turns: { async open(id) { routes.push({ id, state: 'pending' }) },
       async settle(id, outcome) { routes.push({ id, ...outcome }) }, async close() {} },
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
     },
@@ -122,7 +122,7 @@ test('a late Gemini coding tool call wins over the classified-request fallback',
   }, () => {}, async () => {}, () => [], {
     classify: async () => 'coding',
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) }
     },
@@ -177,7 +177,7 @@ test('OpenAI Realtime delegates to Claude and marks the WebRTC result after play
     async caption => { captions.push(caption) }, () => [], {
       providers: { openai: provider },
       transcriptionModels: async () => ['whisper-1'],
-      openChannel: async (_settings, inbound) => {
+      userName: () => '', openChannel: async (_settings, inbound) => {
         owner = inbound
         return { send: async event => { sentToComposer.push(event) }, close: async () => {}, closed: new Promise(() => {}) }
       },
@@ -238,7 +238,7 @@ test('Gemini tool results use Composer automatic response scheduling', async () 
     async dispatch() { return { requestId: 'scoped-gemini' } },
   }, () => {}, async () => {}, () => [], {
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
     },
@@ -275,7 +275,7 @@ test('Gemini Extended Thinking waits for the coding result before continuing its
   }, value => { live = value }, async row => { captions.push(row) }, () => [], {
     turns: { async open(id, at) { turns.push({ id, at }) }, async settle(id, outcome) { turns.push({ id, outcome }) }, async close() {} },
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       return { send: async event => sent.push(event), close: async () => {}, closed: new Promise(() => {}) }
     },
@@ -324,7 +324,7 @@ test('Gemini speech with an empty response output settles a voice-only turn', as
   () => {}, async () => {}, () => [], {
     turns: { async open(id) { turns.push({ id, state: 'pending' }) }, async settle(id, outcome) { turns.push({ id, state: outcome.state }) }, async close() {} },
     providers: { gemini: { id: 'gemini', toolResponseStartsResponse: true } },
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) }
     },
@@ -365,7 +365,7 @@ test('spoken end closes voice without dispatching or stopping Claude work', asyn
     get: () => ({ key: 'test-key', model: 'test-model', voice: 'test-voice', endConversationEnabled: true }),
   }, tasks, () => {}, async () => {}, () => [], {
     providers: { xai: { id: 'xai', toolResponseStartsResponse: false } },
-    openChannel: async (settings, inbound) => {
+    userName: () => '', openChannel: async (settings, inbound) => {
       owner = inbound
       assert.ok(settings.tools.some(tool => tool.name === 'end_conversation'))
       return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) }
@@ -396,7 +396,7 @@ test('a playback caption for an ordinary reply stays in the host and keeps the v
   attachRealtimeVoice(socket, store, tasks, () => {}, async () => {}, () => [], {
     providers: { xai: { id: 'xai', toolResponseStartsResponse: true } },
     transcriptionModels: async () => [],
-    openChannel: async (_settings, inbound) => {
+    userName: () => '', openChannel: async (_settings, inbound) => {
       owner = inbound
       // Like Composer's provider channels, an unknown page event is not a provider command.
       return { send: async event => {
@@ -430,7 +430,7 @@ test("the realtime path hands Claude the user's latest spoken line, not the mode
   attachRealtimeVoice(socket, store, tasks, () => {}, async () => {}, () => [], {
     providers: { xai: { id: 'xai', toolResponseStartsResponse: true } },
     transcriptionModels: async () => [],
-    openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
+    userName: () => '', openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
   })
   socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'xai' })))
   await flush()
@@ -458,7 +458,7 @@ async function spokenHarness() {
   attachRealtimeVoice(socket, store, tasks, () => {}, async () => {}, () => [], {
     providers: { xai: { id: 'xai', toolResponseStartsResponse: true } },
     transcriptionModels: async () => [],
-    openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
+    userName: () => '', openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
   })
   socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'xai' })))
   await flush()
@@ -522,7 +522,7 @@ test('a reply that says a word and hands work over still hands Claude the user\'
   attachRealtimeVoice(socket, store, tasks, () => {}, async () => {}, () => [], {
     providers: { xai: { id: 'xai', toolResponseStartsResponse: true } },
     transcriptionModels: async () => [],
-    openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
+    userName: () => '', openChannel: async (_settings, inbound) => { owner = inbound; return { send: async () => {}, close: async () => {}, closed: new Promise(() => {}) } },
   })
   socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'xai' })))
   await flush()
@@ -554,7 +554,7 @@ test('another session finishing is mentioned as a heads-up, without its result',
   attachRealtimeVoice(socket, store, tasks, live => { connected = live }, async () => {}, () => [], {
     providers: { openai: provider },
     transcriptionModels: async () => ['whisper-1'],
-    openChannel: async () => ({ send: async event => { sentToComposer.push(event) }, close: async () => {}, closed: new Promise(() => {}) }),
+    userName: () => '', openChannel: async () => ({ send: async event => { sentToComposer.push(event) }, close: async () => {}, closed: new Promise(() => {}) }),
   })
   socket.emit('message', Buffer.from(JSON.stringify({ type: 'start', provider: 'openai', offer: 'test-offer' })))
   await flush()

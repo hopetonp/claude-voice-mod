@@ -1,6 +1,5 @@
 html, body, #app { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
 .vm-settings-shell { border: 1px solid #666; border-radius: 13px; }
-.vm-settings-shell.macos-window { border-radius: 0; }
 .vm-settings-shell.windows-window { border-radius: 0; }
 .vm-settings-shell .window-chrome { pointer-events: auto; }
 :root[data-theme="dark"] .vm-settings-shell:not([data-theme]),

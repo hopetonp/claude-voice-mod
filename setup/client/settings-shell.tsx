@@ -4,6 +4,9 @@ import { claudeBackend } from './claude-backend.ts'
 import { CodingDiagnostics } from './coding-diagnostics.tsx'
 import { voiceText } from '../../hooks/voice-status-i18n.js'
 
+declare const __VOICEMESH_COMPOSER_VERSION__: string
+declare const __VOICE_MOD_VERSION__: string
+
 const sections = ['display', 'provider', 'conversation', 'troubleshooting'] as const
 const labels = { display: 'shell.general', provider: 'shell.provider', conversation: 'shell.conversation' }
 const descriptions = { display: 'shell.generalSummary', provider: 'shell.providerSummary', conversation: 'shell.conversationSummary' }
@@ -27,6 +30,10 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
           </svg>
           <span>{id === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[id])}</span>
         </button>)}
+        <div className="settings-sidebar-versions" aria-label="Installed versions">
+          <div>VoiceMesh Composer <span>v{__VOICEMESH_COMPOSER_VERSION__}</span></div>
+          <div>Voice Mod <span>v{__VOICE_MOD_VERSION__}</span></div>
+        </div>
       </nav>
       <div className="settings-main">
         <header className="settings-section-header"><h1>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[section])}</h1>

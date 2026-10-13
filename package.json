@@ -11,12 +11,13 @@
     "plugin:stage": "node scripts/stage-plugin.js",
     "release:windows": "node scripts/build-windows-release.js",
     "release:windows:mod": "node scripts/build-windows-mod-release.js",
+    "release:macos": "node scripts/build-macos-release.js",
     "host": "node host/server.js",
     "host:install:macos": "node scripts/install-host-macos.js"
   },
   "dependencies": {
-    "@voicemesh/composer": "file:../voicemesh-composer/voicemesh-composer-0.2.16.tgz",
-    "@voicemesh/settings-editor": "file:../voicemesh-composer/settings-editor/voicemesh-settings-editor-0.1.24.tgz",
+    "@voicemesh/composer": "file:vendor/voicemesh-composer-0.2.16.tgz",
+    "@voicemesh/settings-editor": "file:vendor/voicemesh-settings-editor-0.1.24.tgz",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "ws": "^8.22.0"

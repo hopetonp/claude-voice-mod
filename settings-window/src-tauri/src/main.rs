@@ -4,16 +4,19 @@ use tauri::{Manager, PhysicalPosition, WebviewUrl, WebviewWindow, WebviewWindowB
 use voicemesh_desktop::{configure_settings_window, SettingsState};
 
 #[cfg(target_os = "macos")]
-fn hide_native_window_buttons(window: &WebviewWindow) {
+fn round_native_mac_window(window: &WebviewWindow) {
     use objc2::{msg_send, runtime::AnyObject};
 
     let Ok(ns_window) = window.ns_window() else { return };
     unsafe {
         let ns_window = ns_window.cast::<AnyObject>();
-        for kind in 0usize..3 {
-            let button: *mut AnyObject = msg_send![ns_window, standardWindowButton: kind];
-            if !button.is_null() {
-                let _: () = msg_send![button, setHidden: true];
+        let content: *mut AnyObject = msg_send![ns_window, contentView];
+        if !content.is_null() {
+            let _: () = msg_send![content, setWantsLayer: true];
+            let layer: *mut AnyObject = msg_send![content, layer];
+            if !layer.is_null() {
+                let _: () = msg_send![layer, setCornerRadius: 13.0f64];
+                let _: () = msg_send![layer, setMasksToBounds: true];
             }
         }
     }
@@ -90,7 +93,6 @@ fn main() {
             let builder = WebviewWindowBuilder::new(app, "settings", WebviewUrl::External(url.clone()))
                 .title("Voice settings")
                 .inner_size(760.0, 580.0)
-                .transparent(false)
                 .resizable(false)
                 .minimizable(false)
                 .maximizable(false)
@@ -100,14 +102,13 @@ fn main() {
                 .focused(false);
             #[cfg(target_os = "macos")]
             let builder = builder
-                .decorations(true)
-                .title_bar_style(tauri::TitleBarStyle::Overlay)
-                .hidden_title(true);
+                .decorations(false)
+                .transparent(true);
             #[cfg(target_os = "windows")]
             let builder = builder.decorations(false);
             let window = builder.build()?;
             #[cfg(target_os = "macos")]
-            hide_native_window_buttons(&window);
+            round_native_mac_window(&window);
             place_over_invoking_screen(&window);
             Ok(())
         })

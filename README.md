@@ -12,11 +12,11 @@ In either mode, coding requests go to the active Claude session. Optional **requ
 
 ## Installation
 
-Download a ZIP from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest).
+Download ZIP from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest).
 
 Ask an AI agent with shell access to your computer:
 
-> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Download a prebuilt ZIP from the latest release, verify it, run its installer, and check both Mods and the local host.
+> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Download prebuilt ZIP from the latest release, verify it, run its installer, and check both Mods and the local host.
 
 Choose `voicemesh-claude-macos-arm64-<version>.zip` for an Apple Silicon Mac (M-series), `voicemesh-claude-macos-x64-<version>.zip` for an Intel Mac, or `voicemesh-claude-win-x64-<version>.zip` for a Windows x64 PC. Run `install.sh` on macOS or `install.ps1` on Windows after extraction. The prebuilt packages include the runtime and settings app, so no build tools are needed. Claude Code and Chrome are required for use. The Mod has been installed successfully on macOS arm64 and on a Windows box.
 

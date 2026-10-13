@@ -23,17 +23,27 @@ let display = { chatBubbles: false, at: -Infinity }
 let appearance = { theme: 'light', at: -Infinity }
 async function desktopTheme($) {
   if (Date.now() - appearance.at < 1000) return appearance.theme
-  const home = await $.env.get('HOME').catch(() => '')
+  const home = await $.env.get('HOME').catch(() => '') || await $.env.get('USERPROFILE').catch(() => '')
   const appdata = await $.env.get('APPDATA').catch(() => '')
-  let theme = 'light'
+  let theme = null
   for (const path of [appdata && `${appdata}/Claude/config.json`, home && `${home}/Library/Application Support/Claude/config.json`, home && `${home}/.config/Claude/config.json`].filter(Boolean)) {
     try {
       const mode = JSON.parse(await $.fs.read(path)).userThemeMode
       if (mode === 'light' || mode === 'dark') { theme = mode; break }
     } catch {}
   }
-  appearance = { theme, at: Date.now() }
-  return theme
+  if (!theme && home) {
+    try {
+      const { url, token } = JSON.parse(await $.fs.read(`${home}/.claude/voicemesh-controls/connection.json`))
+      const response = await $.http.fetch(`${url}/api/state`, { headers: { Authorization: `Bearer ${token}` } })
+      if (response.ok) {
+        const resolved = JSON.parse(response.text).theme
+        if (resolved === 'light' || resolved === 'dark') theme = resolved
+      }
+    } catch {}
+  }
+  appearance = { theme: theme ?? appearance.theme, at: Date.now() }
+  return appearance.theme
 }
 async function chatBubbles($) {
   if (Date.now() - display.at < 1000) return display.chatBubbles
@@ -50,7 +60,7 @@ async function bubble($, e, args) {
   const { Box, Svg, Text } = $.ui.resolve(e)
   const { mine, text } = parseSaid(args)
   const dark = (await desktopTheme($)) === 'dark'
-  const fill = dark ? '#383836' : '#eeede9'
+  const fill = dark ? '#2c2c2c' : '#eeede9'
   const ink = dark ? '#f4f4f1' : '#252523'
   // Surfaces without SVG (the terminal) show a text glyph instead.
   const icon = Svg ? Svg({ source: voiceIcon(ink), width: 16, height: 16, alt: 'Voice' }) : Text({ dimColor: true, children: ['♪'] })

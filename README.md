@@ -4,9 +4,17 @@ Claude Voice Mod adds VoiceMesh voice controls to Claude Code on macOS and Windo
 
 The package includes two Claude Mods, a local VoiceMesh host, and a settings window. Provider keys and voice settings are stored on the user's computer.
 
+## Install with an AI agent
+
+Give an AI agent with shell access this request. If you already have a prebuilt ZIP, include its full path in the request.
+
+> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md and install VoiceMesh. Use a prebuilt ZIP for this computer's operating system and architecture: either the latest matching GitHub Release asset or the ZIP path I provide. Extract the complete package and run its installer (`./install.sh` on macOS or `.\install.ps1` on Windows). Verify the installation and tell me when to restart Claude. Do not clone the repository, build from source, run npm or Cargo, or follow the "Build from source" section. If no matching prebuilt ZIP is available, stop and ask me for one.
+
+The build instructions below are for people creating release packages, not for installing VoiceMesh.
+
 ## Install on macOS
 
-Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or download the ZIP for your Mac's architecture from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest). Extract it and run `./install.sh` from the extracted folder. Restart Claude after installation.
+Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or use a prebuilt ZIP for your Mac's architecture from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest) or supplied by the maintainer. Extract it and run `./install.sh` from the extracted folder. Restart Claude after installation.
 
 The installer places the package under `~/Library/Application Support/VoiceMesh/ClaudeVoice`, registers the local host and Claude marketplace, and installs both Mods. Run `./uninstall.sh` from the same package to remove the host and Mods. Saved voice settings and credentials are preserved.
 
@@ -14,7 +22,7 @@ Claude Code and Chrome are required.
 
 ## Install on Windows
 
-Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or download the ZIP for your PC's architecture (x64 or arm64) from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest). Extract the complete archive, open PowerShell in the extracted package folder, and run:
+Follow [the installation instructions for Claude](INSTALL_WITH_CLAUDE.md), or use a prebuilt ZIP for your PC's architecture (x64 or arm64) from the [latest release](https://github.com/hopetonp/claude-voice-mod/releases/latest) or supplied by the maintainer. Extract the complete archive, open PowerShell in the extracted package folder, and run:
 
 ```powershell
 .\install.ps1

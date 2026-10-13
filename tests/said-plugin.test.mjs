@@ -22,13 +22,20 @@ test("turns draw as chat bubbles by default; with bubbles off the voice's turns 
   register((name, options, handler) => handlers.set(`${name}:${options?.component ?? ''}`, handler ?? options))
   let file = null
   let theme = 'light'
+  let resolvedTheme = 'light'
   const element = type => props => ({ type, ...props })
   const $ = {
-    env: { get: async () => '/home/test' },
+    env: { get: async key => key === 'HOME' ? '' : '/home/test' },
     fs: { read: async path => {
       if (path === '/home/test/Library/Application Support/Claude/config.json') return JSON.stringify({ userThemeMode: theme })
+      if (path === '/home/test/.claude/voicemesh-controls/connection.json') return JSON.stringify({ url: 'http://localhost:1234', token: 'test-token' })
       if (path !== '/home/test/.claude/voicemesh-controls/display.json' || file === null) throw new Error('missing')
       return file
+    } },
+    http: { fetch: async (url, options) => {
+      assert.equal(url, 'http://localhost:1234/api/state')
+      assert.equal(options.headers.Authorization, 'Bearer test-token')
+      return { ok: true, text: JSON.stringify({ theme: resolvedTheme }) }
     } },
     ui: { resolve: () => ({ Box: element('Box'), Text: element('Text'), Svg: element('Svg') }) },
   }
@@ -41,10 +48,11 @@ test("turns draw as chat bubbles by default; with bubbles off the voice's turns 
     assert.equal(chat.justifyContent, 'flex-end', 'your bubble sits on the right')
     assert.equal(chat.children[1].backgroundColor, '#eeede9', 'light Claude uses a light bubble')
     assert.equal(chat.children[1].children[0].color, '#252523')
-    theme = 'dark'
+    theme = 'system'
+    resolvedTheme = 'dark'
     now = 3000
     const dark = await draw('you Hello there')
-    assert.equal(dark.children[1].backgroundColor, '#383836', 'dark Claude uses a dark bubble')
+    assert.equal(dark.children[1].backgroundColor, '#2c2c2c', 'system dark Claude uses a matching dark bubble')
     assert.equal(dark.children[1].children[0].color, '#f4f4f1')
     file = JSON.stringify({ chatBubbles: false })
     now = 5000

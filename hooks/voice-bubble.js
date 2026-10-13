@@ -7,7 +7,7 @@ const voiceIcon = ink => `<svg xmlns="http://www.w3.org/2000/svg" width="16" hei
 export function voiceBubble(ui, text, chat = true, theme = 'light') {
   const { Box, Svg, Text } = ui
   if (!chat) return Box({ width: '100%', children: [Text({ children: [text] })] })
-  const fill = theme === 'dark' ? '#383836' : '#eeede9'
+  const fill = theme === 'dark' ? '#2c2c2c' : '#eeede9'
   const ink = theme === 'dark' ? '#f4f4f1' : '#252523'
   const icon = Svg ? Svg({ source: voiceIcon(ink), width: 16, height: 16, alt: 'Voice' }) : Text({ dimColor: true, children: ['♪'] })
   const body = Box({ backgroundColor: fill, borderStyle: 'round', borderColor: fill, paddingX: 1, paddingY: 0.6, flexShrink: 1, flexDirection: 'row', columnGap: 1, alignItems: 'flex-start',

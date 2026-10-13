@@ -10,6 +10,6 @@ test('the handoff reply bubble uses the active Claude theme', () => {
   const dark = voiceBubble(ui, 'Checking', true, 'dark').children[0]
   assert.equal(light.backgroundColor, '#eeede9')
   assert.equal(light.children[1].color, '#252523')
-  assert.equal(dark.backgroundColor, '#383836')
+  assert.equal(dark.backgroundColor, '#2c2c2c')
   assert.equal(dark.children[1].color, '#f4f4f1')
 })

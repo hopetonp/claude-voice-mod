@@ -1,7 +1,5 @@
-/* Paint the entire webview, including the shell's rounded corners. A transparent
-   root lets Windows composite Claude's animated voice strip through the popup. */
-html { background: #fcfcfb; }
-html[data-theme="dark"] { background: #151515; }
+/* Keep the transparent Tauri window visible around the shell's rounded corners. */
+html, html[data-theme="dark"] { background: transparent; }
 html, body, #app { margin: 0; width: 100%; height: 100%; overflow: hidden; }
 body, #app { background: inherit; }
 .settings-sidebar { display: flex; flex-direction: column; }

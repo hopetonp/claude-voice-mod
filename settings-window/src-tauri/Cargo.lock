@@ -3991,6 +3991,7 @@ dependencies = [
 name = "voicemesh-settings-window"
 version = "0.1.0"
 dependencies = [
+ "objc2",
  "tauri",
  "tauri-build",
  "tauri-plugin-single-instance",

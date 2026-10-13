@@ -11,3 +11,6 @@ tauri-build = { version = "2", features = [] }
 voicemesh-desktop = { path = "../../node_modules/@voicemesh/composer/native/settings-window" }
 tauri = { version = "2", features = ["macos-private-api"] }
 tauri-plugin-single-instance = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"

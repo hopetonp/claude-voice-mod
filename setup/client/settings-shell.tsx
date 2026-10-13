@@ -8,13 +8,24 @@ declare const __VOICEMESH_COMPOSER_VERSION__: string
 declare const __VOICE_MOD_VERSION__: string
 
 const sections = ['display', 'provider', 'conversation', 'troubleshooting'] as const
+const sectionStorageKey = 'voicemesh-claude-settings-section'
 const labels = { display: 'shell.general', provider: 'shell.provider', conversation: 'shell.conversation' }
 const descriptions = { display: 'shell.generalSummary', provider: 'shell.providerSummary', conversation: 'shell.conversationSummary' }
 
+function savedSection(): typeof sections[number] {
+  try {
+    const saved = localStorage.getItem(sectionStorageKey)
+    return sections.find(section => section === saved) ?? 'display'
+  } catch { return 'display' }
+}
+
 /** Claude-specific recovery belongs in the harness, alongside the shared editor. */
 export function SettingsShell({ locale, onClose }: { locale: string; onClose?: () => void }) {
-  const [section, setSection] = useState<typeof sections[number]>('display')
-  const [canRelease, setCanRelease] = useState(false)
+  const [section, setSection] = useState<typeof sections[number]>(savedSection)
+  const [canRelease, setCanRelease] = useState<boolean | null>(null)
+  useEffect(() => {
+    try { localStorage.setItem(sectionStorageKey, section) } catch { /* Settings still work if storage is unavailable. */ }
+  }, [section])
   useEffect(() => {
     let active = true
     async function check() {
@@ -27,15 +38,16 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
     const timer = setInterval(() => { void check() }, 3000)
     return () => { active = false; clearInterval(timer) }
   }, [])
-  useEffect(() => { if (!canRelease && section === 'troubleshooting') setSection('display') }, [canRelease, section])
+  useEffect(() => { if (canRelease === false && section === 'troubleshooting') setSection('display') }, [canRelease, section])
+  const visibleSection = section === 'troubleshooting' && canRelease !== true ? 'display' : section
   const t = createTranslator(locale)
   return <div className="vm-settings-shell">
     {onClose && <div className="window-chrome"><button className="window-close" type="button" aria-label={t('shell.close')} onClick={onClose}>✕</button></div>}
     <div className="settings-layout">
       <nav className="settings-sidebar" aria-label={t('shell.navigation')}>
         <div className="settings-sidebar-label">{t('shell.title')}</div>
-        {sections.filter(id => id !== 'troubleshooting' || canRelease).map(id => <button key={id} type="button" className={`settings-nav-item${section === id ? ' selected' : ''}`}
-          aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}>
+        {sections.filter(id => id !== 'troubleshooting' || canRelease === true).map(id => <button key={id} type="button" className={`settings-nav-item${visibleSection === id ? ' selected' : ''}`}
+          aria-current={visibleSection === id ? 'page' : undefined} onClick={() => setSection(id)}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
             {id === 'provider' ? <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 10a6 6 0 0 0 12 0M12 16v5M8 21h8" /></>
               : id === 'conversation' ? <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H4l2.2-3.5A7.5 7.5 0 1 1 20 11.5Z" />
@@ -46,11 +58,11 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
         </button>)}
       </nav>
       <div className="settings-main">
-        <header className="settings-section-header"><h1>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[section])}</h1>
-          {section === 'troubleshooting' ? <p>{voiceText(locale, 'troubleshooting.summary')}</p>
-            : t(descriptions[section]) && <p>{t(descriptions[section])}</p>}</header>
-        {section === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
-          activeSection={section} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
+        <header className="settings-section-header"><h1>{visibleSection === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[visibleSection])}</h1>
+          {visibleSection === 'troubleshooting' ? <p>{voiceText(locale, 'troubleshooting.summary')}</p>
+            : t(descriptions[visibleSection]) && <p>{t(descriptions[visibleSection])}</p>}</header>
+        {visibleSection === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
+          activeSection={visibleSection} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
           footerRight={<div className="settings-footer-versions" aria-label={t('shell.installedVersions')}>
             <div>{t('shell.composerVersion', { version: __VOICEMESH_COMPOSER_VERSION__ })}</div>
             <div>{t('shell.voiceModVersion', { version: __VOICE_MOD_VERSION__ })}</div>

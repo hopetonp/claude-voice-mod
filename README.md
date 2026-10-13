@@ -1,6 +1,6 @@
 # Claude Voice Mod
 
-Have a two-way, natural voice conversation with Claude Code on macOS or Windows. Ask questions or give coding requests, then hear Claude summarize the result. You can hear progress as it works or wait for the outcome. **Plain-language summaries** in Voice Settings → Conversation make spoken results less technical.
+Have a bidirectional, natural voice conversation with Claude Code on macOS or Windows desktop. Ask questions or give coding requests, then hear Claude summarize the result. You can hear progress as it works or wait for the outcome. **Plain-language summaries** option in Voice Settings → Conversation makes spoken results less technical if desired.
 
 ## How voice works
 

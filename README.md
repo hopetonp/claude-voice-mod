@@ -30,7 +30,11 @@ On macOS the build creates `release/voicemesh-claude-macos-<architecture>-<versi
 
 Run `uninstall.sh` or `uninstall.ps1` from the built package directory to remove the host and Mods. Saved settings and credentials remain in place.
 
-Fresh-clone installation and live voice behavior on each platform still need verification.
+Fresh-clone build and installation were verified on macOS arm64 at commit `7c32277`. Windows fresh-clone installation and live voice behavior on both platforms still need verification.
+
+## Source use
+
+You may clone this repository, build VoiceMesh, and run it for your own use. Permission to redistribute the source or built packages, publish modified versions, or incorporate this code into another project is not granted. Third-party components retain their own terms.
 
 ## Repository layout
 

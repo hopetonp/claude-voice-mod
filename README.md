@@ -32,9 +32,9 @@ Run `uninstall.sh` or `uninstall.ps1` from the built package directory to remove
 
 Fresh-clone build and installation were verified on macOS arm64 at commit `7c32277`. Windows fresh-clone installation and live voice behavior on both platforms still need verification.
 
-## Source use
+## License
 
-You may clone this repository, build VoiceMesh, and run it for your own use. Permission to redistribute the source or built packages, publish modified versions, or incorporate this code into another project is not granted. Third-party components retain their own terms.
+Claude Voice Mod is available under the [MIT License](LICENSE). Third-party components retain their own terms.
 
 ## Repository layout
 

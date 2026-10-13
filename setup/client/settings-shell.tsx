@@ -44,10 +44,6 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
           </svg>
           <span>{id === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[id])}</span>
         </button>)}
-        <div className="settings-sidebar-versions" aria-label="Installed versions">
-          <div>VoiceMesh Composer <span>v{__VOICEMESH_COMPOSER_VERSION__}</span></div>
-          <div>Voice Mod <span>v{__VOICE_MOD_VERSION__}</span></div>
-        </div>
       </nav>
       <div className="settings-main">
         <header className="settings-section-header"><h1>{section === 'troubleshooting' ? voiceText(locale, 'troubleshooting.tab') : t(labels[section])}</h1>
@@ -55,6 +51,9 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
             : t(descriptions[section]) && <p>{t(descriptions[section])}</p>}</header>
         {section === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
           activeSection={section} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
+          footerRight={<div className="settings-footer-versions" aria-label="Installed versions">
+            <div>Composer v{__VOICEMESH_COMPOSER_VERSION__}</div><div>Voice Mod v{__VOICE_MOD_VERSION__}</div>
+          </div>}
           providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }} />}
       </div>
     </div>

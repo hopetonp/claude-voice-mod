@@ -1,0 +1,21 @@
+{
+  "name": "claude-voice-mod",
+  "version": "0.1.210",
+  "description": "Install the prebuilt VoiceMesh Mod beta for Claude Code",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hopetonp/claude-voice-mod.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "claude-voice-mod": "install.mjs"
+  },
+  "files": ["install.mjs"],
+  "scripts": {
+    "postinstall": "node install.mjs"
+  }
+}

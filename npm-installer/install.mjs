@@ -11,9 +11,9 @@ import { fileURLToPath } from 'node:url'
 
 const version = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version
 const checksums = {
-  'darwin-arm64': 'd1600d96d286d9a0788fba716797aa4a0a71f7b11269b17c32036b49880e7c1b',
-  'darwin-x64': 'fe0be0bd99260dad5074c84f4488669dc3bcd8d045b9eaa520f71b5a37fb301e',
-  'win32-x64': '3257f3ed9f5d8f3b852ed68cd6e34ed3efa6ea2cda983d92edb76387bdf4cef0',
+  'darwin-arm64': '629645d2262e9dc59f728831b7a8c6e0afc4b985da9b7225ac3bc1a83446bc7b',
+  'darwin-x64': 'c17b62c2ae263e07afe51a032e3fbd6e2c33c3da1d1fe3091de861b4e5f7e4ee',
+  'win32-x64': '0c66fe02a84cd7caf1ab54389ecac8f180876b54b515fc8fcd5858f101b1e2cf',
 }
 
 export function releaseFor(platform = process.platform, arch = process.arch) {

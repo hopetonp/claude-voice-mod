@@ -1,6 +1,6 @@
 {
   "name": "claude-voice-mod",
-  "version": "0.1.211",
+  "version": "0.1.212",
   "description": "Install the prebuilt VoiceMesh Mod beta for Claude Code",
   "author": "Hopeton Palmer",
   "license": "MIT",

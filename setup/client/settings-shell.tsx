@@ -65,7 +65,7 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
           activeSection={visibleSection} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
           footerRight={<div className="settings-footer-versions" aria-label={t('shell.installedVersions')}>
             <div>{t('shell.composerVersion', { version: __VOICEMESH_COMPOSER_VERSION__ })}</div>
-            <div>{t('shell.voiceModVersion', { version: __VOICE_MOD_VERSION__ })}</div>
+            <div>{t('shell.voiceModVersion', { version: __VOICE_MOD_VERSION__ })} · Beta</div>
           </div>}
           providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }} />}
       </div>

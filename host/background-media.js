@@ -22,7 +22,21 @@ export async function startBackgroundMedia(url) {
       // The page is never visible, so Chrome would otherwise treat it as a background page: slow its
       // timers, deprioritize its renderer, and (on Windows) consider it occluded.
       '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
-      '--disable-backgrounding-occluded-windows', '--disable-features=IntensiveWakeUpThrottling,CalculateNativeWinOcclusion',
+      '--disable-backgrounding-occluded-windows',
+      // Chrome honors only the last --disable-features, so every feature goes in this one flag. The
+      // omnibox popups are browser UI pages a headless window never shows (each costs a renderer).
+      // The rest are browser services the media page never uses: on-device history embeddings (its own
+      // model process), optimization hints, Cast, Translate, Lens and the back-forward cache.
+      '--disable-features=IntensiveWakeUpThrottling,CalculateNativeWinOcclusion,WebUIOmniboxPopup,WebUIOmniboxAimPopup,'
+        + 'HistoryEmbeddings,PassageEmbedder,OptimizationHints,MediaRouter,Translate,LensOverlay,BackForwardCache,SpareRenderer',
+      // The network service runs inside the browser process instead of a process of its own.
+      '--enable-features=NetworkServiceInProcess2',
+      // Chrome's own background traffic: update checks, sync and default apps.
+      '--disable-background-networking', '--disable-component-update', '--disable-sync', '--disable-default-apps',
+      // The media page only does audio (no canvas or WebGL), so it needs no GPU process.
+      '--disable-gpu',
+      // One page needs one renderer: no spare renderer kept warm, and graphics in the browser process.
+      '--renderer-process-limit=1', '--in-process-gpu',
       '--autoplay-policy=no-user-gesture-required',
       '--use-fake-ui-for-media-stream', `--user-data-dir=${profile}`,
       // Local-only DevTools endpoint, for inspecting the page while diagnosing it.

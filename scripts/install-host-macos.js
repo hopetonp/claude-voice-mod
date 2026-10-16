@@ -28,7 +28,8 @@ if (process.argv[2] === '--dev-connections') {
   if (!developmentConnections || !isAbsolute(developmentConnections)) throw new Error('Pass an absolute development connection file path')
 } else if (process.argv.length > 2) throw new Error('Usage: install-host-macos.js [--dev-connections /absolute/path | --remove]')
 
-const args = [process.execPath, join(root, 'scripts', 'launch-host.js'), ...(developmentConnections ? [developmentConnections] : [])]
+// A 2 MB semi-space keeps V8's young generation, and so the long-running host's heap, small.
+const args = [process.execPath, '--max-semi-space-size=2', join(root, 'scripts', 'launch-host.js'), ...(developmentConnections ? [developmentConnections] : [])]
 // launchd does not inherit an interactive shell's PATH. Local model installation needs
 // a current Python and npm, both commonly installed by Homebrew on macOS.
 const servicePath = [dirname(process.execPath), '/opt/homebrew/bin', '/usr/local/bin', '/usr/bin', '/bin', '/usr/sbin', '/sbin'].join(':')

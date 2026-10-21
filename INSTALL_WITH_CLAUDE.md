@@ -2,13 +2,13 @@
 
 Give an AI agent with shell access on the target Mac or Windows PC this request:
 
-> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Download the latest published VoiceMesh Claude Mod release ZIP for this computer from https://github.com/hopetonp/claude-voice-mod/releases/latest, verify its checksum, extract it, and run its installer. Verify both Mods and the local host. Tell me when to restart Claude. Do not build from source.
+> Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Download the newest published VoiceMesh Claude Mod beta ZIP for this computer from https://github.com/hopetonp/claude-voice-mod/releases, verify its checksum, extract it, and run its installer. Verify both Mods and the local host. Tell me when to restart Claude. Do not build from source.
 
 ## Instructions for Claude
 
-Use a local agent session on the computer that will run VoiceMesh. Confirm that Claude Code or Claude Desktop Code and the `claude` CLI are installed. Chrome is required for voice media. The prebuilt ZIP includes the Node runtime, settings app, both Mods, and their local host; Git, npm, Rust, and C++ build tools are not needed on the target computer.
+Use a local agent session on the computer that will run VoiceMesh. Confirm that Claude Code or Claude Desktop Code and the `claude` CLI are installed. Chrome is required for voice media. On macOS, install [Chrome for Testing](https://developer.chrome.com/docs/automation-and-testing/download-test-binaries) in `~/Applications` or `/Applications` to keep the hidden media worker separate from the regular Chrome app; VoiceMesh prefers it when present. The prebuilt ZIP includes the Node runtime, settings app, both Mods, and their local host; Git, npm, Rust, and C++ build tools are not needed on the target computer.
 
-Open the [latest published release](https://github.com/hopetonp/claude-voice-mod/releases/latest). Choose the asset matching the operating system and CPU:
+Open [GitHub releases](https://github.com/hopetonp/claude-voice-mod/releases) and select the newest published beta. GitHub's “Latest” badge can point to an older non-beta release. Choose the asset matching the operating system and CPU:
 
 | Computer | Release asset |
 | --- | --- |

@@ -55,6 +55,53 @@ test('a claimed voice request can observe its turn after Mod reload', async () =
   await exerciseRecovery({ id: 'voice-two', text: 'Read the README', mode: 'submit', status: 'claimed', turnId: null })
 })
 
+test('a pending Claude submission does not stop voice state polling', async () => {
+  const { register } = await import('../hooks/register.js?recovery=pending-submit')
+  const handlers = new Map()
+  register((name, options, handler) => handlers.set(name, handler ?? options))
+  let tick
+  let phase = 'standby'
+  let task = { id: 'voice-pending', text: 'Read the README', mode: 'submit', status: 'queued' }
+  let submitted = 0
+  let invalidated = 0
+  const posts = []
+  const $ = {
+    env: { get: async () => '/tmp' },
+    fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
+    session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
+    command: { register: async () => {} },
+    store: { get: async () => [], set: async () => {} },
+    clock: { every(_ms, callback) { tick = callback } },
+    ui: { invalidate() { invalidated++ }, log() {}, toast() {} },
+    prompt: { submit: () => { submitted++; return new Promise(() => {}) } },
+    http: { fetch: async (url, options = {}) => {
+      const path = new URL(url).pathname
+      if (options.method === 'POST') {
+        posts.push(path)
+        if (path === '/api/claude/claim') task = { ...task, status: 'claimed' }
+        if (path === '/api/claude/submitting') task = { ...task, status: 'submitting' }
+        return { ok: true, text: '{}' }
+      }
+      return { ok: true, text: JSON.stringify(path === '/api/state'
+        ? { phase, mediaConnected: true, voiceConfigured: true, selectedSession: 'claude-session' }
+        : { task }) }
+    } },
+  }
+  await Promise.race([
+    handlers.get('session.start')($, {}, async () => {}),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('voice polling waited for Claude submission')), 100)),
+  ])
+  assert.equal(submitted, 1)
+  const before = invalidated
+  phase = 'listening'
+  tick()
+  await new Promise(setImmediate)
+  assert.ok(invalidated > before, 'a new media phase redraws the panel while submission waits')
+  await handlers.get('ui.message')($, { element: 'voice-icon-mute', data: { action: 'mute' } }, async () => {})
+  assert.ok(posts.includes('/api/control'), 'panel controls still reach the host while submission waits')
+  assert.equal(submitted, 1, 'polling does not submit the task twice')
+})
+
 test('a new pre-submit claim is released on Mod reload without replaying the prompt', async () => {
   const { register } = await import('../hooks/register.js?recovery=pre-submit')
   const handlers = new Map()

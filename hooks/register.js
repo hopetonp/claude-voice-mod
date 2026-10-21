@@ -397,7 +397,10 @@ async function finishHandoff($) {
   // release a pre-submit claim, but must never replay an uncertain submission.
   await postBridge($, '/api/claude/submitting', { id: voiceTask.id, sessionId })
   voiceTask.handoff = null
-  await $.prompt.submit({ text: voiceTask.text, asUser: true })
+  // submit may wait for an already-running turn to become idle. Keep the timer free to
+  // poll media and redraw the controls while that handoff waits.
+  void $.prompt.submit({ text: voiceTask.text, asUser: true })
+    .catch(() => show($, vt('status.handoffInterrupted')))
 }
 
 async function refreshCaptions($) {

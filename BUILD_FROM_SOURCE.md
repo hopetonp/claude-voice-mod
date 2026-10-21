@@ -8,7 +8,7 @@ Give an AI agent with shell access on the target Mac or Windows PC this request:
 
 Use a local agent session with shell access on the computer that will run VoiceMesh. Clone the repository, build on that computer, and install from the resulting directory. Do not use a GitHub-generated source archive as an installer: it lacks the compiled settings window and runtime. For an installation without build tools, use the [prebuilt release guide](INSTALL_WITH_CLAUDE.md).
 
-Confirm that Claude Code or Claude Desktop Code and the `claude` CLI are installed. Chrome is required for voice media. Building requires Git, Node.js 22.19 or later, npm, Rust, and Cargo. Windows also requires Visual Studio C++ build tools and the Windows SDK. If a required tool is missing, report it and stop rather than substituting an unrelated binary.
+Confirm that Claude Code or Claude Desktop Code and the `claude` CLI are installed. Chrome is required for voice media. On macOS, install [Chrome for Testing](https://developer.chrome.com/docs/automation-and-testing/download-test-binaries) in `~/Applications` or `/Applications` to keep the hidden media worker separate from the regular Chrome app; VoiceMesh prefers it when present. Building requires Git, Node.js 22.19 or later, npm, Rust, and Cargo. Windows also requires Visual Studio C++ build tools and the Windows SDK. If a required tool is missing, report it and stop rather than substituting an unrelated binary.
 
 On either platform, clone and build the shared components:
 

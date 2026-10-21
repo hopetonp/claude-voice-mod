@@ -1,6 +1,6 @@
 {
   "name": "voicemesh-controls",
-  "version": "0.1.213",
+  "version": "0.1.214",
   "description": "VoiceMesh controls and Claude Code session bridge",
   "author": {
     "name": "Hopeton Palmer"

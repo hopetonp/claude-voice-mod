@@ -1,15 +1,21 @@
 /** Own Composer's browser audio runtime without a visible media tab. */
 import { execFileSync, spawn } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { mkdir } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { spawnBackground } from '@voicemesh/composer/desktop/server'
 
 export async function startBackgroundMedia(url) {
-  const browser = process.env.VOICE_MEDIA_BROWSER ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  const chromeForTesting = [
+    join(homedir(), 'Applications', 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing'),
+    '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+  ].find(existsSync)
+  const browser = process.env.VOICE_MEDIA_BROWSER ?? chromeForTesting ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   const appEnd = browser.indexOf('.app/')
   const browserApp = process.platform === 'darwin' && appEnd !== -1 ? browser.slice(0, appEnd + 4) : null
-  const profile = process.env.VOICE_MEDIA_PROFILE ?? join(homedir(), '.claude', 'voicemesh-controls', 'media-profile')
+  const profile = process.env.VOICE_MEDIA_PROFILE ?? join(homedir(), '.claude', 'voicemesh-controls',
+    browser === chromeForTesting ? 'media-profile-cft' : 'media-profile')
   await mkdir(profile, { recursive: true, mode: 0o700 })
   let child
   let closing = false

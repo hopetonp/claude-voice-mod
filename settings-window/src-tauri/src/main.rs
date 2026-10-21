@@ -22,9 +22,134 @@ fn round_native_mac_window(window: &WebviewWindow) {
     }
 }
 
-// The launch click identifies Claude's display. Center Settings on that
-// display so moving the pointer does not move the window toward an edge.
+#[cfg(target_os = "macos")]
+fn claude_window_center() -> Option<(f64, f64)> {
+    use core_foundation::{
+        base::{CFType, TCFType},
+        dictionary::CFDictionary,
+        number::CFNumber,
+        string::CFString,
+    };
+    use core_graphics::window::{
+        create_description_from_array, create_window_list, kCGNullWindowID, kCGWindowBounds,
+        kCGWindowLayer, kCGWindowListExcludeDesktopElements, kCGWindowListOptionOnScreenOnly,
+        kCGWindowOwnerPID,
+    };
+    use objc2_app_kit::NSRunningApplication;
+    use objc2_foundation::ns_string;
+
+    let apps = NSRunningApplication::runningApplicationsWithBundleIdentifier(
+        ns_string!("com.anthropic.claudefordesktop"),
+    );
+    let pids: Vec<i32> = apps.iter().map(|app| app.processIdentifier()).collect();
+    if pids.is_empty() {
+        return None;
+    }
+    let ids = create_window_list(
+        kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
+        kCGNullWindowID,
+    )?;
+    let windows = create_description_from_array(ids)?;
+    for info in windows.iter() {
+        let pid_key = unsafe { CFString::wrap_under_get_rule(kCGWindowOwnerPID) };
+        let layer_key = unsafe { CFString::wrap_under_get_rule(kCGWindowLayer) };
+        let bounds_key = unsafe { CFString::wrap_under_get_rule(kCGWindowBounds) };
+        let Some(pid) = info
+            .find(&pid_key)
+            .and_then(|value| value.downcast::<CFNumber>())
+            .and_then(|value| value.to_i32())
+        else {
+            continue;
+        };
+        let Some(layer) = info
+            .find(&layer_key)
+            .and_then(|value| value.downcast::<CFNumber>())
+            .and_then(|value| value.to_i32())
+        else {
+            continue;
+        };
+        if !pids.contains(&pid) || layer != 0 {
+            continue;
+        }
+        let Some(bounds) = info
+            .find(&bounds_key)
+            .and_then(|value| value.downcast::<CFDictionary>())
+        else {
+            continue;
+        };
+        let bounds: CFDictionary<CFString, CFType> =
+            unsafe { CFDictionary::wrap_under_get_rule(bounds.as_concrete_TypeRef()) };
+        let value = |key: &str| -> Option<f64> {
+            bounds.find(&CFString::new(key))?.downcast::<CFNumber>()?.to_f64()
+        };
+        let (Some(x), Some(y), Some(width), Some(height)) =
+            (value("X"), value("Y"), value("Width"), value("Height"))
+        else {
+            continue;
+        };
+        if width >= 300.0 && height >= 200.0 {
+            return Some((x + width / 2.0, y + height / 2.0));
+        }
+    }
+    None
+}
+
+#[cfg(target_os = "macos")]
+fn place_over_claude(window: &WebviewWindow) -> bool {
+    use objc2::MainThreadMarker;
+    use objc2_app_kit::{NSScreen, NSWindow};
+
+    let Some((x, y)) = claude_window_center() else {
+        return false;
+    };
+    let Some(mtm) = MainThreadMarker::new() else {
+        return false;
+    };
+    let screens = NSScreen::screens(mtm);
+    let Some(primary) = screens.iter().find(|screen| {
+        let frame = screen.frame();
+        frame.origin.x == 0.0 && frame.origin.y == 0.0
+    }) else {
+        return false;
+    };
+    // Core Graphics uses a top-left origin; AppKit uses a bottom-left origin.
+    let cocoa_y = primary.frame().size.height - y;
+    let Some(screen) = screens.iter().find(|screen| {
+        let frame = screen.frame();
+        x >= frame.origin.x && x < frame.origin.x + frame.size.width
+            && cocoa_y >= frame.origin.y && cocoa_y < frame.origin.y + frame.size.height
+    }) else {
+        return false;
+    };
+    let Ok(native) = window.ns_window() else {
+        return false;
+    };
+    let native = unsafe { &*native.cast::<NSWindow>() };
+    let frame = native.frame();
+    let visible = screen.visibleFrame();
+    let max_left = (visible.origin.x + visible.size.width - frame.size.width).max(visible.origin.x);
+    let max_bottom = (visible.origin.y + visible.size.height - frame.size.height).max(visible.origin.y);
+    let left = (x - frame.size.width / 2.0).clamp(visible.origin.x, max_left);
+    let bottom = (cocoa_y - frame.size.height / 2.0).clamp(visible.origin.y, max_bottom);
+    native.setFrameOrigin(objc2_foundation::NSPoint::new(left, bottom));
+    true
+}
+
+#[cfg(all(test, target_os = "macos"))]
+mod tests {
+    #[test]
+    #[ignore = "requires Claude Desktop to be running with a visible window"]
+    fn finds_claude_window_without_screen_recording() {
+        assert!(super::claude_window_center().is_some());
+    }
+}
+
+// Fallback when Claude has no visible window, and for non-macOS hosts.
 fn place_over_invoking_screen(window: &WebviewWindow) {
+    #[cfg(target_os = "macos")]
+    if place_over_claude(window) {
+        return;
+    }
     let app = window.app_handle();
     let Ok(cursor) = app.cursor_position() else { return };
     let Ok(Some(monitor)) = app.monitor_from_point(cursor.x, cursor.y) else { return };

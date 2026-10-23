@@ -2,6 +2,13 @@ name: Build installable packages
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_npm_tag:
+        description: 'Publish the npm beta installer for an existing published release (e.g. v0.1.215); leave blank to build packages'
+        required: false
+        type: string
+  release:
+    types: [published]
   push:
     tags:
       - 'v*'
@@ -11,6 +18,7 @@ permissions:
 
 jobs:
   macos:
+    if: github.event_name != 'release' && inputs.publish_npm_tag == ''
     strategy:
       fail-fast: false
       matrix:
@@ -49,6 +57,7 @@ jobs:
           if-no-files-found: error
 
   windows:
+    if: github.event_name != 'release' && inputs.publish_npm_tag == ''
     runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +101,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: github.ref_type == 'tag'
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     needs: [macos, windows]
     runs-on: ubuntu-24.04
     permissions:
@@ -112,3 +121,49 @@ jobs:
           test "$(find . -maxdepth 1 -name '*.zip' | wc -l)" -eq 3
           sha256sum ./*.zip > SHA256SUMS
           gh release create "$GITHUB_REF_NAME" ./*.zip SHA256SUMS --draft --title "VoiceMesh Claude Mod $GITHUB_REF_NAME" --generate-notes
+
+  npm:
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish_npm_tag != '')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: npm-publish
+      cancel-in-progress: false
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.publish_npm_tag }}
+    steps:
+      - name: Validate release tag
+        run: '[[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]'
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Verify installer version and published release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version=$(node -p "require('./npm-installer/package.json').version")
+          test "$RELEASE_TAG" = "v$version"
+          test "$version" = "$(node -p "require('./.claude-plugin/plugin.json').version")"
+          gh release view "$RELEASE_TAG" --json isDraft,assets > "$RUNNER_TEMP/npm-release.json"
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict'
+          import { readFileSync } from 'node:fs'
+          const release = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/npm-release.json`, 'utf8'))
+          assert.equal(release.isDraft, false, 'Release must be published before npm')
+          const version = process.env.RELEASE_TAG.slice(1)
+          for (const name of ['SHA256SUMS', `voicemesh-claude-macos-arm64-${version}.zip`,
+            `voicemesh-claude-macos-x64-${version}.zip`, `voicemesh-claude-win-x64-${version}.zip`]) {
+            assert.ok(release.assets.some(asset => asset.name === name && asset.state === 'uploaded'), `Missing release asset: ${name}`)
+          }
+          JS
+      - name: Publish beta installer with npm trusted publishing
+        working-directory: npm-installer
+        run: npm publish --tag beta --access public

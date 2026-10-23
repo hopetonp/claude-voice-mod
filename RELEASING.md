@@ -8,3 +8,11 @@ The [Build installable packages](.github/workflows/release-packages.yml) workflo
 4. Publish the draft release on GitHub. The [prebuilt installation guide](INSTALL_WITH_CLAUDE.md) then points users to it as the latest release.
 
 To check archive creation without making a release, run the workflow manually from GitHub Actions. Manual runs keep the ZIPs as workflow artifacts and do not create a release.
+
+## npm beta installer
+
+The `npm` job in `release-packages.yml` publishes `npm-installer/` using npm trusted publishing (GitHub OIDC). Configure the npm package's trusted publisher for `hopetonp/claude-voice-mod` and workflow filename `release-packages.yml`, with direct publishing allowed. No npm token is used.
+
+Keep `npm-installer/package.json` at the Mod release version. Publishing a GitHub release triggers the npm beta job; its version and all four release assets must be present before npm publication. To publish an existing release, run the workflow manually with `publish_npm_tag` set to its tag (for example, `v0.1.215`). This skips package builds. Leave the input blank for the existing package-build smoke run.
+
+Releases published by another workflow using `GITHUB_TOKEN` do not trigger a second workflow. In that case, dispatch the npm job explicitly after publishing the GitHub release.

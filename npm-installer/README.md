@@ -12,6 +12,6 @@ With pnpm, run the installer directly:
 pnpm dlx claude-voice-mod@beta
 ```
 
-Installation downloads the matching [v0.1.214 Beta GitHub release](https://github.com/hopetonp/claude-voice-mod/releases/tag/v0.1.214), checks its SHA-256 digest, and runs the bundled installer. It requires the Claude CLI and Chrome; it does not compile code or require Rust. Restart Claude after installation.
+Installation downloads the matching [v0.1.215 Beta GitHub release](https://github.com/hopetonp/claude-voice-mod/releases/tag/v0.1.215), checks its SHA-256 digest, and runs the bundled installer. It requires the Claude CLI and Chrome; it does not compile code or require Rust. Restart Claude after installation.
 
 This package supports macOS arm64, macOS x64, and Windows x64. If npm lifecycle scripts are disabled, the installer does not run.

@@ -9,6 +9,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Voice पन्ना जवाब नइखे देत"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "शुरू हो रहल बा..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Voice सेटअप जरूरी बा"
@@ -222,6 +226,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "የድምጽ ገጽ ምላሽ እየሰጠ አይደለም"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "በማስጀመር ላይ..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -437,6 +445,10 @@ export default {
       "source": "Voice page not responding",
       "text": "ভয়েস পেজ সাড়া দিচ্ছে না"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "চালু হচ্ছে..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "ভয়েস সেটআপ প্রয়োজন"
@@ -650,6 +662,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "语音页面未响应"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "正在初始化..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -865,6 +881,10 @@ export default {
       "source": "Voice page not responding",
       "text": "語音頁面沒有回應"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "正在初始化..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "需要設定語音"
@@ -1078,6 +1098,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Stemmeside svarer ikke"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Initialiserer..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -1293,6 +1317,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Hindi tumutugon ang voice page"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Sinisimulan..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Kailangan ng pag-setup ng boses"
@@ -1506,6 +1534,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Äänisivu ei vastaa"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Alustetaan..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -1721,6 +1753,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Spraakpagina reageert niet"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Initialiseren..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Spraakconfiguratie vereist"
@@ -1934,6 +1970,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "La page vocale ne répond pas"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Initialisation..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -2149,6 +2189,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Voice પેજ પ્રતિસાદ આપી રહ્યું નથી"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "પ્રારંભ થઈ રહ્યો છે..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Voice સેટઅપ આવશ્યક છે"
@@ -2362,6 +2406,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Voice-Seite antwortet nicht"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Wird initialisiert..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -2577,6 +2625,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Shafin murya ba ya amsawa"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Ana farawa..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Ana buƙatar saita murya"
@@ -2790,6 +2842,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "वॉइस पेज रिस्पॉन्ड नहीं कर रहा है"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "शुरू हो रहा है..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3005,6 +3061,10 @@ export default {
       "source": "Voice page not responding",
       "text": "音声ページが応答していません"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "初期化中..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "音声のセットアップが必要です"
@@ -3218,6 +3278,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Halaman suara tidak merespons"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Menginisialisasi..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3433,6 +3497,10 @@ export default {
       "source": "Voice page not responding",
       "text": "La pagina vocale non risponde"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Inizializzazione..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Configurazione vocale necessaria"
@@ -3646,6 +3714,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "음성 페이지 응답 없음"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "초기화 중..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3861,6 +3933,10 @@ export default {
       "source": "Voice page not responding",
       "text": "ಧ್ವನಿ ಪುಟವು ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತಿಲ್ಲ"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "ಪ್ರಾರಂಭಿಸಲಾಗುತ್ತಿದೆ..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "ಧ್ವನಿ ಸೆಟಪ್ ಅಗತ್ಯವಿದೆ"
@@ -4074,6 +4150,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "വോയ്സ് പേജ് പ്രതികരിക്കുന്നില്ല"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "ആരംഭിക്കുന്നു..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -4289,6 +4369,10 @@ export default {
       "source": "Voice page not responding",
       "text": "व्हॉइस पेज प्रतिसाद देत नाही"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "सुरू होत आहे..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "व्हॉइस सेटअप आवश्यक आहे"
@@ -4502,6 +4586,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Página de voz não está respondendo"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Inicializando..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -4717,6 +4805,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Talesiden svarer ikke"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Initialiserer..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Taleoppsett kreves"
@@ -4930,6 +5022,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Голосовая страница не отвечает"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Инициализация..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -5145,6 +5241,10 @@ export default {
       "source": "Voice page not responding",
       "text": "La página de voz no responde"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Inicializando..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Configuración de voz requerida"
@@ -5358,6 +5458,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Página de voz no responde"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Inicializando..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -5573,6 +5677,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Ukurasa wa sauti hauitikii"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Inaanzisha..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Usanidi wa sauti unahitajika"
@@ -5786,6 +5894,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Röstsidan svarar inte"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Initierar..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6001,6 +6113,10 @@ export default {
       "source": "Voice page not responding",
       "text": "குரல் பக்கம் பதிலளிக்கவில்லை"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "தொடங்குகிறது..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "குரல் அமைப்பு தேவைப்படுகிறது"
@@ -6214,6 +6330,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "వాయిస్ పేజీ స్పందించడం లేదు"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "ప్రారంభిస్తోంది..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6429,6 +6549,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Ses sayfası yanıt vermiyor"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Başlatılıyor..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Ses kurulumu gerekli"
@@ -6642,6 +6766,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "หน้าเสียงไม่ตอบสนอง"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "กำลังเริ่มต้น..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6857,6 +6985,10 @@ export default {
       "source": "Voice page not responding",
       "text": "Голосова сторінка не відповідає"
     },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Ініціалізація..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Потрібне налаштування голосу"
@@ -7070,6 +7202,10 @@ export default {
     "status.pageNotResponding": {
       "source": "Voice page not responding",
       "text": "Trang Voice không phản hồi"
+    },
+    "status.initializing": {
+      "source": "Initializing...",
+      "text": "Đang khởi tạo..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",

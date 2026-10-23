@@ -20,7 +20,7 @@ import { previewRealtime } from './realtime-preview.js'
 import { probeRealtimeConnection } from './realtime-diagnostics.js'
 import { probeRealtimeAudioTools } from './sts-audio-diagnostic.js'
 import { startBackgroundMedia } from './background-media.js'
-import { openSettingsWindow } from './settings-window.js'
+import { openSettingsWindow, stopSettingsWindows } from './settings-window.js'
 import { claudeDesktopLocale, claudeDesktopTheme } from './claude-theme.js'
 import { classifyForVoice } from './classifier.js'
 import { addSteer, steerFollowUp, steerNote } from './voice-steer.js'
@@ -1131,13 +1131,27 @@ await writeFile(connectionFile, JSON.stringify({ url: `http://127.0.0.1:${addres
 console.log(`VoiceMesh media host: http://127.0.0.1:${address.port}/media/`)
 const mediaWorker = await startBackgroundMedia(`http://127.0.0.1:${address.port}/media/`)
 
-async function shutdown() {
-  mediaWorker.stop()
-  for (const socket of voiceSockets.clients) socket.close()
-  for (const socket of pipelineSockets.clients) socket.close()
-  server.close()
-  await Promise.all([localInstaller.dispose(), localVoice.dispose()])
-  await unlink(connectionFile).catch(() => {})
+let shuttingDown = false
+export async function shutdown() {
+  if (shuttingDown) return
+  shuttingDown = true
+  // Provider sockets and native workers may be slow to close; never leave a host behind.
+  const deadline = setTimeout(() => process.exit(0), 5000)
+  try {
+    mediaWorker.stop()
+    stopSettingsWindows()
+    for (const id of livePreviewSessions.keys()) closeLivePreview(id)
+    for (const socket of voiceSockets.clients) socket.close()
+    for (const socket of pipelineSockets.clients) socket.close()
+    server.close()
+    server.closeAllConnections()
+    // Remove discovery before waiting on native disposal, including a hung disposal.
+    await unlink(connectionFile).catch(() => {})
+    await Promise.allSettled([localInstaller.dispose(), localVoice.dispose()])
+  } finally {
+    clearTimeout(deadline)
+    process.exit(0)
+  }
 }
 process.once('SIGINT', () => void shutdown())
 process.once('SIGTERM', () => void shutdown())

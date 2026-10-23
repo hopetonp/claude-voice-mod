@@ -35,3 +35,7 @@ export async function openSettingsWindow(url, { onClosed } = {}) {
   })
   child.unref()
 }
+
+export function stopSettingsWindows() {
+  for (const child of running) child.kill('SIGTERM')
+}

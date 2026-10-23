@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { once } from 'node:events'
 import { spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -31,7 +32,7 @@ async function startHost({ transcripts, tasks, claudeTranscript } = {}) {
     return { status: response.status, body: await response.json() }
   }
   const stop = async () => { child.kill('SIGTERM'); await rm(dir, { recursive: true, force: true }) }
-  return { call, stop }
+  return { call, stop, child, dir }
 }
 
 const request = (sessionId, id) => ({ id, text: `Work for ${sessionId}`, mode: 'submit', sessionId })
@@ -203,4 +204,24 @@ test("the captions route carries each spoken turn's routing record, for that ses
     const { sessionId, ...expected } = turn
     assert.deepEqual(body.turns, [expected])
   } finally { await host.stop() }
+})
+
+test('host exits and removes discovery on shutdown even with an open socket', { timeout: 10000 }, async () => {
+  const { createConnection } = await import('node:net')
+  const host = await startHost()
+  const connection = JSON.parse(await readFile(join(host.dir, 'connection.json'), 'utf8'))
+  const socket = createConnection({ host: '127.0.0.1', port: Number(new URL(connection.url).port) })
+  await once(socket, 'connect')
+  // Hold an incomplete HTTP request open across shutdown.
+  socket.write('GET /api/state HTTP/1.1\r\nHost: localhost\r\n')
+  try {
+    const exited = once(host.child, 'exit')
+    host.child.kill('SIGTERM')
+    const [code] = await exited
+    assert.equal(code, 0)
+    await assert.rejects(readFile(join(host.dir, 'connection.json')), { code: 'ENOENT' })
+  } finally {
+    socket.destroy()
+    await host.stop()
+  }
 })

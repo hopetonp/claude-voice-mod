@@ -1,3 +1,4 @@
+import { desktopRunning, watchDesktop } from '../host/desktop-lifecycle.js'
 import { readFile } from 'node:fs/promises'
 
 // Local development may borrow Composer Playground's existing connection.
@@ -12,4 +13,8 @@ if (developmentConnections) {
   process.env.OPENAI_VOICE = live.voice
 }
 
-await import('../host/server.js')
+// Packaged hosts follow the desktop app; direct `node host/server.js` remains a dev server.
+const managed = ['darwin', 'win32'].includes(process.platform)
+if (managed && await desktopRunning() === false) process.exit(0)
+const { shutdown } = await import('../host/server.js')
+if (managed) watchDesktop({ onExit: shutdown })

@@ -41,7 +41,7 @@ ${element('key', 'ProgramArguments')}<array>${args.map(value => element('string'
 ${element('key', 'WorkingDirectory')}${element('string', root)}
 ${element('key', 'EnvironmentVariables')}<dict>${element('key', 'PATH')}${element('string', servicePath)}</dict>
 ${element('key', 'RunAtLoad')}<true/>
-${element('key', 'KeepAlive')}<true/>
+${element('key', 'KeepAlive')}<dict>${element('key', 'SuccessfulExit')}<false/></dict>
 ${element('key', 'StandardOutPath')}${element('string', join(logDir, 'host.stdout.log'))}
 ${element('key', 'StandardErrorPath')}${element('string', join(logDir, 'host.stderr.log'))}
 </dict></plist>

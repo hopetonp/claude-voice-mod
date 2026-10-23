@@ -4,6 +4,7 @@ import catalogs from './voice-status-catalogs.js'
 export const english = {
   'status.hostNotConnected': 'Voice host not connected',
   'status.pageNotResponding': 'Voice page not responding',
+  'status.initializing': 'Initializing...',
   'status.setupNeeded': 'Voice setup needed',
   'status.error': 'Voice error: {detail}',
   'status.audioActivation': 'Composer needs audio activation',

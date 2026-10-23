@@ -8,10 +8,11 @@ import { voiceDuration } from './voice-duration.js'
 import { createCompletionOutbox } from './completion-outbox.js'
 
 let connection = null
-let status = 'Voice host not connected'
+let status = null
 let media = { phase: 'offline', muted: false, mediaConnected: false }
 const vt = (key, values) => voiceText(media.locale, key, values)
 let polling = false
+let mediaInitialized = false
 // When the user's live transcript and the voice's reply last changed, for the live line.
 let userChangedAt = 0
 let replyChangedAt = 0
@@ -207,7 +208,8 @@ async function refresh($) {
     }
     announced = new Set([...announced].filter(key => elsewhere.some(result => finish(result) === key)))
     const showing = !!currentLine(changedAt)
-    show($, !next.mediaConnected ? vt('status.pageNotResponding')
+    if (next.mediaConnected) mediaInitialized = true
+    show($, !next.mediaConnected ? vt(mediaInitialized ? 'status.pageNotResponding' : 'status.initializing')
       : next.voiceConfigured === false ? vt('status.setupNeeded')
         : next.phase === 'error' && next.error ? vt('status.error', { detail: next.error })
       : next.phase === 'needs-activation' ? vt('status.audioActivation')
@@ -227,7 +229,7 @@ async function refresh($) {
   } catch {
     connection = null
     media = { phase: 'offline', muted: false, mediaConnected: false, locale: media.locale }
-    show($, vt('status.hostNotConnected'))
+    show($, vt(mediaInitialized ? 'status.hostNotConnected' : 'status.initializing'))
   } finally {
     polling = false
   }
@@ -741,7 +743,7 @@ function voiceStrip($, e, original) {
   // DeepSeek's quick controls: the clock, or one word while parked or connecting, then the icons.
   // A problem the person must act on (host down, setup needed, an error) replaces the clock.
   const healthy = media.mediaConnected && media.voiceConfigured !== false && media.phase !== 'error' && media.phase !== 'needs-activation'
-  const label = !healthy || !connection ? status
+  const label = !healthy || !connection ? (status ?? vt('status.initializing'))
     : live ? duration(media.activeSeconds, media.locale) : parked ? vt('status.standby') : connecting ? vt('status.connectingShort') : ''
   const icon = (action, glyph, color, alt) => Box({
     position: 'relative', width: 3, height: BUTTON_ROWS,
@@ -843,8 +845,7 @@ async function recordDrawError($, error) {
   } catch {}
 }
 
-// A Windows marketplace package carries its own runtime. The Mac package does not,
-// so its existing host lifecycle is unchanged.
+// Windows launches a packaged runtime; macOS starts its registered launchd job.
 let packagedHostStarting = false
 
 async function packagedHostRunning($, home) {
@@ -873,7 +874,20 @@ async function packagedChromePath($) {
 }
 
 async function ensurePackagedHost($) {
-  const root = $.plugin.root
+  let root = $.plugin.root
+  // macOS keeps the host registered with launchd after a clean desktop shutdown.
+  const macHome = await $.env.get('HOME')
+  if (macHome && await $.fs.exists(`${macHome}/Library/LaunchAgents/com.voicemesh.claude-host.plist`)) {
+    if (await packagedHostRunning($, macHome)) return
+    for await (const _ of $.process.spawn({ argv: ['/bin/launchctl', 'start', 'com.voicemesh.claude-host'] })) {}
+    return
+  }
+  // The full Windows installer keeps its runtime beside app/, outside the Mod.
+  if (!await $.fs.exists(`${root}/runtime/node.exe`)) {
+    const localAppData = await $.env.get('LOCALAPPDATA')
+    if (!localAppData) return
+    root = `${localAppData}/VoiceMesh/ClaudeVoice`
+  }
   const node = `${root}/runtime/node.exe`
   if (!await $.fs.exists(node) || packagedHostStarting) return
   const home = await $.env.get('HOME') ?? await $.env.get('USERPROFILE')

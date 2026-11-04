@@ -14,6 +14,8 @@ test('voice history waits for the user row before starting the reply row', async
   let now = 1000
   Date.now = () => now
   let revision = 0
+  let phase = 'listening'
+  let invalidated = 0
   const rows = [
     { id: 'question', role: 'user', text: 'How are you?', final: true, spokenAt: 1000 },
     { id: 'reply', role: 'assistant', text: 'Doing well.', final: true, spokenAt: 1200 },
@@ -29,11 +31,11 @@ test('voice history waits for the user row before starting the reply row', async
     } },
     store: { get: async () => [], set: async () => {} },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log() {} },
+    ui: { invalidate() { invalidated++ }, log() {} },
     http: { fetch: async url => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
-        ? { phase: 'listening', mediaConnected: true, voiceConfigured: true,
+        ? { phase, mediaConnected: true, voiceConfigured: true,
             selectedSession: 'claude-session', captionRevision: revision }
         : path === '/api/captions' ? { revision, rows } : { task: null }
       return { ok: true, text: JSON.stringify(body) }
@@ -47,6 +49,10 @@ test('voice history waits for the user row before starting the reply row', async
     now = 8000
     clock(); await new Promise(setImmediate)
     assert.deepEqual(started, ['you How are you?'], 'the reply must wait while the user row is being written')
+    const before = invalidated
+    phase = 'speaking'
+    clock(); await new Promise(setImmediate)
+    assert.ok(invalidated > before, 'the voice row must refresh while a history command waits for Claude')
     releaseUser()
     await new Promise(setImmediate)
     await new Promise(setImmediate)

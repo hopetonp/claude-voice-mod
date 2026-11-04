@@ -955,7 +955,9 @@ export function register(on) {
     historyRevision = -1
     await loadHistory($)
     await tick($)
-    $.clock.every(250, () => void tick($))
+    // A transcript command can wait for a busy Claude turn. Keep the voice row
+    // polling while its history write finishes in the original tick.
+    $.clock.every(250, () => void (ticking ? refresh($) : tick($)))
     return next(e)
   })
 

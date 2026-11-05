@@ -153,16 +153,36 @@ jobs:
           test "$RELEASE_TAG" = "v$version"
           test "$version" = "$(node -p "require('./.claude-plugin/plugin.json').version")"
           gh release view "$RELEASE_TAG" --json isDraft,assets > "$RUNNER_TEMP/npm-release.json"
+          gh release download "$RELEASE_TAG" --pattern SHA256SUMS --dir "$RUNNER_TEMP/npm-checksums"
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict'
-          import { readFileSync } from 'node:fs'
+          import { readFileSync, writeFileSync } from 'node:fs'
           const release = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/npm-release.json`, 'utf8'))
           assert.equal(release.isDraft, false, 'Release must be published before npm')
           const version = process.env.RELEASE_TAG.slice(1)
-          for (const name of ['SHA256SUMS', `voicemesh-claude-macos-arm64-${version}.zip`,
-            `voicemesh-claude-macos-x64-${version}.zip`, `voicemesh-claude-win-x64-${version}.zip`]) {
-            assert.ok(release.assets.some(asset => asset.name === name && asset.state === 'uploaded'), `Missing release asset: ${name}`)
+          const sums = new Map(readFileSync(`${process.env.RUNNER_TEMP}/npm-checksums/SHA256SUMS`, 'utf8')
+            .trim().split(/\r?\n/).map(line => {
+              const match = /^([a-f0-9]{64})\s+\*?(?:\.\/)?(.+)$/.exec(line)
+              assert.ok(match, 'Invalid SHA256SUMS entry')
+              return [match[2], match[1]]
+            }))
+          const checksums = {}
+          for (const [platform, archive] of Object.entries({
+            'darwin-arm64': `voicemesh-claude-macos-arm64-${version}.zip`,
+            'darwin-x64': `voicemesh-claude-macos-x64-${version}.zip`,
+            'win32-x64': `voicemesh-claude-win-x64-${version}.zip`,
+          })) {
+            const asset = release.assets.find(asset => asset.name === archive && asset.state === 'uploaded')
+            assert.ok(asset, `Missing release asset: ${archive}`)
+            const checksum = sums.get(archive)
+            assert.ok(checksum && asset.digest === `sha256:${checksum}`, `Release digest mismatch: ${archive}`)
+            checksums[platform] = checksum
           }
+          const path = 'npm-installer/install.mjs'
+          const source = readFileSync(path, 'utf8')
+          const pattern = /const checksums = \{[^}]*\}/
+          assert.ok(pattern.test(source), 'Installer checksum table missing')
+          writeFileSync(path, source.replace(pattern, `const checksums = ${JSON.stringify(checksums, null, 2)}`))
           JS
       - name: Publish beta installer with npm trusted publishing
         working-directory: npm-installer

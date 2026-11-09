@@ -13,6 +13,10 @@ export default {
       "source": "Initializing...",
       "text": "शुरू हो रहल बा..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "आवाज के इतिहास लोड हो रहल बा..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Voice सेटअप जरूरी बा"
@@ -230,6 +234,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "በማስጀመር ላይ..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "የድምፅ ታሪክ በመጫን ላይ..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -449,6 +457,10 @@ export default {
       "source": "Initializing...",
       "text": "চালু হচ্ছে..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "ভয়েসের ইতিহাস লোড হচ্ছে..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "ভয়েস সেটআপ প্রয়োজন"
@@ -666,6 +678,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "正在初始化..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "正在加载语音历史记录..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -885,6 +901,10 @@ export default {
       "source": "Initializing...",
       "text": "正在初始化..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "正在載入語音歷史記錄..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "需要設定語音"
@@ -1102,6 +1122,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Initialiserer..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Indlæser stemmehistorik..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -1321,6 +1345,10 @@ export default {
       "source": "Initializing...",
       "text": "Sinisimulan..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Nilo-load ang kasaysayan ng boses..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Kailangan ng pag-setup ng boses"
@@ -1538,6 +1566,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Alustetaan..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Ladataan äänihistoriaa..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -1757,6 +1789,10 @@ export default {
       "source": "Initializing...",
       "text": "Initialiseren..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Spraakgeschiedenis laden..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Spraakconfiguratie vereist"
@@ -1974,6 +2010,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Initialisation..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Chargement de l’historique vocal..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -2193,6 +2233,10 @@ export default {
       "source": "Initializing...",
       "text": "પ્રારંભ થઈ રહ્યો છે..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "વૉઇસ ઇતિહાસ લોડ થઈ રહ્યો છે..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Voice સેટઅપ આવશ્યક છે"
@@ -2410,6 +2454,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Wird initialisiert..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Sprachverlauf wird geladen..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -2629,6 +2677,10 @@ export default {
       "source": "Initializing...",
       "text": "Ana farawa..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Ana loda tarihin murya..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Ana buƙatar saita murya"
@@ -2846,6 +2898,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "शुरू हो रहा है..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "वॉइस इतिहास लोड हो रहा है..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3065,6 +3121,10 @@ export default {
       "source": "Initializing...",
       "text": "初期化中..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "音声履歴を読み込み中..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "音声のセットアップが必要です"
@@ -3282,6 +3342,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Menginisialisasi..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Memuat riwayat suara..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3501,6 +3565,10 @@ export default {
       "source": "Initializing...",
       "text": "Inizializzazione..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Caricamento della cronologia vocale..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Configurazione vocale necessaria"
@@ -3718,6 +3786,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "초기화 중..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "음성 기록을 불러오는 중..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -3937,6 +4009,10 @@ export default {
       "source": "Initializing...",
       "text": "ಪ್ರಾರಂಭಿಸಲಾಗುತ್ತಿದೆ..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "ಧ್ವನಿ ಇತಿಹಾಸವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "ಧ್ವನಿ ಸೆಟಪ್ ಅಗತ್ಯವಿದೆ"
@@ -4154,6 +4230,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "ആരംഭിക്കുന്നു..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "വോയ്‌സ് ചരിത്രം ലോഡ് ചെയ്യുന്നു..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -4373,6 +4453,10 @@ export default {
       "source": "Initializing...",
       "text": "सुरू होत आहे..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "व्हॉइस इतिहास लोड होत आहे..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "व्हॉइस सेटअप आवश्यक आहे"
@@ -4590,6 +4674,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Inicializando..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Carregando histórico de voz..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -4809,6 +4897,10 @@ export default {
       "source": "Initializing...",
       "text": "Initialiserer..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Laster stemmehistorikk..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Taleoppsett kreves"
@@ -5026,6 +5118,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Инициализация..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Загрузка истории голосового общения..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -5245,6 +5341,10 @@ export default {
       "source": "Initializing...",
       "text": "Inicializando..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Cargando historial de voz..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Configuración de voz requerida"
@@ -5462,6 +5562,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Inicializando..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Cargando historial de voz..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -5681,6 +5785,10 @@ export default {
       "source": "Initializing...",
       "text": "Inaanzisha..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Inapakia historia ya sauti..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Usanidi wa sauti unahitajika"
@@ -5898,6 +6006,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Initierar..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Läser in rösthistorik..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6117,6 +6229,10 @@ export default {
       "source": "Initializing...",
       "text": "தொடங்குகிறது..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "குரல் வரலாறு ஏற்றப்படுகிறது..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "குரல் அமைப்பு தேவைப்படுகிறது"
@@ -6334,6 +6450,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "ప్రారంభిస్తోంది..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "వాయిస్ చరిత్ర లోడ్ అవుతోంది..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6553,6 +6673,10 @@ export default {
       "source": "Initializing...",
       "text": "Başlatılıyor..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Sesli konuşma geçmişi yükleniyor..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Ses kurulumu gerekli"
@@ -6770,6 +6894,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "กำลังเริ่มต้น..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "กำลังโหลดประวัติการสนทนาด้วยเสียง..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",
@@ -6989,6 +7117,10 @@ export default {
       "source": "Initializing...",
       "text": "Ініціалізація..."
     },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Завантаження історії голосового спілкування..."
+    },
     "status.setupNeeded": {
       "source": "Voice setup needed",
       "text": "Потрібне налаштування голосу"
@@ -7206,6 +7338,10 @@ export default {
     "status.initializing": {
       "source": "Initializing...",
       "text": "Đang khởi tạo..."
+    },
+    "status.loadingHistory": {
+      "source": "Loading voice history...",
+      "text": "Đang tải lịch sử giọng nói..."
     },
     "status.setupNeeded": {
       "source": "Voice setup needed",

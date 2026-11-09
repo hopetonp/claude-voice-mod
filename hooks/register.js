@@ -13,6 +13,8 @@ let media = { phase: 'offline', muted: false, mediaConnected: false }
 const vt = (key, values) => voiceText(media.locale, key, values)
 let polling = false
 let mediaInitialized = false
+let sessionReady = false
+let startupHistoryPending = true
 // When the user's live transcript and the voice's reply last changed, for the live line.
 let userChangedAt = 0
 let replyChangedAt = 0
@@ -743,7 +745,7 @@ function voiceStrip($, e, original) {
   // DeepSeek's quick controls: the clock, or one word while parked or connecting, then the icons.
   // A problem the person must act on (host down, setup needed, an error) replaces the clock.
   const healthy = media.mediaConnected && media.voiceConfigured !== false && media.phase !== 'error' && media.phase !== 'needs-activation'
-  const label = !healthy || !connection ? (status ?? vt('status.initializing'))
+  const label = startupHistoryPending ? vt('status.loadingHistory') : !healthy || !connection ? (status ?? vt('status.initializing'))
     : live ? duration(media.activeSeconds, media.locale) : parked ? vt('status.standby') : connecting ? vt('status.connectingShort') : ''
   const icon = (action, glyph, color, alt) => Box({
     position: 'relative', width: 3, height: BUTTON_ROWS,
@@ -916,6 +918,13 @@ The user may be talking to you by voice through the VoiceMesh Mod. Its host runs
 
 If voice is on and you deliberately do something that interrupts it (restarting or killing the VoiceMesh host or its browser, reinstalling or reloading the Mod), you are responsible for turning it back on: restore it yourself straight afterwards, as it comes back from standby; do not leave the user to press start. This covers only interruptions you cause; voice the user turned off stays off. Before the disruptive step, note whether GET <url>/api/state (header Authorization: Bearer <token>) reports a phase other than offline, idle, error or needs-activation. If it did, once the host answers again (its media page connects about 3 seconds after a host start; until then /api/control answers 409), POST <url>/api/control with JSON {"action":"start"} and the same header, then confirm /api/state shows the voice listening.`
 
+let pollingStarted = false
+function startPolling($) {
+  if (pollingStarted) return
+  pollingStarted = true
+  $.clock.every(250, () => void (!sessionReady || ticking ? refresh($) : tick($)))
+}
+
 export function register(on) {
   on('ui.message', async ($, e, next) => {
     if (e.element === 'voice-toggle' && e.data?.action === 'toggle') {
@@ -933,6 +942,7 @@ export function register(on) {
   // The desktop app attaches to the session the user selects (and detaches from the one they leave), so
   // the newest attach owns the voice. A detach changes nothing: the next attach takes over.
   on('session.attach', async ($, e, next) => {
+    startPolling($)
     if (e.surface === 'desktop') await ensurePackagedHost($).catch(() => {})
     if (e.surface === 'desktop') await selectThisSession($).catch(() => {})
     return next(e)
@@ -945,19 +955,27 @@ export function register(on) {
   })
 
   on('session.start', async ($, e, next) => {
-    await ensurePackagedHost($).catch(() => {})
-    sessionId = await $.session.id()
-    completionOutbox = createCompletionOutbox({
-      load: () => $.store.get('voice-completions').catch(() => []),
-      save: rows => $.store.set('voice-completions', rows),
-      deliver: item => postBridge($, '/api/claude/result', item),
+    startPolling($)
+    // Show the row immediately; storage, host startup and history delivery may all wait.
+    void (async () => {
+      await ensurePackagedHost($).catch(() => {})
+      sessionId = await $.session.id()
+      completionOutbox = createCompletionOutbox({
+        load: () => $.store.get('voice-completions').catch(() => []),
+        save: rows => $.store.set('voice-completions', rows),
+        deliver: item => postBridge($, '/api/claude/result', item),
+      })
+      historyRevision = -1
+      await loadHistory($)
+      sessionReady = true
+      await tick($)
+      startupHistoryPending = false
+      $.ui.invalidate('ui.render')
+    })().catch(() => {
+      startupHistoryPending = false
+      show($, vt('status.bridgeUnavailable'))
+      $.ui.invalidate('ui.render')
     })
-    historyRevision = -1
-    await loadHistory($)
-    await tick($)
-    // A transcript command can wait for a busy Claude turn. Keep the voice row
-    // polling while its history write finishes in the original tick.
-    $.clock.every(250, () => void (ticking ? refresh($) : tick($)))
     return next(e)
   })
 

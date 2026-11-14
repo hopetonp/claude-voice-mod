@@ -133,6 +133,10 @@ const signaling = {
       if (message.type === 'voice.live-caption') {
         caption(message.role, message.text, message.id)
       }
+      if (message.type === 'voice.caption-preview-error') {
+        state.error = 'Live streaming captions unavailable; using conversation captions.'
+        void publish()
+      }
       if (message.type === 'voice.conversation-ended') void stop()
     })
     return socket

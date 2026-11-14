@@ -7,6 +7,7 @@ import { codingCalls, codingTools, endConversationTool, runCodingCall } from './
 import { codingResultText, stoppedCodingResult, liveInstructions, noHandoffTalk, spokenTechnicalText } from './voice-policy.js'
 import { claudeUserName } from './claude-user.js'
 import { classifyForVoice } from './classifier.js'
+import { createStreamingCaptions } from './streaming-captions.js'
 
 const providers = { openai: openaiStsProvider, xai: xaiStsProvider, gemini: geminiStsProvider }
 const transcriptionPreference = ['gpt-live-transcribe', 'gpt-realtime-whisper', 'gpt-transcribe',
@@ -28,7 +29,7 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
   const transcriptionModels = services.transcriptionModels ?? listRealtimeTranscriptionModels
   const turns = services.turns
   const lifetime = new AbortController()
-  let channel, rtc, provider
+  let channel, rtc, provider, streamingCaptions
   let started = false
   let responseActive = false
   let playbackBusy = false
@@ -82,6 +83,7 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
   const close = async () => {
     if (lifetime.signal.aborted) return
     lifetime.abort()
+    streamingCaptions?.close()
     for (const wake of idleWaiters.splice(0)) wake()
     onLive(null)
     await Promise.allSettled([channel?.close(), rtc?.close(), turns?.close?.()])
@@ -209,11 +211,13 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
     }
     if (event.type === 'conversation.item.input_audio_transcription.updated'
       || event.type === 'conversation.item.input_audio_transcription.completed') {
+      if (event.type.endsWith('.completed')) streamingCaptions?.suppress()
       hear(event.item_id, event.transcript)
       await caption('user', event.item_id, event.transcript,
         event.type.endsWith('.completed') ? 'final' : 'update')
     }
     if (event.type === 'response.created' && typeof event.response?.id === 'string') {
+      streamingCaptions?.suppress()
       began(event.response.id)
       responseActive = true
       playbackBusy = true
@@ -369,6 +373,7 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
     queuedBytes += data.length
     if (queuedBytes > 4 * 1024 * 1024) { socket.close(1009); void close(); return }
     if (event.type === 'input_audio_buffer.append' && channel) {
+      streamingCaptions?.push(event.audio)
       void channel.send(event).catch(() => { void close().finally(() => socket.close()) })
         .finally(() => { queuedBytes -= data.length })
       return
@@ -400,6 +405,15 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
         channel = await openChannel(settings, { record: async () => {}, receive },
           lifetime.signal, provider, rtc?.connection)
         if (lifetime.signal.aborted) return
+        const captions = store.get(event.provider)
+        if (event.provider === 'gemini' && captions.streamingCaptions === true && captions.captionModel) {
+          streamingCaptions = (services.createStreamingCaptions ?? createStreamingCaptions)({
+            key, model: captions.captionModel, signal: lifetime.signal,
+            preview: transcript => send({ type: 'conversation.item.input_audio_transcription.updated', transcript }),
+            failed: () => { send({ type: 'voice.caption-preview-error' });
+              console.warn('Streaming captions unavailable; continuing with conversation captions') },
+          })
+        }
         onLive({ completed: async () => {}, replayOwed, milestone, notice })
         send({ type: 'ready', ...(rtc ? { answer: rtc.answer } : {}) })
         void channel.closed.then(reason => {
@@ -429,6 +443,7 @@ export function attachRealtimeVoice(socket, store, tasks, onLive, onCaption = as
         await replayOwed()
         return
       }
+      if (event.type === 'input_audio_buffer.append') streamingCaptions?.push(event.audio)
       await channel.send(event)
     }).finally(() => { queuedBytes -= data.length }).catch(() => {
       send({ type: 'voice.error' })

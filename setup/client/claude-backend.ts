@@ -68,6 +68,7 @@ const current = ({ providers, selectedProvider, voiceMode, pipeline, classifier 
     statusSounds: value?.statusSounds ?? true, assistantOrbEnabled: value?.assistantOrbEnabled ?? true,
     responseDetail: value?.responseDetail ?? 'concise', progressMode: value?.progressMode ?? 'outcome', plainLanguageSummaries: value?.plainLanguageSummaries ?? false, backchannelEnabled: value?.backchannelEnabled ?? false,
     endConversationEnabled: value?.endConversationEnabled ?? false,
+    streamingCaptions: value?.streamingCaptions === true, captionModel: value?.captionModel ?? '',
     configured: !!value?.configured }
 }
 async function catalog(model: string, signal: AbortSignal): Promise<any> {
@@ -83,6 +84,9 @@ async function save(fields: Record<string, unknown>): Promise<VoicePreferences> 
 /** Claude's local-host adapter for the optional VoiceMesh settings editor. */
 export const claudeBackend: VoiceSettingsBackend = {
   async load() { return current(await request('/api/settings')) },
+  async loadVoiceDisplay() { return request('/api/voice-display') },
+  async saveVoiceDisplay(value) { return request('/api/voice-display', { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(value) }) },
   async loadDisplay() { return (await request('/api/display')).chatBubbles === true },
   async saveDisplay(chatBubbles) { return (await request('/api/display', { method: 'POST',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chatBubbles }) })).chatBubbles === true },
@@ -121,6 +125,10 @@ export const claudeBackend: VoiceSettingsBackend = {
   saveSelection(model, voice) { return save({ model, voice }) },
   saveStandby(voiceStandbySec) { return save({ voiceStandbySec }) },
   saveOptions(options) { return save(options) },
+  async listCaptionModels(signal) {
+    return (await request('/api/pipeline/options?kind=stt-model&engine=gemini', { signal })).options.map((item: { id: string }) => item.id)
+  },
+  saveCaptionModel(captionModel) { return save({ captionModel }) },
   async listModels(signal) {
     const state = await claudeBackend.load()
     return (await catalog(state.model, signal)).models.map((item: any) => typeof item === 'string' ? item : item.id)

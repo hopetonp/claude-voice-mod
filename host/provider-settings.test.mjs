@@ -65,3 +65,21 @@ test('classifier is opt-in and stores its Jev key locally without exposing it', 
     assert.equal(openaiRoute, 'voice')
   } finally { await rm(root, { recursive: true, force: true }) }
 })
+
+
+test('streaming captions are opt-in and persist a separate model with the existing Gemini key', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'caption-settings-'))
+  try {
+    const path = join(root, 'providers.json'), store = await createSettings(path, {})
+    assert.equal(store.get('gemini').streamingCaptions, false)
+    await store.save({ id: 'gemini', key: 'existing-key', streamingCaptions: true, captionModel: 'gemini-3.5-transcribe-live' })
+    const loaded = await createSettings(path, {})
+    assert.equal(loaded.get('gemini').key, 'existing-key')
+    assert.equal(loaded.get('gemini').captionModel, 'gemini-3.5-transcribe-live')
+    assert.equal(loaded.get('gemini').streamingCaptions, true)
+    assert.equal(loaded.publicSettings().some(item => 'key' in item), false)
+    await loaded.save({ id: 'gemini', streamingCaptions: false })
+    assert.equal(loaded.get('gemini').captionModel, 'gemini-3.5-transcribe-live')
+    await assert.rejects(loaded.save({ id: 'gemini', streamingCaptions: 'true' }), /Invalid/)
+  } finally { await rm(root, { recursive: true, force: true }) }
+})

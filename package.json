@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@voicemesh/composer": "file:vendor/voicemesh-composer-0.2.18.tgz",
-    "@voicemesh/settings-editor": "file:vendor/voicemesh-settings-editor-0.1.35.tgz",
+    "@voicemesh/settings-editor": "file:vendor/voicemesh-settings-editor-0.1.36.tgz",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "ws": "^8.22.0"

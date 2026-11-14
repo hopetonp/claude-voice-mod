@@ -1,6 +1,7 @@
 import { VoiceHistory, extraWords } from './voice-history.js'
 import { settingsApi } from './settings-api.js'
 import { liveLine, tail } from './live-line.js'
+import { liveMessageHeight } from './live-message.js'
 import { SETTINGS_PANE, settingsPane } from './settings-pane.js'
 import { voiceBubble } from './voice-bubble.js'
 import { english as voiceEnglish, voiceText } from './voice-status-i18n.js'
@@ -155,11 +156,11 @@ function currentLine(now) {
 }
 
 // Live audio redraws replace tooltip anchors. Keep them stable until Claude's
-// 150 ms pointer-leave dismissal has completed; host polling continues normally.
+// 150 ms pointer-leave dismissal has completed; new captions must still render immediately.
 // The connecting SVG runs its own clock; repeated row replacement restarts it.
 function redraw($, force = false) {
   if (!force && media.phase === 'connecting' && drawnVoicePhase === 'connecting') return
-  if (!hoveredControl && !hoverReleasePending) $.ui.invalidate('ui.render')
+  if (force || (!hoveredControl && !hoverReleasePending)) $.ui.invalidate('ui.render')
 }
 
 function show($, next) {
@@ -193,6 +194,7 @@ async function refresh($) {
     history.classifierEnabled = next.classifierEnabled === true
     const themeChanged = next.theme !== media.theme
     const localeChanged = next.locale !== media.locale
+    const displayChanged = JSON.stringify(next.voiceDisplay) !== JSON.stringify(media.voiceDisplay)
     const levelsChanged = JSON.stringify(media.inputLevels) !== JSON.stringify(next.inputLevels)
       || JSON.stringify(media.outputLevels) !== JSON.stringify(next.outputLevels)
     const owns = !next.selectedSession || next.selectedSession === sessionId
@@ -236,11 +238,12 @@ async function refresh($) {
           duration: ['listening', 'speaking', 'thinking'].includes(next.phase)
             ? vt('status.duration', { duration: duration(next.activeSeconds, next.locale) }) : '',
         }))
-    if (levelsChanged || themeChanged || localeChanged) redraw($)
+    if (levelsChanged || themeChanged || localeChanged || displayChanged) redraw($)
     // Redraw for new words, while a line shows so it clears on time, and once when it goes away; and
     // while the resting orb shows, so it breathes.
     const resting = !showing && !['offline', 'idle', 'error', 'needs-activation', 'connecting', 'standby'].includes(next.phase)
-    if (textChanged || showing || showing !== lineShown || resting) redraw($)
+    if (textChanged) redraw($, true)
+    else if (showing || showing !== lineShown || resting) redraw($)
     lineShown = showing
   } catch {
     connection = null
@@ -835,6 +838,9 @@ function voiceStrip($, e, original) {
   // a line too long to fit is aligned to the right end, so what does not fit falls off the left.
   // The terminal counts cells exactly, so there the words that fit are chosen here instead: the strip's
   // width less the controls on the right (about 34 columns) and the gap.
+  const multiline = media.voiceDisplay?.multiline !== false
+  const maxLines = media.voiceDisplay?.maxLines ?? 8
+  const messageRows = multiline && line ? liveMessageHeight(line.text, (Number(e.props?.bodyColumns) || 80) - 2, maxLines) : 0
   const room = (Number(e.props?.bodyColumns) || 80) - 34 - 2
   const words = line && (e.surface === 'desktop'
     ? Box({ flexGrow: 1, flexShrink: 1, minWidth: 0, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end',
@@ -859,7 +865,7 @@ function voiceStrip($, e, original) {
           // The live line: the newest words of whoever is talking, unlabelled, filling the strip's empty left side
           // and stopping short of the controls.
           ...(line || live || parked || connecting || !active ? [Box({ flexDirection: 'row', width: 0, flexGrow: 1, flexShrink: 1, minWidth: 0, columnGap: 1, marginRight: 2,
-            alignItems: 'center', children: active && !connecting && line ? [
+            alignItems: 'center', children: !multiline && active && !connecting && line ? [
               // The voice's words lead with its orb; the user's need no mark.
               ...(line.speaker === 'Voice' ? [Svg({ source: voiceOrb(media.speakerMuted ? [] : media.outputLevels, vt('orb.speaking')), width: ORB_SIZE, height: ORB_SIZE, alt: vt('orb.speaking') })] : []),
               words,
@@ -914,6 +920,18 @@ function voiceStrip($, e, original) {
           ] }),
         ],
       }),
+      ...(multiline && line ? [
+        Box({ key: 'voice-message-divider', height: 0.04, flexShrink: 0,
+          backgroundColor: media.theme === 'dark' ? '#ffffff14' : '#00000014', marginTop: 1, marginBottom: 0.5 }),
+        Box({
+        key: 'voice-multiline-message', flexDirection: 'column', minWidth: 0,
+        // Let native wrapping size short captions; estimated rows can exceed proportional-font rows.
+        ...(messageRows >= maxLines ? { height: maxLines } : {}),
+        overflow: 'hidden', justifyContent: 'flex-end', paddingX: 1,
+        // A non-shrinking child keeps the newest wrapped lines at the bottom when full.
+        children: [Box({ flexDirection: 'column', flexShrink: 0, minWidth: 0,
+          children: [Text({ wrap: 'wrap', children: [line.text] })] })],
+      })] : []),
     ],
   })
 }

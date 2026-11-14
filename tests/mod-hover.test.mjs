@@ -8,6 +8,9 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
   let poll, renders = 0, stateReads = 0, taskReads = 0
   const timers = []
   let phase = 'listening'
+  let transcript = ''
+  let voiceDisplay = { multiline: false, maxLines: 8 }
+  let drawnNodes = []
   const $ = {
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test' }) },
@@ -32,7 +35,7 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
       if (path === '/api/state') stateReads++
       else taskReads++
       return { ok: true, text: JSON.stringify(path === '/api/state'
-        ? { phase, mediaConnected: true, voiceConfigured: true,
+        ? { phase, transcript, voiceDisplay, mediaConnected: true, voiceConfigured: true,
             selectedSession: 'hover-session', captionRevision: 0, inputLevels: [stateReads], activeSeconds: stateReads }
         : path === '/api/captions' ? { revision: 0, rows: [] } : { task: null }) }
     } },
@@ -54,6 +57,7 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
       for (const child of node.children ?? []) walk(child)
     }
     walk(tree)
+    drawnNodes = nodes
     const popovers = nodes.filter(node => node.type === 'Box' && node.props.position === 'absolute'
       && node.props.display === 'none' && node.props.hover?.display === 'flex' && !node.props.hover.scope)
     assert.equal(popovers.length, 1, 'only one native popover may exist in the row')
@@ -88,6 +92,23 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
   assert.equal(renders, before + 1, 'refresh once after leaving the controls')
   poll(); await settle()
   assert.ok(renders > before + 1, 'live animation resumes')
+  for (const multiline of [false, true]) {
+    voiceDisplay = { multiline, maxLines: 8 }
+    await hover('voice-icon-settings', true)
+    const held = renders
+    transcript = multiline ? 'My words stream in multiple lines' : 'My words stream immediately'
+    poll(); await settle()
+    assert.ok(renders > held, 'new speech must render even while a tooltip is hovered')
+    await drawing('settings')
+    assert.ok(drawnNodes.some(node => node.type === 'Text' && node.children.includes(transcript)))
+    await hover('voice-icon-settings', false)
+    const leaving = renders
+    transcript += ' as I continue'
+    poll(); await settle()
+    assert.ok(renders > leaving, 'tooltip dismissal must not hold back new speech')
+    timers.at(-1).callback()
+  }
+  voiceDisplay = { multiline: false, maxLines: 8 }
   phase = 'idle'
   poll(); await settle()
   await hover('voice-toggle', true)
@@ -103,4 +124,37 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
   poll(); await settle()
   assert.ok(renders > connectingRenders, 'connection completion must still redraw')
   await drawing(undefined, 'Stop voice')
+  voiceDisplay = { multiline: true, maxLines: 8 }
+  transcript = 'This caption takes two estimated rows but must not reserve an empty line above its text while it grows.'
+  poll(); await settle()
+  await drawing(undefined)
+  const growing = drawnNodes.find(node => node.props.key === 'voice-multiline-message')
+  assert.equal(growing.props.height, undefined, 'short captions must use their actual wrapped height')
+  assert.equal(growing.props.marginTop, undefined, 'the message must not add a blank row above the text')
+  const divider = drawnNodes.find(node => node.props.key === 'voice-message-divider')
+  assert.ok(divider.props.height < 0.1, 'the separator must be a thin line rather than a text row')
+  assert.equal(divider.props.backgroundColor, '#00000014')
+  voiceDisplay = { multiline: false, maxLines: 8 }
+  transcript = Array.from({ length: 12 }, (_, i) => `Voice message line ${i + 1}`).join('\n')
+  poll(); await settle()
+  await drawing(undefined)
+  assert.equal(drawnNodes.some(node => node.props.key === 'voice-multiline-message'), false, 'an explicit single-line choice keeps the compact layout')
+  voiceDisplay = { multiline: true, maxLines: 8 }
+  poll(); await settle()
+  await drawing(undefined)
+  let message = drawnNodes.find(node => node.props.key === 'voice-multiline-message')
+  assert.equal(message.props.height, 8)
+  assert.equal(message.props.justifyContent, 'flex-end', 'the newest wrapped lines stay visible')
+  assert.equal(message.children[0].props.flexShrink, 0)
+  assert.ok(message.children[0].children[0].children[0].endsWith('line 12'))
+  voiceDisplay = { multiline: true, maxLines: 3 }
+  poll(); await settle()
+  await drawing(undefined)
+  assert.equal(drawnNodes.find(node => node.props.key === 'voice-multiline-message').props.height, 3)
+  voiceDisplay = { multiline: false, maxLines: 3 }
+  poll(); await settle()
+  await drawing(undefined)
+  assert.equal(drawnNodes.some(node => node.props.key === 'voice-multiline-message'), false)
+  assert.equal(drawnNodes.some(node => node.props.key === 'voice-message-divider'), false)
+
 })

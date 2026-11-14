@@ -40,7 +40,7 @@ export async function createSettings(path, env = process.env) {
     const prefix=id==='openai-live'?'OPENAI':id.toUpperCase();
     const fields = { model:env[`${prefix}_MODEL`] || '', voice:env[`${prefix}_VOICE`] || '', voiceStandbySec:30, statusSounds:true, assistantOrbEnabled:true,
       responseDetail:'concise', progressMode:'outcome', backchannelEnabled:false, endConversationEnabled:false,
-      backendModel:'', transcriptionModel:id==='openai' ? env.OPENAI_TRANSCRIPTION_MODEL || '' : '', ...saved[id] };
+      backendModel:'', streamingCaptions:false, captionModel:'', transcriptionModel:id==='openai' ? env.OPENAI_TRANSCRIPTION_MODEL || '' : '', ...saved[id] };
     return { ...fields, plainLanguageSummaries: plainLanguageSummaries(), key: ['openai', 'openai-live'].includes(id)
       ? saved.openai?.key || saved['openai-live']?.key || env.OPENAI_API_KEY || ''
       : saved[id]?.key || env[`${prefix}_API_KEY`] || '' };
@@ -59,7 +59,7 @@ export async function createSettings(path, env = process.env) {
       if (!value || !ids.includes(value.id)) throw new Error('Select a supported provider');
       // Persist only explicit settings, never an environment or bootstrap key.
       const next={...(saved[value.id] ?? {})};
-      for (const field of ['key','model','voice','transcriptionModel','backendModel']) {
+      for (const field of ['key','model','voice','transcriptionModel','backendModel','captionModel']) {
         if (value[field] === undefined) continue;
         if (typeof value[field] !== 'string' || value[field].length>4096 || /[\r\n]/.test(value[field])) throw new Error('Invalid connection field');
         if (field === 'key' && value[field].trim() && !/^[\x21-\x7e]+$/.test(value[field].trim())) throw new Error('Invalid API key characters');
@@ -70,7 +70,7 @@ export async function createSettings(path, env = process.env) {
         if (!Number.isInteger(value.voiceStandbySec) || value.voiceStandbySec < 0 || value.voiceStandbySec > 120) throw new Error('Invalid standby duration');
         next.voiceStandbySec = value.voiceStandbySec;
       }
-      for (const field of ['statusSounds', 'assistantOrbEnabled', 'endConversationEnabled']) {
+      for (const field of ['statusSounds', 'assistantOrbEnabled', 'endConversationEnabled', 'streamingCaptions']) {
         if (value[field] === undefined) continue;
         if (typeof value[field] !== 'boolean') throw new Error(`Invalid ${field} setting`);
         next[field] = value[field];

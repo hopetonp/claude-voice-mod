@@ -228,6 +228,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude रुकल बा। «Claude फेर से शुरू करीं» पर क्लिक करीं।"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "अपडेट जाँचीं"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "अनुरोध भेजल जात बा…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "अपडेट जाँच के अनुरोध भेज दिहल गइल।"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "अपडेट जाँच ना भेजाइल। फेर कोशिश करीं।"
     }
   },
   "am": {
@@ -458,6 +474,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude ቆሟል። «Claudeን ቀጥል» የሚለውን ጠቅ ያድርጉ።"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "ዝማኔዎችን ያረጋግጡ"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "ጥያቄ በመላክ ላይ…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "የዝማኔ ማረጋገጫ ተጠይቋል።"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "የዝማኔ ጥያቄውን መላክ አልተቻለም። እንደገና ይሞክሩ።"
     }
   },
   "bn": {
@@ -688,6 +720,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude বিরত আছে। «Claude আবার চালু করুন» ক্লিক করুন।"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "আপডেট দেখুন"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "অনুরোধ পাঠানো হচ্ছে…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "আপডেট যাচাইয়ের অনুরোধ পাঠানো হয়েছে।"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "আপডেট যাচাইয়ের অনুরোধ পাঠানো যায়নি। আবার চেষ্টা করুন।"
     }
   },
   "zh-Hans": {
@@ -918,6 +966,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude 已暂停。点击“继续 Claude”。"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "检查更新"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "正在请求…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "已请求检查更新。"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "无法发送更新检查请求。请重试。"
     }
   },
   "zh-Hant": {
@@ -1148,6 +1212,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude 已暫停。點擊「繼續 Claude」。"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "檢查更新"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "正在請求…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "已請求檢查更新。"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "無法傳送更新檢查請求。請再試一次。"
     }
   },
   "da": {
@@ -1378,6 +1458,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude er sat på pause. Klik på Genoptag Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Søg efter opdateringer"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Anmoder…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Der er anmodet om at søge efter opdateringer."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Kunne ikke sende anmodningen. Prøv igen."
     }
   },
   "fil": {
@@ -1608,6 +1704,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Naka-pause ang Claude. I-click ang Ipagpatuloy ang Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Tingnan kung may update"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Ipinapadala ang kahilingan…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Naipadala na ang kahilingan sa pag-check ng update."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Hindi maipadala ang pag-check ng update. Subukang muli."
     }
   },
   "fi": {
@@ -1838,6 +1950,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude on keskeytetty. Napsauta Jatka Claudea."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Tarkista päivitykset"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Pyydetään…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Päivitysten tarkistusta pyydetty."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Päivityspyyntöä ei voitu lähettää. Yritä uudelleen."
     }
   },
   "nl": {
@@ -2068,6 +2196,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude is gepauzeerd. Klik op Claude hervatten."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Controleren op updates"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Aanvragen…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Updatecontrole aangevraagd."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Kan de updatecontrole niet verzenden. Probeer het opnieuw."
     }
   },
   "fr-FR": {
@@ -2298,6 +2442,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude est en pause. Cliquez sur Reprendre Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Rechercher des mises à jour"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Demande en cours…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Vérification des mises à jour demandée."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Impossible d’envoyer la demande. Réessayez."
     }
   },
   "gu": {
@@ -2528,6 +2688,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude થોભાવેલું છે. «Claude ફરી શરૂ કરો» પર ક્લિક કરો."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "અપડેટ તપાસો"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "વિનંતી મોકલાઈ રહી છે…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "અપડેટ તપાસવાની વિનંતી મોકલાઈ."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "અપડેટ તપાસવાની વિનંતી મોકલી શકાઈ નહીં. ફરી પ્રયાસ કરો."
     }
   },
   "de-DE": {
@@ -2758,6 +2934,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude ist pausiert. Klicke auf Claude fortsetzen."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Nach Updates suchen"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Wird angefordert…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Updateprüfung angefordert."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Die Updateprüfung konnte nicht gesendet werden. Versuche es erneut."
     }
   },
   "ha": {
@@ -2988,6 +3180,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "An dakatar da Claude. Danna Ci gaba da Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Duba sabuntawa"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Ana aika buƙata…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "An aika buƙatar duba sabuntawa."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "An kasa aika buƙatar sabuntawa. Sake gwadawa."
     }
   },
   "hi-IN": {
@@ -3218,6 +3426,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude रुका हुआ है। «Claude फिर शुरू करें» पर क्लिक करें।"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "अपडेट जाँचें"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "अनुरोध भेजा जा रहा है…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "अपडेट जाँच का अनुरोध भेज दिया गया।"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "अपडेट जाँच का अनुरोध नहीं भेजा जा सका। फिर कोशिश करें।"
     }
   },
   "ja-JP": {
@@ -3448,6 +3672,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude は一時停止中です。「Claude を再開」をクリックしてください。"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "更新を確認"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "リクエスト中…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "更新の確認をリクエストしました。"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "更新の確認を送信できませんでした。もう一度お試しください。"
     }
   },
   "id-ID": {
@@ -3678,6 +3918,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude dijeda. Klik Lanjutkan Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Periksa pembaruan"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Mengirim permintaan…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Pemeriksaan pembaruan diminta."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Tidak dapat mengirim pemeriksaan pembaruan. Coba lagi."
     }
   },
   "it-IT": {
@@ -3908,6 +4164,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude è in pausa. Fai clic su Riprendi Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Controlla aggiornamenti"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Richiesta in corso…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Controllo aggiornamenti richiesto."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Impossibile inviare la richiesta. Riprova."
     }
   },
   "ko-KR": {
@@ -4138,6 +4410,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude가 일시 중지되었습니다. «Claude 재개»를 클릭하세요."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "업데이트 확인"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "요청 중…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "업데이트 확인을 요청했습니다."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "업데이트 확인 요청을 보내지 못했습니다. 다시 시도하세요."
     }
   },
   "kn": {
@@ -4368,6 +4656,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude ವಿರಾಮಗೊಂಡಿದೆ. «Claude ಮುಂದುವರಿಸಿ» ಕ್ಲಿಕ್ ಮಾಡಿ."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "ನವೀಕರಣಗಳನ್ನು ಪರಿಶೀಲಿಸಿ"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "ವಿನಂತಿಸಲಾಗುತ್ತಿದೆ…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "ನವೀಕರಣ ಪರಿಶೀಲನೆಗೆ ವಿನಂತಿಸಲಾಗಿದೆ."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "ನವೀಕರಣ ವಿನಂತಿಯನ್ನು ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     }
   },
   "ml": {
@@ -4598,6 +4902,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude താൽക്കാലികമായി നിർത്തിയിരിക്കുന്നു. «Claude പുനരാരംഭിക്കുക» ക്ലിക്ക് ചെയ്യുക."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "അപ്‌ഡേറ്റുകൾ പരിശോധിക്കുക"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "അഭ്യർത്ഥിക്കുന്നു…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "അപ്‌ഡേറ്റ് പരിശോധന അഭ്യർത്ഥിച്ചു."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "അപ്‌ഡേറ്റ് പരിശോധന അയയ്ക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
     }
   },
   "mr": {
@@ -4828,6 +5148,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude थांबवले आहे. «Claude पुन्हा सुरू करा» वर क्लिक करा."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "अपडेट तपासा"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "विनंती पाठवत आहे…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "अपडेट तपासण्याची विनंती पाठवली."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "अपडेट तपासण्याची विनंती पाठवता आली नाही. पुन्हा प्रयत्न करा."
     }
   },
   "pt-BR": {
@@ -5058,6 +5394,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "O Claude está pausado. Clique em Retomar Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Verificar atualizações"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Solicitando…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Verificação de atualizações solicitada."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Não foi possível enviar a solicitação. Tente novamente."
     }
   },
   "nb": {
@@ -5288,6 +5640,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude er satt på pause. Klikk på Fortsett Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Se etter oppdateringer"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Ber om…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Oppdateringssjekk forespurt."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Kunne ikke sende forespørselen. Prøv igjen."
     }
   },
   "ru": {
@@ -5518,6 +5886,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude приостановлен. Нажмите «Продолжить Claude»."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Проверить обновления"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Отправка запроса…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Запрошена проверка обновлений."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Не удалось отправить запрос. Попробуйте ещё раз."
     }
   },
   "es-ES": {
@@ -5748,6 +6132,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude está en pausa. Haz clic en Reanudar Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Buscar actualizaciones"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Solicitando…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Comprobación de actualizaciones solicitada."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "No se pudo enviar la solicitud. Inténtalo de nuevo."
     }
   },
   "es-419": {
@@ -5978,6 +6378,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude está en pausa. Haz clic en Reanudar Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Buscar actualizaciones"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Solicitando…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Se solicitó la búsqueda de actualizaciones."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "No se pudo enviar la solicitud. Inténtalo de nuevo."
     }
   },
   "sw": {
@@ -6208,6 +6624,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude imesitishwa. Bofya Endelea na Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Angalia masasisho"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Inatuma ombi…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Ombi la kuangalia masasisho limetumwa."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Imeshindwa kutuma ombi. Jaribu tena."
     }
   },
   "sv": {
@@ -6438,6 +6870,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude är pausad. Klicka på Återuppta Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Sök efter uppdateringar"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Begär…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Uppdateringskontroll begärd."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Kunde inte skicka begäran. Försök igen."
     }
   },
   "ta": {
@@ -6668,6 +7116,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude இடைநிறுத்தப்பட்டுள்ளது. «Claude ஐத் தொடரவும்» என்பதைக் கிளிக் செய்யவும்."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "புதுப்பிப்புகளைச் சரிபார்க்கவும்"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "கோரிக்கை அனுப்பப்படுகிறது…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "புதுப்பிப்பு சரிபார்ப்பு கோரப்பட்டது."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "புதுப்பிப்பு கோரிக்கையை அனுப்ப முடியவில்லை. மீண்டும் முயலவும்."
     }
   },
   "te": {
@@ -6898,6 +7362,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude పాజ్ చేయబడింది. «Claudeను కొనసాగించు» క్లిక్ చేయండి."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "నవీకరణలను తనిఖీ చేయండి"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "అభ్యర్థిస్తోంది…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "నవీకరణ తనిఖీ అభ్యర్థించబడింది."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "నవీకరణ అభ్యర్థన పంపలేకపోయింది. మళ్లీ ప్రయత్నించండి."
     }
   },
   "tr": {
@@ -7128,6 +7608,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude duraklatıldı. Claude’a devam et’e tıklayın."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Güncellemeleri denetle"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "İsteniyor…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Güncelleme denetimi istendi."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Güncelleme isteği gönderilemedi. Yeniden deneyin."
     }
   },
   "th": {
@@ -7358,6 +7854,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude หยุดชั่วคราว คลิก ดำเนินการ Claude ต่อ"
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "ตรวจสอบการอัปเดต"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "กำลังส่งคำขอ…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "ส่งคำขอตรวจสอบการอัปเดตแล้ว"
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "ส่งคำขอตรวจสอบการอัปเดตไม่ได้ โปรดลองอีกครั้ง"
     }
   },
   "uk": {
@@ -7588,6 +8100,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude призупинено. Натисніть «Продовжити Claude»."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Перевірити оновлення"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Надсилання запиту…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Надіслано запит на перевірку оновлень."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Не вдалося надіслати запит. Спробуйте ще раз."
     }
   },
   "vi": {
@@ -7818,6 +8346,22 @@ export default {
     "status.claudePaused": {
       "source": "Claude is paused. Click Resume Claude.",
       "text": "Claude đang tạm dừng. Nhấp vào Tiếp tục Claude."
+    },
+    "update.check": {
+      "source": "Check for updates",
+      "text": "Kiểm tra cập nhật"
+    },
+    "update.requesting": {
+      "source": "Requesting…",
+      "text": "Đang gửi yêu cầu…"
+    },
+    "update.requested": {
+      "source": "Update check requested.",
+      "text": "Đã yêu cầu kiểm tra cập nhật."
+    },
+    "update.failed": {
+      "source": "Could not send the update check. Try again.",
+      "text": "Không thể gửi yêu cầu kiểm tra cập nhật. Hãy thử lại."
     }
   }
 }

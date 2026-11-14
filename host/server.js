@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { WebSocketServer } from 'ws'
 import { createSettings } from './provider-settings.js'
 import { createVoiceDisplaySettings } from './voice-display-settings.js'
+import { createUpdateChecks } from './update-check.js'
 import { createTaskLedger } from './task-ledger.js'
 import { unstartedClaimExpired } from './claim-recovery.js'
 import { createClaudeTaskRecovery } from './claude-task-recovery.js'
@@ -44,6 +45,7 @@ const displayFile = process.env.VOICEMESH_DISPLAY_FILE ?? join(homedir(), '.clau
 const voiceDisplaySettings = createVoiceDisplaySettings(process.env.VOICEMESH_VOICE_DISPLAY_FILE
   ?? join(homedir(), '.claude', 'voicemesh-controls', 'voice-display.json'))
 const token = randomBytes(32).toString('hex')
+const updateChecks = createUpdateChecks()
 const providerStore = await createSettings(process.env.COMPOSER_SETTINGS_FILE ?? join(homedir(), '.claude', 'voicemesh-controls', 'providers.json'))
 const localRoot = process.env.VOICEMESH_LOCAL_ROOT ?? join(homedir(), '.claude', 'voicemesh-controls', 'voice-local')
 const localRuntimePath = join(localRoot, 'runtime')
@@ -753,9 +755,18 @@ const server = createServer(async (request, response) => {
       try { return send(response, 200, await voiceDisplaySettings.save(await readJson(request))) }
       catch (error) { return send(response, 400, { error: error.message }) }
     }
+    if (request.method === 'POST' && url.pathname === '/api/claude/check-updates') {
+      const owner = sessions.selected()
+      if (!owner) return send(response, 409, { error: 'Open a Claude chat with VoiceMesh first' })
+      return send(response, 200, { request: updateChecks.request(owner) })
+    }
+    if (request.method === 'POST' && url.pathname === '/api/claude/check-updates/claim') {
+      const { sessionId, id } = await readJson(request)
+      return send(response, 200, { request: updateChecks.claim(sessionId, id) })
+    }
     if (request.method === 'GET' && url.pathname === '/api/state') {
       const selected = sessions.selected()
-      send(response, 200, { ...mediaState, voiceDisplay: await voiceDisplaySettings.read(), theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale(), mediaConnected: Date.now() - mediaSeenAt < 2500,
+      send(response, 200, { ...mediaState, updateCheck: updateChecks.get(selected), voiceDisplay: await voiceDisplaySettings.read(), theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale(), mediaConnected: Date.now() - mediaSeenAt < 2500,
         voiceConfigured: availableConnections().length > 0,
         classifierEnabled: providerStore.classifier?.().enabled === true,
         captionRevision: selected ? transcriptLedger.revision(selected) : 0, sequence,

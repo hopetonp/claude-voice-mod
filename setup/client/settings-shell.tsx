@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createTranslator, VoiceSettingsEditor } from '@voicemesh/settings-editor'
-import { claudeBackend, codingDiagnostics } from './claude-backend.ts'
+import { claudeBackend, codingDiagnostics, requestUpdateCheck } from './claude-backend.ts'
 import { CodingDiagnostics } from './coding-diagnostics.tsx'
 import { voiceText } from '../../hooks/voice-status-i18n.js'
 
@@ -22,6 +22,12 @@ function savedSection(): typeof sections[number] {
 /** Claude-specific recovery belongs in the harness, alongside the shared editor. */
 export function SettingsShell({ locale, onClose }: { locale: string; onClose?: () => void }) {
   const [section, setSection] = useState<typeof sections[number]>(savedSection)
+  const [updateState, setUpdateState] = useState<'idle' | 'pending' | 'requested' | 'failed'>('idle')
+  const checkUpdates = async () => {
+    setUpdateState('pending')
+    try { await requestUpdateCheck(); setUpdateState('requested') }
+    catch { setUpdateState('failed') }
+  }
   const [canRelease, setCanRelease] = useState<boolean | null>(null)
   useEffect(() => {
     try { localStorage.setItem(sectionStorageKey, section) } catch { /* Settings still work if storage is unavailable. */ }
@@ -63,10 +69,14 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
             : t(descriptions[visibleSection]) && <p>{t(descriptions[visibleSection])}</p>}</header>
         {visibleSection === 'troubleshooting' ? <CodingDiagnostics locale={locale} /> : <VoiceSettingsEditor backend={claudeBackend} locale={locale}
           activeSection={visibleSection} voiceSelector="dropdown" title={t('settings.titleForHost', { host: 'Claude' })}
-          footerRight={<div className="settings-footer-versions" aria-label={t('shell.installedVersions')}>
+          footerRight={<div className="settings-footer-info">
+            <div className="settings-update-check"><button type="button" disabled={updateState === 'pending' || updateState === 'requested'} onClick={() => void checkUpdates()}>
+              {voiceText(locale, updateState === 'pending' ? 'update.requesting' : 'update.check')}
+            </button>{(updateState === 'requested' || updateState === 'failed') && <span role="status">{voiceText(locale, updateState === 'requested' ? 'update.requested' : 'update.failed')}</span>}</div>
+            <div className="settings-footer-versions" aria-label={t('shell.installedVersions')}>
             <div>{t('shell.composerVersion', { version: __VOICEMESH_COMPOSER_VERSION__ })}</div>
             <div>{t('shell.voiceModVersion', { version: __VOICE_MOD_VERSION__ })} · Beta</div>
-          </div>}
+          </div></div>}
           providers={{ 'openai-live': 'GPT Live', openai: 'OpenAI Realtime', xai: 'xAI Grok', gemini: 'Gemini Live' }} />}
       </div>
     </div>

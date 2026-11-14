@@ -563,6 +563,13 @@ async function pollBridge($) {
     if (connection) await completionOutbox?.flush()
     if (media.selectedSession === null && sessionId
       && (await $.session.surfaces().catch(() => [])).length) await selectThisSession($).catch(() => {})
+    const update = media.updateCheck
+    if (update?.sessionId === sessionId) {
+      const claimed = await postBridge($, '/api/claude/check-updates/claim', { sessionId, id: update.id })
+      if (claimed.request) void $.prompt.submit({ text: claimed.request.text, asUser: true })
+        .then(result => { if (result?.drop !== undefined) $.ui.toast(vt('update.failed')) })
+        .catch(() => $.ui.toast(vt('update.failed')))
+    }
     await pollVoiceTask($)
     await pollSteer($)
   } finally { bridgePolling = false }

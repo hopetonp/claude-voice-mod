@@ -18,3 +18,8 @@ html, body, #app { margin: 0; width: 100%; height: 100%; overflow: hidden; backg
 html[data-theme="dark"] .coding-diagnostics { color: #eee; }
 html[data-theme="dark"] .coding-diagnostics button,
 html[data-theme="dark"] .coding-diagnostics-panel { background: #202020; border-color: #555; }
+
+.settings-footer-info { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; margin-left: auto; }
+.settings-update-check { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.settings-update-check button { font-size: 11px; padding: 6px 10px; }
+.settings-update-check [role="status"] { max-width: 220px; font-size: 10px; color: var(--muted); }

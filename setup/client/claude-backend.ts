@@ -156,3 +156,7 @@ export const claudeBackend: VoiceSettingsBackend = {
     return result.ready === true
   },
 }
+
+export async function requestUpdateCheck(): Promise<void> {
+  await request('/api/claude/check-updates', { method: 'POST' })
+}

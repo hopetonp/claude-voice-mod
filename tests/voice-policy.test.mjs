@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFile } from 'node:fs/promises'
-import { codingAcknowledgement, liveInstructions, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
+import { codingResultText, stoppedCodingResult, codingAcknowledgement, liveInstructions, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
 
 test('questions about images or the screen go to the coding session, stated early', () => {
   const text = liveInstructions()
@@ -33,4 +33,17 @@ test('no reply, result, or acknowledgement mentions a handoff or reads technical
       assert.ok(source.includes(`\${${name}}`), `${file} speaks with ${name}`)
     }
   }
+})
+
+
+test('stopped work is acknowledged in the user language without treating it as a failure', () => {
+  for (const status of ['aborted', 'stopped']) {
+    assert.equal(codingResultText({ status, text: '' }), 'The user stopped the coding work.')
+    assert.equal(codingResultText({ status, text: 'An unfinished answer' }), 'The user stopped the coding work.')
+  }
+  assert.equal(codingResultText({ status: 'failed', text: '' }), 'Claude could not complete that request.')
+  assert.equal(codingResultText({ status: 'complete', text: 'Fixed.' }), 'Fixed.')
+  assert.ok(liveInstructions().includes(stoppedCodingResult))
+  assert.match(stoppedCodingResult, /user’s language/)
+  assert.match(stoppedCodingResult, /Do not apologize, ask them to retry/)
 })

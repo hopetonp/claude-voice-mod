@@ -1,14 +1,25 @@
 /** Spoken interruptions of a running Claude turn. Composer steers the host while a task runs; the
  * host decides how what was said reaches Claude:
- * - a stop: the Mod cancels the turn and Claude reads `interruptedPrompt` next;
+ * - a plain stop: the Mod cancels the turn and the voice reports its terminal status;
+ * - a stop with a new instruction: Claude reads `interruptedPrompt` next;
  * - anything else: a note the Mod hands Claude after its next tool call, without stopping it. A note
  *   the turn never reached (it ended first, or sat in one long command) becomes the next request. */
 
 // "stop", "no, wait", "cancel that", "never mind": words that halt the work rather than redirect it.
 const STOP = /^(?:(?:no|okay|ok|um+|uh+|hey|actually|claude|please)[\s,.!]+)*(?:stop|cancel|abort|halt|quit|wait|hold on|hang on|never ?mind|forget it|scratch that|don'?t do (?:that|it))\b/i
 
+function stopWords(said) {
+  return said.trim().replace(/^(?:(?:no|okay|ok|um+|uh+|hey|actually|claude|please)[\s,.!]+)*(?:(?:can|could|would|will) you\s+)?(?:please\s+)?/i, '')
+}
+
 export function isStopRequest(said) {
-  return STOP.test(said.trim())
+  return STOP.test(stopWords(said))
+}
+
+/** Only an unambiguous command to halt work may bypass model routing. */
+export function isDirectStopRequest(said) {
+  const text = stopWords(said).replace(/[.!?,;]+/g, ' ').replace(/\s+/g, ' ').trim()
+  return /^(?:stop|cancel|abort|halt|wait|hold on|hang on|never ?mind|forget it|scratch that)(?: (?:that|it|working|coding|the work|the coding agent|what you(?:'re| are) doing))?(?: please)?(?: stop(?: that| it)?)?(?: (?:don'?t do (?:that|it)(?: anymore)?|i changed my mind|changed my mind|change my mind))*$/i.test(text)
 }
 
 /** The prompt Claude receives after its turn was cancelled, so it knows what was interrupted and why. */
@@ -43,7 +54,7 @@ export function addSteer(pending, { id, parentId, previous, said }) {
 
 /** The task a pending steer becomes once the steered turn has ended, or null when nothing is left. */
 export function steerFollowUp(pending) {
-  if (!pending?.notes.length) return null
+  if (!pending?.notes.length || (pending.kind === 'stop' && isDirectStopRequest(pending.notes.at(-1).text))) return null
   const said = pending.notes.map(note => note.text)
   const text = pending.kind === 'stop' ? interruptedPrompt(pending.previous, said.join(' ')) : followUpPrompt(pending.previous, said)
   return { id: pending.notes.at(-1).id, text }

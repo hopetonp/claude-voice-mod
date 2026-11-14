@@ -10,3 +10,9 @@ test('only an unstarted claimed request expires', () => {
   assert.equal(unstartedClaimExpired({ status: 'running', turnId: 'turn-1', claimedAt }, now), false)
   assert.equal(unstartedClaimExpired({ status: 'claimed', turnId: 'turn-1', claimedAt }, now), false)
 })
+
+
+test('a definitely rejected submission waits for the person instead of expiring', () => {
+  assert.equal(unstartedClaimExpired({ status: 'claimed', submissionState: 'rejected', turnId: null, claimedAt: 1000 },
+    1000 + CLAIM_START_TIMEOUT_MS * 10), false)
+})

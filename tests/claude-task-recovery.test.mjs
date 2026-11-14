@@ -41,3 +41,25 @@ test('a newer prompt or malformed history cannot supply an old task completion',
   assert.equal(completionFromTranscript(task, transcript(root, newer, { ...answer, parentUuid: newer.uuid }, stop)), null)
   assert.equal(completionFromTranscript(task, transcript(root) + 'invalid\n' + transcript(answer, stop)), null)
 })
+
+const interrupted = { type: 'user', uuid: 'interrupted', parentUuid: answer.uuid,
+  sessionId: task.sessionId, promptId: root.promptId,
+  message: { content: [{ type: 'text', text: '[Request interrupted by user]' }] } }
+
+test('a native manual stop recovers the exact voice task without a completion callback', () => {
+  for (const text of ['[Request interrupted by user]', '[Request interrupted by user for tool use]']) {
+    assert.deepEqual(completionFromTranscript(task, transcript(root, answer,
+      { ...interrupted, message: { content: [{ type: 'text', text }] } })), {
+      status: 'aborted', text: '', evidence: 'claude-transcript-interruption',
+    })
+  }
+})
+
+test('interruption text in another prompt, subagent, tool result, or user quote cannot release a task', () => {
+  for (const change of [
+    { promptId: 'other-prompt' }, { isSidechain: true }, { parentUuid: 'unrelated' },
+    { origin: { kind: 'user' } }, { isMeta: true }, { sessionId: 'other' },
+    { message: { content: [{ type: 'tool_result', is_error: true, content: '[Request interrupted by user]' }] } },
+    { message: { content: 'They said [Request interrupted by user]' } },
+  ]) assert.equal(completionFromTranscript(task, transcript(root, answer, { ...interrupted, ...change })), null)
+})

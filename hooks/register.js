@@ -20,6 +20,10 @@ let userChangedAt = 0
 let replyChangedAt = 0
 // Whether the live line was drawn at the last poll, so its disappearance gets a redraw.
 let lineShown = false
+let drawnVoicePhase = null
+let hoveredControl = null
+let hoverReleasePending = false
+let hoverReleaseTimer = null
 let sessionId = null
 let voiceTask = null
 // The main agent's turn in progress, if any: with voice live and nobody talking, the strip names it.
@@ -55,24 +59,26 @@ const START_HOLD_MS = 8000
 let sessionFresh = false
 
 // DeepSeek's five-bar, stop, and muted glyphs inside the established Claude button surface.
-function voiceButtonIcon(phase, muted, theme = 'light') {
+function voiceButtonIcon(phase, muted, theme = 'light', hovered = false) {
+  const fill = hovered ? '#315ee8' : BUTTON_FILL
   const colors = voiceColors(theme)
   // The symbols sit on the blue button, so in light mode they are white rather than the theme's dark ink.
   const ink = theme === 'dark' ? colors.ink : '#ffffff'
   const connecting = phase === 'connecting'
   const active = !['offline', 'idle', 'error', 'needs-activation', 'connecting'].includes(phase)
   const bars = [[0.15, 5.6], [3.65, 16], [7.15, 9.6], [10.65, 13], [14.15, 5.6]]
-  const delays = [0, -720, -540, -360, -180]
+  const delays = [0, -1440, -1080, -720, -360]
+  const easing = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"'
   const wave = bars.map(([x, height], index) => {
     const y = (16 - height) / 2
     if (!connecting) return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${ink}"/>`
-    const shortHeight = height * .35
+    const shortHeight = height * .6
     const shortY = (16 - shortHeight) / 2
-    return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${ink}"><animate attributeName="height" values="${shortHeight};${height};${shortHeight}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="y" values="${shortY};${y};${shortY}" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/><animate attributeName="opacity" values=".55;1;.55" dur="900ms" begin="${delays[index]}ms" repeatCount="indefinite"/></rect>`
+    return `<rect x="${x}" y="${y}" width="1.7" height="${height}" rx="0.85" fill="${ink}"><animate attributeName="height" values="${shortHeight};${height};${shortHeight}" dur="1800ms" begin="${delays[index]}ms" ${easing} repeatCount="indefinite"/><animate attributeName="y" values="${shortY};${y};${shortY}" dur="1800ms" begin="${delays[index]}ms" ${easing} repeatCount="indefinite"/><animate attributeName="opacity" values=".8;1;.8" dur="1800ms" begin="${delays[index]}ms" ${easing} repeatCount="indefinite"/></rect>`
   }).join('')
   const stop = `<path d="M4.4 4.4 11.6 11.6M11.6 4.4 4.4 11.6" stroke="${ink}" stroke-width="1.9" stroke-linecap="round"/>`
   const micOff = `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v1.1l5.2 5.2V3.6A2.6 2.6 0 0 0 8 1ZM4.2 8.2c0 .4.05.7.14 1.05l3.66 3.66h-1.6l-4-4 1.1-1.1c.1.15.3.25.7.39ZM7.4 11.7v2.2h1.2v-2.2H7.4ZM2.3 1.4l12.3 12.3-.85.85L1.45 2.25 2.3 1.4Z" fill="${ink}"/>`
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="${BUTTON_FILL}" stroke="${darken(BUTTON_FILL, .25)}" stroke-width="1"/><g transform="translate(9 9)">${muted ? micOff : active ? stop : wave}</g></svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="${fill}" stroke="${darken(fill, .25)}" stroke-width="1"/><g transform="translate(9 9)">${muted ? micOff : active ? stop : wave}</g></svg>`
 }
 // The outer voice row owns its height; the start button retains its original size.
 const BUTTON_SIZE = 28
@@ -87,8 +93,8 @@ function darken(hex, amount) {
 
 // DeepSeek's quick-control glyphs (voice-client glyphs.tsx), drawn at 15px in a 26px round seat.
 const voiceColors = theme => theme === 'dark'
-  ? { control: '#383836', border: '#5e5e5a', bars: '#e8e8e4', ink: '#e8e8e4', muted: '#b4b4ae', off: '#e16d66' }
-  : { control: '#ffffff', border: '#d1d0cc', bars: '#3b82f6', ink: '#343432', muted: '#676761', off: '#b43c35' }
+  ? { hover: '#4b4b48', control: '#383836', border: '#5e5e5a', bars: '#e8e8e4', ink: '#e8e8e4', muted: '#b4b4ae', off: '#e16d66' }
+  : { hover: '#e5e4df', control: '#ffffff', border: '#d1d0cc', bars: '#3b82f6', ink: '#343432', muted: '#676761', off: '#b43c35' }
 const GLYPHS = {
   mic: c => `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v4.8a2.6 2.6 0 0 0 5.2 0V3.6A2.6 2.6 0 0 0 8 1Z" fill="${c}"/><path d="M4.2 8.2c0 2.1 1.7 3.8 3.8 3.8s3.8-1.7 3.8-3.8H13c0 2.9-2.2 5.2-5 5.2s-5-2.3-5-5.2h1.2Z" fill="${c}"/><path d="M7.4 11.7v2.2h1.2v-2.2H7.4Z" fill="${c}"/>`,
   micOff: c => `<path d="M8 1a2.6 2.6 0 0 0-2.6 2.6v1.1l5.2 5.2V3.6A2.6 2.6 0 0 0 8 1Z" fill="${c}"/><path d="M4.2 8.2c0 .4.05.7.14 1.05l3.66 3.66h-1.6l-4-4 1.1-1.1c.1.15.3.25.7.39Z" fill="${c}"/><path d="M7.4 11.7v2.2h1.2v-2.2H7.4Z" fill="${c}"/><path d="M2.3 1.4l12.3 12.3-.85.85L1.45 2.25 2.3 1.4Z" fill="${c}"/>`,
@@ -98,8 +104,8 @@ const GLYPHS = {
   // A single cog silhouette keeps its teeth connected at the small control size.
   settings: c => `<path d="M6.65.7h2.7l.32 1.64c.52.16 1.01.36 1.47.61l1.39-.95 1.91 1.91-.95 1.39c.25.46.45.95.61 1.47l1.64.32v2.7l-1.64.32c-.16.52-.36 1.01-.61 1.47l.95 1.39-1.91 1.91-1.39-.95c-.46.25-.95.45-1.47.61l-.32 1.64h-2.7l-.32-1.64c-.52-.16-1.01-.36-1.47-.61l-1.39.95-1.91-1.91.95-1.39c-.25-.46-.45-.95-.61-1.47L.7 9.35v-2.7l1.64-.32c.16-.52.36-1.01.61-1.47L2 3.47l1.91-1.91 1.39.95c.46-.25.95-.45 1.47-.61L6.65.7ZM8 5.3a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Z" fill="${c}" fill-rule="evenodd"/>`,
 }
-function voiceIcon(glyph, color) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><g transform="translate(5.5 5.5) scale(.9375)">${GLYPHS[glyph](color)}</g></svg>`
+function voiceIcon(glyph, color, hoverFill) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">${hoverFill ? `<circle cx="13" cy="13" r="13" fill="${hoverFill}"/>` : ''}<g transform="translate(5.5 5.5) scale(.9375)">${GLYPHS[glyph](color)}</g></svg>`
 }
 
 // DeepSeek's nine-band microphone meter, adapted to a Mod SVG leaf, in a clear green: the user's mic is live.
@@ -148,10 +154,18 @@ function currentLine(now) {
   return liveLine({ ...media, transcript: history.unwritten(media.transcript ?? ''), userChangedAt, replyChangedAt }, now)
 }
 
+// Live audio redraws replace tooltip anchors. Keep them stable until Claude's
+// 150 ms pointer-leave dismissal has completed; host polling continues normally.
+// The connecting SVG runs its own clock; repeated row replacement restarts it.
+function redraw($, force = false) {
+  if (!force && media.phase === 'connecting' && drawnVoicePhase === 'connecting') return
+  if (!hoveredControl && !hoverReleasePending) $.ui.invalidate('ui.render')
+}
+
 function show($, next) {
   if (status === next) return
   status = next
-  $.ui.invalidate('ui.render')
+  redraw($)
 }
 const duration = voiceDuration
 
@@ -222,11 +236,11 @@ async function refresh($) {
           duration: ['listening', 'speaking', 'thinking'].includes(next.phase)
             ? vt('status.duration', { duration: duration(next.activeSeconds, next.locale) }) : '',
         }))
-    if (levelsChanged || themeChanged || localeChanged) $.ui.invalidate('ui.render')
+    if (levelsChanged || themeChanged || localeChanged) redraw($)
     // Redraw for new words, while a line shows so it clears on time, and once when it goes away; and
     // while the resting orb shows, so it breathes.
     const resting = !showing && !['offline', 'idle', 'error', 'needs-activation', 'connecting', 'standby'].includes(next.phase)
-    if (textChanged || showing || showing !== lineShown || resting) $.ui.invalidate('ui.render')
+    if (textChanged || showing || showing !== lineShown || resting) redraw($)
     lineShown = showing
   } catch {
     connection = null
@@ -284,8 +298,9 @@ async function pollSteer($) {
     headers: { Authorization: `Bearer ${connection.token}` },
   })
   if (!response.ok) return
+  const task = voiceTask
   const { steer } = JSON.parse(response.text)
-  if (steer?.parentId !== voiceTask.id) return
+  if (!task?.turnId || steer?.parentId !== task.id || task.steering) return
   if (steer.kind !== 'stop') {
     // A poll that crossed a delivery still lists what Claude already read.
     const read = voiceTask.readNotes ?? []
@@ -293,9 +308,11 @@ async function pollSteer($) {
       && typeof note.text === 'string' && !read.includes(note.id)) : []
     return
   }
-  voiceTask.steering = true
+  task.steering = true
   // A turn that already ended cannot be cancelled; report it so the interruption still goes through.
-  await $.turn.abort({ turnId: voiceTask.turnId }).catch(() => abandonVoiceTask($))
+  await $.turn.abort({ turnId: task.turnId }).catch(() => {
+    if (voiceTask === task) return abandonVoiceTask($)
+  })
 }
 
 // Notes reach Claude as context after a tool result in the voice turn's main loop. A turn that ends
@@ -328,7 +345,7 @@ async function pollVoiceTask($) {
       // The host may have recovered a completion while this Mod missed the
       // event. Drop only that stale local ownership, without cancelling Claude.
       if (claudeTurn === previousTurn) claudeTurn = null
-      $.ui.invalidate('ui.render')
+      redraw($)
     } else {
       const warning = vt('status.handoffNotStarted')
       show($, warning)
@@ -353,7 +370,7 @@ async function pollVoiceTask($) {
   if (['claimed', 'submitting', 'running'].includes(task.status)) {
     // A Mod reload can resume observing an admitted turn, but must never resubmit it.
     history.handOff(task.text)
-    if (task.mode === 'submit') voiceTask = { ...task, admitted: true }
+    if (task.mode === 'submit') voiceTask = { ...task, admitted: true, submissionRetry: task.submissionState === 'rejected' }
     else show($, vt('status.draftReview'))
     return
   }
@@ -373,7 +390,8 @@ async function pollVoiceTask($) {
 }
 
 async function finishHandoff($) {
-  const handoff = voiceTask?.handoff
+  const task = voiceTask
+  const handoff = task?.handoff
   if (!handoff) return
   const route = routedTurns.get(voiceTask.id)
   // The queued task is already the host's coding admission. GPT Live supplies a
@@ -393,18 +411,29 @@ async function finishHandoff($) {
   openNotes.add(handoff.key)
   await flushHistory($)
   await updateNotes($)
+  if (voiceTask !== task) return
   if (written && userPosted) {
     handedOff.set(handoff.key, written)
     if (handedOff.size > 64) handedOff.delete(handedOff.keys().next().value)
   }
-  // This durable transition is the duplicate-send boundary. A fresh Mod may
-  // release a pre-submit claim, but must never replay an uncertain submission.
-  await postBridge($, '/api/claude/submitting', { id: voiceTask.id, sessionId })
-  voiceTask.handoff = null
-  // submit may wait for an already-running turn to become idle. Keep the timer free to
-  // poll media and redraw the controls while that handoff waits.
-  void $.prompt.submit({ text: voiceTask.text, asUser: true })
-    .catch(() => show($, vt('status.handoffInterrupted')))
+  await submitHandoff($, task)
+}
+
+async function submitHandoff($, task) {
+  // Only an explicit {drop} proves no prompt was enqueued. An exception or a
+  // missing reply is ambiguous and must never cause an automatic resubmission.
+  await postBridge($, '/api/claude/submitting', { id: task.id, sessionId })
+  if (voiceTask !== task) return
+  task.handoff = null
+  task.submissionRetry = false
+  void $.prompt.submit({ text: task.text, asUser: true }).then(async result => {
+    if (result?.drop === undefined || voiceTask !== task || task.turnId) return
+    await postBridge($, '/api/claude/submission-rejected', { id: task.id, sessionId })
+    task.submissionRetry = true
+    redraw($)
+    show($, vt('status.claudePaused'))
+    $.ui.toast(vt('status.claudePaused'))
+  }).catch(() => show($, vt('status.handoffInterrupted')))
 }
 
 async function refreshCaptions($) {
@@ -469,26 +498,36 @@ function resolveVoiceTurns() {
 
 // A finished conversation caption becomes one bubble: /voice-said, answered and drawn by the
 // voicemesh-said companion (a plugin's own command runs skip its own hooks). Commands start no turn.
-// Without the companion the run rejects and the caption falls back to a dim history line.
-function showSaid($, role, text) {
-  const said = text.trim()
-  return Promise.resolve().then(() => $.command.run({ command: 'voice-said', args: `${role === 'user' ? 'you' : 'voice'} ${said}` }))
-    .catch(() => $.ui.log(`${role === 'user' ? 'You' : 'Voice'}: ${said}`, { to: 'transcript' }))
+// A failed command stays queued. ui.log creates a plugin-labelled row instead of a bubble.
+let captionRetryAt = 0
+async function showSaid($, role, text) {
+  try {
+    const result = await $.command.run({ command: 'voice-said', args: `${role === 'user' ? 'you' : 'voice'} ${text.trim()}` })
+    if (result?.drop !== undefined || result?.deny !== undefined) throw new Error(result.drop ?? result.deny)
+    return true
+  } catch (error) {
+    await $.store.set('voice-caption-error', { at: Date.now(), message: String(error?.message ?? error) }).catch(() => {})
+    return false
+  }
 }
 
 // Resolve only once every bubble is posted, so a hand-off cannot overtake them.
 async function flushHistory($) {
-  if (!sessionId) return
+  if (!sessionId || Date.now() < captionRetryAt) return
   let piece
   while ((piece = history.next())) {
     const { row } = piece
-    history.posted(piece)
-    if (!piece.final) continue
+    if (!piece.final) { history.posted(piece); continue }
     const said = (piece.text ?? row.text.slice(piece.from)).trim()
     const line = row.delegated || !said ? '' : `${row.role === 'user' ? 'You' : 'Voice'}: ${said}`
     // Claude may complete command rows out of order when runs overlap. Finish one
     // visible row before starting the next so the timeline never has to move it.
-    if (line && !piece.quiet) await showSaid($, row.role, said)
+    if (line && !piece.quiet && !await showSaid($, row.role, said)) {
+      captionRetryAt = Date.now() + 1000
+      return
+    }
+    captionRetryAt = 0
+    history.posted(piece)
     const written = (piece.rows ?? [row]).map((item, index) => ({ id: item.id, line: index ? '' : line, posted: item.posted, final: true }))
     savedHistory = [...savedHistory.filter(entry => !written.some(item => item.id === entry.id)), ...written].slice(-128)
     await $.store.set(`voice-history:${sessionId}`, savedHistory)
@@ -507,22 +546,30 @@ async function updateNotes($) {
   }
   if (!changed) return
   notes = new Map([...notes].slice(-64))
-  $.ui.invalidate('ui.render')
+  redraw($)
   await $.store.set(`voice-notes:${sessionId}`, [...notes])
+}
+
+// Control traffic must keep moving while Claude holds a transcript command open.
+let bridgePolling = false
+async function pollBridge($) {
+  if (bridgePolling) return
+  bridgePolling = true
+  try {
+    await refresh($)
+    if (connection) await completionOutbox?.flush()
+    if (media.selectedSession === null && sessionId
+      && (await $.session.surfaces().catch(() => [])).length) await selectThisSession($).catch(() => {})
+    await pollVoiceTask($)
+    await pollSteer($)
+  } finally { bridgePolling = false }
 }
 
 async function tick($) {
   if (ticking) return
   ticking = true
   try {
-    await refresh($)
-    if (connection) await completionOutbox?.flush()
-    // A restarted host has no selected session: the one on screen takes it back, so its own results are
-    // not taken for another session's.
-    if (media.selectedSession === null && sessionId
-      && (await $.session.surfaces().catch(() => [])).length) await selectThisSession($).catch(() => {})
-    await pollSteer($)
-    await pollVoiceTask($)
+    await pollBridge($)
     // Only the session that owns the voice writes its conversation.
     if (owning()) {
       await refreshCaptions($)
@@ -618,7 +665,7 @@ let settings = { prefs: null, models: [], voices: [], catalogLoading: false,
 let catalogRequest = 0
 function redrawSettings($, changes) {
   settings = { ...settings, ...changes }
-  $.ui.invalidate('ui.render')
+  redraw($)
 }
 
 async function settingsHost($) {
@@ -681,7 +728,7 @@ function settingsActions($) {
         await $.fs.write(await displayFile($), JSON.stringify({ chatBubbles }))
         display = { chat: chatBubbles, at: Date.now() }
         redrawSettings($, { notice: chatBubbles ? 'Turns show as chat bubbles.' : 'Turns show as plain text.' })
-        $.ui.invalidate('ui.render')
+        redraw($)
       } catch { redrawSettings($, { chatBubbles: !chatBubbles, notice: 'Could not save the display choice.' }) }
     },
     saveStandby: seconds => apply('Saving…', 'Standby duration saved.', api => api.save(provider(), { voiceStandbySec: seconds })),
@@ -734,7 +781,8 @@ async function openSettings($, surface) {
 
 // The voice row above the prompt.
 function voiceStrip($, e, original) {
-  const { Box, Client, Svg, Text } = $.ui.resolve(e)
+  drawnVoicePhase = media.phase
+  const { Box, Button, Client, Svg, Text } = $.ui.resolve(e)
   const colors = voiceColors(media.theme)
   const parked = media.phase === 'standby'
   const connecting = media.phase === 'connecting'
@@ -745,16 +793,36 @@ function voiceStrip($, e, original) {
   // DeepSeek's quick controls: the clock, or one word while parked or connecting, then the icons.
   // A problem the person must act on (host down, setup needed, an error) replaces the clock.
   const healthy = media.mediaConnected && media.voiceConfigured !== false && media.phase !== 'error' && media.phase !== 'needs-activation'
-  const label = startupHistoryPending ? vt('status.loadingHistory') : !healthy || !connection ? (status ?? vt('status.initializing'))
+  const label = startupHistoryPending ? vt('status.loadingHistory') : voiceTask?.submissionRetry ? vt('status.claudePaused') : !healthy || !connection ? (status ?? vt('status.initializing'))
     : live ? duration(media.activeSeconds, media.locale) : parked ? vt('status.standby') : connecting ? vt('status.connectingShort') : ''
+  // Claude lifts this hidden hover Box into a DOM popover, outside the band's paint containment.
+  const tooltip = label => Box({
+    position: 'absolute', display: 'none', hover: { display: 'flex' },
+    children: [Text({ children: [label] })],
+  })
   const icon = (action, glyph, color, alt) => Box({
+    key: `voice-control-${action}`,
     position: 'relative', width: 3, height: BUTTON_ROWS,
     children: [
-      Svg({ source: voiceIcon(glyph, color), width: 26, height: 26, alt }),
+      Svg({ source: voiceIcon(glyph, color, hoveredControl === `voice-icon-${action}` ? colors.hover : undefined), width: 26, height: 26, alt }),
       Box({ position: 'absolute', top: 0, left: 0,
         children: [Client({ key: `voice-icon-${action}`, module: './voice-hit-client.js', props: { action, height: BUTTON_ROWS }, width: 3, height: BUTTON_ROWS })] }),
     ],
   })
+  const hints = [
+    ...(parked ? [['voice-icon-resume', vt('control.resume')]] : []),
+    ...(active ? [
+      ['voice-icon-mute', vt(media.muted ? 'control.unmuteMic' : 'control.muteMic')],
+      ['voice-icon-speaker-mute', vt(media.speakerMuted ? 'control.unmuteSpeaker' : 'control.muteSpeaker')],
+    ] : []),
+    ...(connection ? [['voice-icon-settings', vt('control.settings')]] : []),
+    ['voice-toggle', vt(active ? 'control.stop' : 'control.start')],
+  ]
+  // A press clears hover while the row changes; keep its fallback on the
+  // start/stop button rather than the first newly added microphone control.
+  const hoveredHintIndex = hints.findIndex(([key]) => key === hoveredControl)
+  const hintIndex = hoveredHintIndex < 0 ? hints.length - 1 : hoveredHintIndex
+  const hintOffset = hintIndex * 3.5
   const line = currentLine(Date.now())
   // A claimed voice request may still be waiting for handoff. Only a started Claude turn
   // means Claude is actually working; its turn ID survives a Mod reload via the host.
@@ -806,31 +874,44 @@ function voiceStrip($, e, original) {
                   alt: orbLabel }),
               ...(working ? [Text({ dimColor: true, wrap: 'truncate', children: [vt('status.working')] })] : []),
             ] })] : []),
-          ...(parked ? [icon('resume', 'resume', colors.muted, vt('control.resume'))] : []),
+          ...(voiceTask?.submissionRetry ? [Button({ key: 'voice-resume-coding', label: vt('control.resumeCoding'), onPress: () => voiceTask?.submissionRetry ? submitHandoff($, voiceTask) : undefined })] : []),
+
           // The clock sits in a seat of its own, wide enough for any m:ss, so a changing digit moves
           // only inside the seat and never pushes the icons beside it.
-          ...(label ? [live && healthy && connection
+          ...(label ? [live && healthy && connection && !voiceTask?.submissionRetry
             ? Box({ width: 7, flexShrink: 0, justifyContent: 'flex-end', children: [Text({ color: colors.muted, children: [label] })] })
             : Text({ color: colors.muted, children: [label] })] : []),
+          ...(live ? [Svg({ source: voiceWave(waveLevels, vt('control.micLevels')), width: 64, height: 24, alt: vt('control.micLevels') })] : []),
+          // The shared popover has one lifetime. Offset its anchor to the hovered
+          // button, and counter-offset the row so the controls stay in place.
+          Box({ key: 'voice-tooltip-anchor', position: 'relative', flexShrink: 0,
+            marginLeft: hintOffset, marginRight: -hintOffset, children: [
+            Box({ flexDirection: 'row', alignItems: 'center', columnGap: 0.5, flexShrink: 0,
+              marginLeft: -hintOffset, marginRight: hintOffset, children: [
+          ...(parked ? [icon('resume', 'resume', colors.muted, vt('control.resume'))] : []),
           ...(active ? [
             icon('mute', media.muted ? 'micOff' : 'mic', media.muted ? colors.off : colors.muted, vt(media.muted ? 'control.unmuteMic' : 'control.muteMic')),
             icon('speaker-mute', media.speakerMuted ? 'volumeOff' : 'volume', media.speakerMuted ? colors.off : colors.muted, vt(media.speakerMuted ? 'control.unmuteSpeaker' : 'control.muteSpeaker')),
           ] : []),
-          ...(live ? [Svg({ source: voiceWave(waveLevels, vt('control.micLevels')), width: 64, height: 24, alt: vt('control.micLevels') })] : []),
+
           ...(connection ? [icon('settings', 'settings', colors.muted, vt('control.settings'))] : []),
           Box({
+            key: 'voice-toggle-seat',
             position: 'relative',
             width: 4,
             height: BUTTON_ROWS,
             justifyContent: 'center',
             children: [
-              Svg({ source: voiceButtonIcon(media.phase, media.muted, media.theme), width: BUTTON_SIZE, height: BUTTON_SIZE, alt: vt(active ? 'control.stop' : 'control.start') }),
+              Svg({ source: voiceButtonIcon(media.phase, media.muted, media.theme, hoveredControl === 'voice-toggle'), width: BUTTON_SIZE, height: BUTTON_SIZE, alt: vt(active ? 'control.stop' : 'control.start') }),
               Box({
                 position: 'absolute', top: 0, left: 0,
                 children: [Client({ key: 'voice-toggle', module: './voice-toggle-client.js', width: 4, height: BUTTON_ROWS })],
               }),
             ],
           }),
+            ] }),
+            tooltip(hints[hintIndex][1]),
+          ] }),
         ],
       }),
     ],
@@ -922,11 +1003,40 @@ let pollingStarted = false
 function startPolling($) {
   if (pollingStarted) return
   pollingStarted = true
-  $.clock.every(250, () => void (!sessionReady || ticking ? refresh($) : tick($)))
+  $.clock.every(250, () => void (!sessionReady ? refresh($) : ticking
+      ? pollBridge($).catch(() => show($, vt('status.bridgeUnavailable'))) : tick($)))
 }
 
 export function register(on) {
   on('ui.message', async ($, e, next) => {
+    if ((e.element === 'voice-toggle' || e.element?.startsWith('voice-icon-'))
+      && typeof e.data?.hovered === 'boolean') {
+      if (e.data.hovered) {
+        const changed = hoveredControl !== e.element
+        hoverReleaseTimer?.cancel()
+        hoverReleaseTimer = null
+        hoverReleasePending = false
+        hoveredControl = e.element
+        if (changed) $.ui.invalidate('ui.render')
+      }
+      else if (hoveredControl === e.element) {
+        hoveredControl = null
+        hoverReleasePending = true
+        hoverReleaseTimer = $.clock.after(250, () => {
+          hoverReleaseTimer = null
+          hoverReleasePending = false
+          redraw($, true)
+        })
+      }
+      if (e.data.hoverOnly) return next(e)
+    }
+    if (e.data?.action) {
+      hoverReleaseTimer?.cancel()
+      hoverReleaseTimer = null
+      hoveredControl = null
+      hoverReleasePending = false
+    }
+
     if (e.element === 'voice-toggle' && e.data?.action === 'toggle') {
       await (media.voiceConfigured === false ? openSettings($, e.surface) : control($, ['offline', 'idle', 'error', 'needs-activation'].includes(media.phase) ? 'start' : 'stop'))
     }
@@ -970,11 +1080,11 @@ export function register(on) {
       sessionReady = true
       await tick($)
       startupHistoryPending = false
-      $.ui.invalidate('ui.render')
+      redraw($)
     })().catch(() => {
       startupHistoryPending = false
       show($, vt('status.bridgeUnavailable'))
-      $.ui.invalidate('ui.render')
+      redraw($)
     })
     return next(e)
   })
@@ -1006,7 +1116,7 @@ export function register(on) {
     if (e.agentId === undefined) {
       sessionFresh = false
       claudeTurn = e.turnId
-      $.ui.invalidate('ui.render')
+      redraw($)
     }
     if (voiceTask?.turnId && voiceTask.turnId !== e.turnId && e.agentId === undefined) await abandonVoiceTask($)
     if (voiceTask?.admitted && !voiceTask.turnId && e.text === voiceTask.text) {
@@ -1049,14 +1159,16 @@ export function register(on) {
   on('turn.complete', async ($, e, next) => {
     if (e.agentId === undefined && claudeTurn === e.turnId) {
       claudeTurn = null
-      $.ui.invalidate('ui.render')
+      redraw($)
     }
     if (voiceTask?.turnId === e.turnId && e.agentId === undefined) {
-      const status = e.reason === 'answer' ? 'complete' : e.isAborted ? 'aborted' : 'failed'
-      // The next spoken turn reports Claude's result, never the handoff acknowledgement.
-      history.stopWaiting()
-      await reportCompletion($, { id: voiceTask.id, sessionId, turnId: e.turnId, status, text: e.answer ?? '' }).catch(() => show($, vt('status.resultBridgeUnavailable')))
+      const status = e.isAborted ? 'aborted' : e.reason === 'answer' ? 'complete' : 'failed'
+      // Release local ownership before asynchronous delivery; an older callback must
+      // never clear the next task admitted while its result is being persisted.
+      const task = voiceTask
       voiceTask = null
+      history.stopWaiting()
+      await reportCompletion($, { id: task.id, sessionId, turnId: e.turnId, status, text: e.answer ?? '' }).catch(() => show($, vt('status.resultBridgeUnavailable')))
     }
     return next(e)
   })

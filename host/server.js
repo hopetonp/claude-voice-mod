@@ -23,7 +23,8 @@ import { startBackgroundMedia } from './background-media.js'
 import { openSettingsWindow, stopSettingsWindows } from './settings-window.js'
 import { claudeDesktopLocale, claudeDesktopTheme } from './claude-theme.js'
 import { classifyForVoice } from './classifier.js'
-import { addSteer, steerFollowUp, steerNote } from './voice-steer.js'
+import { createSpokenStopRouter } from './spoken-stop.js'
+import { isDirectStopRequest, addSteer, steerFollowUp, steerNote } from './voice-steer.js'
 import { scopedVoiceId } from './voice-identity.js'
 import { pcm16ToWav } from './wav.js'
 import { attachPipelineSttSession, connectPipelineProvider, synthesizePipeline,
@@ -164,14 +165,16 @@ async function finishClaudeTask(task, status, text, recoveryEvidence) {
   try {
     const sessionId = task.sessionId
     const steered = pendingSteers.get(sessionId)?.parentId === task.id ? pendingSteers.get(sessionId) : null
+    const followUp = steerFollowUp(steered)
+    const reportResult = steered?.kind !== 'stop' || !followUp
     const finished = { ...task, status, result: text.slice(0, 16000),
       ...(recoveryEvidence ? { recoveryEvidence, recoveredAt: Date.now() } : {}) }
     await persistTask(finished)
-    if (finished.playbackId && steered?.kind !== 'stop') {
+    if (steered?.kind === 'stop') console.info(`Claude stop outcome: ${status} (${task.id})`)
+    if (finished.playbackId && reportResult) {
       await resultLedger.record(finished)
       if (recoveryEvidence === 'manual-release') await resultLedger.markPlayed(finished.playbackId, sessionId)
     }
-    const followUp = steerFollowUp(steered)
     if (followUp) {
       const playbackId = await resultLedger.allocate()
       await persistTask({ id: followUp.id, text: followUp.text, mode: 'submit', status: 'queued',
@@ -179,7 +182,7 @@ async function finishClaudeTask(task, status, text, recoveryEvidence) {
     }
     if (steered) pendingSteers.delete(sessionId)
     if (sessionId !== sessions.selected()) {
-      if (sessions.selected() && finished.playbackId && steered?.kind !== 'stop') {
+      if (sessions.selected() && finished.playbackId && reportResult) {
         const away = { at: Date.now(), title: '' }
         finishedAway.set(sessionId, away)
         away.title = await sessionTitle(sessionId, sessions.cwd(sessionId)).catch(() => '')
@@ -243,13 +246,20 @@ const liveTasksFor = owner => ({
     return { requestId: id }
   },
   // Composer steers instead of dispatching while a task is active (a spoken stop or correction).
-  async steer(id, { instruction }) {
+  async steer(id, { instruction, expectedRequestId }) {
     if (!owner) throw new Error('No Claude session connected')
     if (typeof instruction !== 'string' || !instruction.trim()) throw new Error('Invalid steering instruction')
     await releaseExpiredClaim(owner)
     await recoverCompletedTask(owner)
     const task = taskOf(owner)
+    if (expectedRequestId && (task?.id !== expectedRequestId || !active(task))) return this.states()
     if (!task || !['queued', 'claimed', 'submitting', 'running'].includes(task.status)) return this.dispatch(id, { instruction })
+    if (task.status === 'queued' && isDirectStopRequest(instruction)) {
+      const stopped = { ...task, status: 'aborted', result: '' }
+      await persistTask(stopped)
+      if (stopped.playbackId) await resultLedger.record(stopped)
+      return this.states()
+    }
     if (task.status === 'queued') {
       // Not yet submitted to Claude: the correction joins the request itself.
       await persistTask({ ...task, text: `${task.text}\n${instruction.trim()}` })
@@ -259,6 +269,14 @@ const liveTasksFor = owner => ({
     return this.states()
   },
 })
+
+// Pipeline captions and tool calls share deduplication, just as a realtime socket does.
+const pipelineStopRouters = new Map()
+function pipelineStopsFor(owner) {
+  if (!pipelineStopRouters.has(owner)) pipelineStopRouters.set(owner,
+    createSpokenStopRouter(liveTasksFor(owner), requestId => console.info(`Spoken stop requested for Claude task ${requestId}`)))
+  return pipelineStopRouters.get(owner)
+}
 
 const types = {
   '.html': 'text/html; charset=utf-8',
@@ -630,7 +648,7 @@ const server = createServer(async (request, response) => {
       if (providerStore.voiceMode() !== 'pipeline') return send(response, 409, { error: 'Pipeline mode is not selected' })
       const owner = sessions.selected(), { instruction } = await readJson(request)
       if (!owner || typeof instruction !== 'string' || !instruction.trim() || instruction.length > 4000) return send(response, 400, { error: 'Invalid coding request' })
-      const admitted = await liveTasksFor(owner).dispatch(randomUUID(), { instruction })
+      const admitted = await pipelineStopsFor(owner).tasks.dispatch(randomUUID(), { instruction })
       await transcriptLedger.recordCodingRoute(owner, admitted.requestId, instruction, true)
       send(response, 200, admitted)
       return
@@ -650,7 +668,9 @@ const server = createServer(async (request, response) => {
       const owner = sessions.selected(), { role, text, id, phase } = await readJson(request)
       if (!owner || !['user','assistant'].includes(role) || typeof text !== 'string' || !text.trim() || text.length > 4000) return send(response, 400, { error: 'Invalid voice exchange' })
       if (phase !== undefined && !['start', 'update', 'final'].includes(phase)) return send(response, 400, { error: 'Invalid voice exchange phase' })
-      await transcriptLedger.record(owner, { id: typeof id === 'string' && id.length <= 128 ? id : randomUUID(), role, text, phase: phase ?? 'final' })
+      const caption = { id: typeof id === 'string' && id.length <= 128 ? id : randomUUID(), role, text, phase: phase ?? 'final' }
+      await pipelineStopsFor(owner).caption(caption)
+      await transcriptLedger.record(owner, caption)
       send(response, 200, { ok: true })
       return
     }
@@ -864,8 +884,20 @@ const server = createServer(async (request, response) => {
       const { id, sessionId } = await readJson(request)
       const claudeTask = typeof sessionId === 'string' ? taskOf(sessionId) : null
       if (!claudeTask || claudeTask.id !== id || claudeTask.status !== 'claimed'
-        || claudeTask.submissionState !== 'not-started') return send(response, 409, { error: 'Voice request is not awaiting submission' })
-      await persistTask({ ...claudeTask, status: 'submitting', submissionState: 'started' })
+        || !['not-started', 'rejected'].includes(claudeTask.submissionState)) return send(response, 409, { error: 'Voice request is not awaiting submission' })
+      await persistTask({ ...claudeTask, status: 'submitting', submissionState: 'started', claimedAt: Date.now() })
+      send(response, 200, { ok: true })
+      return
+    }
+    if (request.method === 'POST' && url.pathname === '/api/claude/submission-rejected') {
+      const { id, sessionId } = await readJson(request)
+      const task = typeof sessionId === 'string' ? taskOf(sessionId) : null
+      if (!task || task.id !== id || task.status !== 'submitting' || task.turnId) {
+        return send(response, 409, { error: 'Voice request is not awaiting submission' })
+      }
+      // The Mod received Claude's explicit {drop}: no prompt entered its queue.
+      // Hold the same request for a fresh user gesture, without expiring it.
+      await persistTask({ ...task, status: 'claimed', submissionState: 'rejected' })
       send(response, 200, { ok: true })
       return
     }
@@ -925,12 +957,12 @@ const server = createServer(async (request, response) => {
       const claudeTask = typeof sessionId === 'string' ? taskOf(sessionId) : null
       const savedResult = resultLedger.find(id, sessionId)
       if (claudeTask && claudeTask.id === id && claudeTask.turnId === turnId && typeof text === 'string'
-        && ((claudeTask.status === status && claudeTask.result === text.slice(0, 16000)) || claudeTask.recoveryEvidence === 'manual-release')
+        && ((claudeTask.status === status && (claudeTask.result === text.slice(0, 16000) || claudeTask.recoveryEvidence === 'claude-transcript-interruption')) || claudeTask.recoveryEvidence === 'manual-release')
         && ['complete', 'aborted', 'failed'].includes(claudeTask.status)) {
         return send(response, 200, { ok: true, alreadyRecorded: true })
       }
       if (savedResult && typeof text === 'string' && savedResult.turnId === turnId
-        && ((savedResult.status === status && (savedResult.text === text.slice(0, 16000) || savedResult.recoveryEvidence === 'claude-transcript-completion'))
+        && ((savedResult.status === status && (savedResult.text === text.slice(0, 16000) || ['claude-transcript-completion', 'claude-transcript-interruption'].includes(savedResult.recoveryEvidence)))
           || savedResult.recoveryEvidence === 'manual-release')) {
         return send(response, 200, { ok: true, alreadyRecorded: true })
       }
@@ -1092,8 +1124,12 @@ server.on('upgrade', (request, socket, head) => {
     lastOutput: () => owner ? resultLedger.latest(owner) : null,
     played: playbackId => owner ? resultLedger.markPlayed(playbackId, owner) : Promise.resolve(false),
   }
+  const stops = createSpokenStopRouter(socketTasks, requestId => {
+    console.info(`Spoken stop requested for Claude task ${requestId}`)
+  })
   const onCaption = async caption => {
     if (!owner) return
+    await stops.caption(caption).catch(error => console.error(`Spoken stop dispatch failed: ${error.message}`))
     const delegatedText = active(taskOf(owner)) ? taskOf(owner).text : ''
     await transcriptLedger.record(owner, { ...caption, conversationId,
       id: scopedVoiceId('caption', owner, conversationId, caption.id) }, delegatedText)
@@ -1113,9 +1149,12 @@ server.on('upgrade', (request, socket, head) => {
     close: () => owner ? transcriptLedger.closeTurns(owner) : undefined,
   }
   closeRetiring(voiceSockets)
-  voiceSockets.handleUpgrade(request, socket, head, ws => providerStore.selectedProvider() === 'openai-live'
-    ? attachVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history, turns)
-    : attachRealtimeVoice(ws, providerStore, socketTasks, live => { activeLive = live }, onCaption, history, { turns }))
+  voiceSockets.handleUpgrade(request, socket, head, ws => {
+    ws.on('close', () => stops.close())
+    return providerStore.selectedProvider() === 'openai-live'
+    ? attachVoice(ws, providerStore, stops.tasks, live => { activeLive = live }, onCaption, history, turns)
+    : attachRealtimeVoice(ws, providerStore, stops.tasks, live => { activeLive = live }, onCaption, history, { turns })
+  })
 })
 
 const listenPort = Number(process.env.VOICE_HOST_PORT ?? 61445)

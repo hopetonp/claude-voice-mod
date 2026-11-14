@@ -79,10 +79,13 @@ test('a completed voice exchange releases a prior unanswered caption and both ap
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => [], set: async () => {} },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -121,10 +124,13 @@ test('voice-only turns pass an older coding route and appear before standby', as
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => [], set: async () => {} },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -138,6 +144,7 @@ test('voice-only turns pass an older coding route and appear before standby', as
   }
   try {
     await handlers.get('session.start')($, {}, async () => {})
+    await new Promise(setImmediate)
     now = 7000
     clock(); await new Promise(setImmediate)
     assert(visible.includes('You: How are you?'))
@@ -162,10 +169,13 @@ test('the Mod keeps consecutive ledger turns distinct and omits delegated prompt
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => saved.at(-1) ?? [], set: async (_key, value) => { saved.push(value) } },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -212,10 +222,13 @@ test('a Mod reload in the middle of an utterance shows the whole utterance once 
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => saved.at(-1) ?? [], set: async (_key, value) => { saved.push(value) } },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -266,10 +279,13 @@ test('a reload does not repost captions whose saved entries were evicted', async
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => saved, set: async () => {} },
     clock: { every() {} },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -299,7 +315,7 @@ test('the saved history keeps one entry per caption', async () => {
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async () => ({ text: '' }) },
     store: { get: async () => saved.at(-1) ?? [], set: async (_key, value) => { saved.push(value) } },
     clock: { every(_ms, callback) { clock = callback } },
     ui: { invalidate() {}, log() {} },
@@ -403,10 +419,13 @@ test('a caption the host marks final shows on the next tick', async () => {
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      logged.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => [], set: async () => {} },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { logged.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -444,10 +463,13 @@ test('a ledger caption that grows after its bubble was written posts only the ne
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => saved.at(-1) ?? [], set: async (_key, value) => { saved.push(value) } },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async (url) => {
       const path = new URL(url).pathname
       const body = path === '/api/state'
@@ -503,10 +525,13 @@ test("a last word transcribed late joins the user's bubble ahead of the voice's 
     env: { get: async () => '/tmp' },
     fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test-token' }) },
     session: { id: async () => 'claude-session', cwd: async () => '/p/project' },
-    command: { register: async () => {} },
+    command: { register: async () => {}, run: async ({ args }) => {
+      visible.push(args.replace(/^you /, 'You: ').replace(/^voice /, 'Voice: '))
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
     store: { get: async () => [], set: async () => {} },
     clock: { every(_ms, callback) { clock = callback } },
-    ui: { invalidate() {}, log(line) { visible.push(line) } },
+    ui: { invalidate() {}, log() { throw new Error('captions must use bubble commands') } },
     http: { fetch: async url => {
       const path = new URL(url).pathname
       const body = path === '/api/state' ? { phase, mediaConnected: true, voiceConfigured: true, captionRevision: revision }
@@ -533,5 +558,58 @@ test("a last word transcribed late joins the user's bubble ahead of the voice's 
     await tick(3000)
     await tick(6000)
     assert.deepEqual(visible, ['You: It went off. It was quiet', "Voice: Good, that's what we want."])
+  } finally { Date.now = realNow }
+})
+
+
+for (const failure of ['throw', 'drop']) test(`a caption ${failure} stays queued and retries as a bubble without a plugin log`, async () => {
+  const { register } = await import(`../hooks/register.js?caption-retry=${failure}`)
+  const handlers = new Map()
+  register((name, options, handler) => handlers.set(name, handler ?? options))
+  let clock
+  let attempts = 0
+  const bubbles = []
+  const saved = new Map()
+  const realNow = Date.now
+  let now = 1000
+  Date.now = () => now
+  const $ = {
+    env: { get: async () => '/tmp' }, fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test' }) },
+    session: { id: async () => 'session' },
+    command: { register: async () => {}, run: async ({ args }) => {
+      attempts++
+      if (attempts === 1) {
+        if (failure === 'drop') return { drop: 'the session was stopped' }
+        throw new Error('the session was stopped')
+      }
+      bubbles.push(args)
+      return { text: args.replace(/^(you|voice) /, '') }
+    } },
+    store: { get: async () => [], set: async (key, value) => saved.set(key, value) },
+    clock: { every(ms, callback) { clock = callback } },
+    ui: { invalidate() {}, log() { assert.fail('caption failure must not create a plugin-labelled transcript row') } },
+    http: { fetch: async url => {
+      const path = new URL(url).pathname
+      return { ok: true, text: JSON.stringify(path === '/api/state' ? { phase: 'idle', mediaConnected: true, captionRevision: 1 }
+        : path === '/api/captions' ? { revision: 1, rows: [
+          { id: 'user', role: 'user', text: 'Hello', final: true },
+          { id: 'reply', role: 'assistant', text: 'Hi there', final: true },
+        ] } : { task: null }) }
+    } },
+  }
+  const settle = async () => { for (let i = 0; i < 4; i++) await new Promise(setImmediate) }
+  try {
+    await handlers.get('session.start')($, {}, async () => {})
+    await settle()
+    now = 6000; clock(); await settle()
+    assert.equal(attempts, 1)
+    assert.equal(saved.has('voice-history:session'), false, 'failure cannot mark a caption delivered')
+    now = 6500; clock(); await settle()
+    assert.equal(attempts, 1, 'a failed command is not retried every poll')
+    now = 7100; clock(); await settle()
+    assert.deepEqual(bubbles, ['you Hello', 'voice Hi there'], 'original captions appear once, in order')
+    now = 9000; clock(); await settle()
+    assert.equal(attempts, 3, 'successful captions are not replayed')
+    assert.equal(saved.get('voice-history:session').length, 2)
   } finally { Date.now = realNow }
 })

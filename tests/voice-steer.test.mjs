@@ -30,6 +30,20 @@ test('notes the turn never read become the next request, and a stop outranks the
   assert.match(followUp.text, /Fix the bubbles/)
   pending = addSteer(pending, { id: 'c', parentId: 'task', previous: 'Fix the bubbles', said: 'actually stop' })
   assert.equal(pending.kind, 'stop')
+  assert.equal(steerFollowUp(pending), null, 'a plain stop does not start a confirmation coding turn')
+  pending = addSteer(pending, { id: 'd', parentId: 'task', previous: 'Fix the bubbles', said: 'stop that and read the README instead' })
   assert.match(steerFollowUp(pending).text, /interrupted/)
   assert.equal(steerFollowUp({ ...pending, notes: [] }), null)
+})
+
+
+test('the observed polite stop is recognized without confusing voice controls, quotes, or questions about a stop', async () => {
+  const { isDirectStopRequest, isStopRequest } = await import('../host/voice-steer.js')
+  for (const text of ['Actually, can you stop? Stop', 'Actually, can you stop? Stop that.', 'Could you please cancel that?', 'please stop the coding agent', 'Stop.']) {
+    assert.equal(isDirectStopRequest(text), true, text)
+    assert.equal(isStopRequest(text), true, text)
+  }
+  for (const text of ['stop voice', 'stop recording', 'stop using tabs', 'stopwatch', 'do not stop', "Why didn't the coding agent stop?", 'If I say stop, what happens?', 'Say stop', 'stop that and fix the README']) {
+    assert.equal(isDirectStopRequest(text), false, text)
+  }
 })

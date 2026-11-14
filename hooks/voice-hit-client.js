@@ -3,6 +3,11 @@
 export default function VoiceHit(props, surface) {
   const { action, width = 3, height = 1.2 } = props ?? {}
   surface.onPointer(event => {
+    if (event.type === 'enter' || event.type === 'move' || event.type === 'leave') {
+      surface.post({ hoverOnly: true, hovered: event.type !== 'leave'
+        && event.x >= 0 && event.x < width && event.y >= 0 && event.y < height })
+    }
+
     if (event.type === 'up' && event.button === 'left'
       && event.x >= 0 && event.x < width && event.y >= 0 && event.y < height) {
       surface.post({ action })

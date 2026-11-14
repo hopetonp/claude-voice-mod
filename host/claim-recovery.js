@@ -3,7 +3,7 @@
 export const CLAIM_START_TIMEOUT_MS = 60 * 1000
 
 export function unstartedClaimExpired(task, now = Date.now()) {
-  return ['claimed', 'submitting'].includes(task?.status) && !task.turnId
+  return ['claimed', 'submitting'].includes(task?.status) && !task.turnId && task.submissionState !== 'rejected'
     && Number.isSafeInteger(task.claimedAt)
     && now - task.claimedAt >= CLAIM_START_TIMEOUT_MS
 }

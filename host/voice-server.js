@@ -3,7 +3,7 @@ import { WebSocket } from 'ws'
 import { LiveDelegation } from '@voicemesh/composer'
 import { openaiLiveProvider, openaiStsProvider, xaiStsProvider, geminiStsProvider, openStsChannel } from '@voicemesh/composer/server'
 import { latestLiveUserRequest } from './live-task-instruction.js'
-import { liveInstructions } from './voice-policy.js'
+import { codingResultText, liveInstructions } from './voice-policy.js'
 import { claudeUserName } from './claude-user.js'
 import { classifyForVoice } from './classifier.js'
 
@@ -200,7 +200,7 @@ export function attachVoice(socket, store, tasks, onLive, onCaption = async () =
       replayed.add(row.playbackId)
       resultDelivery({ turn: row.playbackId, requestId: row.id }, 'pending')
       const context = `Claude request ${row.status}.`
-      const speech = row.text || 'Claude could not complete that request.'
+      const speech = codingResultText(row)
       try {
         if (!await live.append('session.thinking.append', null, context)
           || !await live.append('session.commentary.append', null, speech)) throw new Error('Result delivery was not accepted')
@@ -248,7 +248,7 @@ export function attachVoice(socket, store, tasks, onLive, onCaption = async () =
           classification: liveClassification(store),
           result: state => ({
             context: `Claude request ${state.status}.`,
-            speech: state.text || 'Claude could not complete that request.',
+            speech: codingResultText(state),
           }),
         }
         live = new LiveDelegation(

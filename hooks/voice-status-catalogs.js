@@ -220,6 +220,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "जाँच ना हो सकल। पक्का करीं कि वॉयस कनेक्ट बा, फेर ई टैब दोबारा खोलीं।"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude फेर से शुरू करीं"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude रुकल बा। «Claude फेर से शुरू करीं» पर क्लिक करीं।"
     }
   },
   "am": {
@@ -442,6 +450,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "መፈተሽ አልተቻለም። ድምጽ መገናኘቱን ያረጋግጡና ይህን ትር እንደገና ይክፈቱ።"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claudeን ቀጥል"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude ቆሟል። «Claudeን ቀጥል» የሚለውን ጠቅ ያድርጉ።"
     }
   },
   "bn": {
@@ -664,6 +680,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "যাচাই করা যায়নি। ভয়েস সংযুক্ত আছে কিনা নিশ্চিত করুন, তারপর এই ট্যাবটি আবার খুলুন।"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude আবার চালু করুন"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude বিরত আছে। «Claude আবার চালু করুন» ক্লিক করুন।"
     }
   },
   "zh-Hans": {
@@ -886,6 +910,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "无法检查。请确保语音已连接，然后重新打开此标签页。"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "继续 Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude 已暂停。点击“继续 Claude”。"
     }
   },
   "zh-Hant": {
@@ -1108,6 +1140,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "無法檢查。請確認語音已連線，然後重新開啟此分頁。"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "繼續 Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude 已暫停。點擊「繼續 Claude」。"
     }
   },
   "da": {
@@ -1330,6 +1370,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Kunne ikke kontrollere. Sørg for, at tale er tilsluttet, og genåbn derefter denne fane."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Genoptag Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude er sat på pause. Klik på Genoptag Claude."
     }
   },
   "fil": {
@@ -1552,6 +1600,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Hindi masuri. Tiyaking nakakonekta ang boses, pagkatapos ay buksan muli ang tab na ito."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Ipagpatuloy ang Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Naka-pause ang Claude. I-click ang Ipagpatuloy ang Claude."
     }
   },
   "fi": {
@@ -1774,6 +1830,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Tarkistus epäonnistui. Varmista, että ääni on yhdistetty, ja avaa tämä välilehti uudelleen."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Jatka Claudea"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude on keskeytetty. Napsauta Jatka Claudea."
     }
   },
   "nl": {
@@ -1996,6 +2060,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Kon niet worden gecontroleerd. Zorg dat spraak is verbonden en open dit tabblad opnieuw."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude hervatten"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude is gepauzeerd. Klik op Claude hervatten."
     }
   },
   "fr-FR": {
@@ -2218,6 +2290,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Impossible de vérifier. Assurez-vous que la voix est connectée, puis rouvrez cet onglet."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Reprendre Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude est en pause. Cliquez sur Reprendre Claude."
     }
   },
   "gu": {
@@ -2440,6 +2520,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "ચકાસી શકાયું નથી. ખાતરી કરો કે વૉઇસ કનેક્ટેડ છે, પછી આ ટૅબ ફરી ખોલો."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude ફરી શરૂ કરો"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude થોભાવેલું છે. «Claude ફરી શરૂ કરો» પર ક્લિક કરો."
     }
   },
   "de-DE": {
@@ -2662,6 +2750,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Konnte nicht geprüft werden. Stellen Sie sicher, dass die Sprachverbindung besteht, und öffnen Sie diesen Tab erneut."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude fortsetzen"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude ist pausiert. Klicke auf Claude fortsetzen."
     }
   },
   "ha": {
@@ -2884,6 +2980,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Ba a iya dubawa ba. Tabbatar murya tana haɗe, sannan ka sake buɗe wannan shafin."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Ci gaba da Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "An dakatar da Claude. Danna Ci gaba da Claude."
     }
   },
   "hi-IN": {
@@ -3106,6 +3210,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "जाँच नहीं की जा सकी। सुनिश्चित करें कि वॉइस कनेक्ट है, फिर इस टैब को दोबारा खोलें।"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude फिर शुरू करें"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude रुका हुआ है। «Claude फिर शुरू करें» पर क्लिक करें।"
     }
   },
   "ja-JP": {
@@ -3328,6 +3440,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "確認できませんでした。音声が接続されていることを確認し、このタブを再度開いてください。"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude を再開"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude は一時停止中です。「Claude を再開」をクリックしてください。"
     }
   },
   "id-ID": {
@@ -3550,6 +3670,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Gagal memeriksa. Pastikan suara terhubung, lalu buka kembali tab ini."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Lanjutkan Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude dijeda. Klik Lanjutkan Claude."
     }
   },
   "it-IT": {
@@ -3772,6 +3900,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Impossibile verificare. Assicurati che la voce sia connessa, quindi riapri questa scheda."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Riprendi Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude è in pausa. Fai clic su Riprendi Claude."
     }
   },
   "ko-KR": {
@@ -3994,6 +4130,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "확인할 수 없습니다. 음성이 연결되어 있는지 확인한 후 이 탭을 다시 여세요."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude 재개"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude가 일시 중지되었습니다. «Claude 재개»를 클릭하세요."
     }
   },
   "kn": {
@@ -4216,6 +4360,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "ಪರಿಶೀಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ವಾಯ್ಸ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ ಎಂಬುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ, ನಂತರ ಈ ಟ್ಯಾಬ್ ಅನ್ನು ಮತ್ತೆ ತೆರೆಯಿರಿ."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude ಮುಂದುವರಿಸಿ"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude ವಿರಾಮಗೊಂಡಿದೆ. «Claude ಮುಂದುವರಿಸಿ» ಕ್ಲಿಕ್ ಮಾಡಿ."
     }
   },
   "ml": {
@@ -4438,6 +4590,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "പരിശോധിക്കാനായില്ല. വോയ്‌സ് കണക്റ്റ് ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പുവരുത്തി ഈ ടാബ് വീണ്ടും തുറക്കുക."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude പുനരാരംഭിക്കുക"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude താൽക്കാലികമായി നിർത്തിയിരിക്കുന്നു. «Claude പുനരാരംഭിക്കുക» ക്ലിക്ക് ചെയ്യുക."
     }
   },
   "mr": {
@@ -4660,6 +4820,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "तपासता आले नाही. व्हॉइस कनेक्ट असल्याची खात्री करा, नंतर हा टॅब पुन्हा उघडा."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude पुन्हा सुरू करा"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude थांबवले आहे. «Claude पुन्हा सुरू करा» वर क्लिक करा."
     }
   },
   "pt-BR": {
@@ -4882,6 +5050,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Não foi possível verificar. Verifique se a voz está conectada e reabra esta aba."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Retomar Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "O Claude está pausado. Clique em Retomar Claude."
     }
   },
   "nb": {
@@ -5104,6 +5280,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Kunne ikke sjekke. Sørg for at tale er tilkoblet, og åpne denne fanen på nytt."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Fortsett Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude er satt på pause. Klikk på Fortsett Claude."
     }
   },
   "ru": {
@@ -5326,6 +5510,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Не удалось проверить. Убедитесь, что голосовая связь подключена, и откройте эту вкладку снова."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Продолжить Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude приостановлен. Нажмите «Продолжить Claude»."
     }
   },
   "es-ES": {
@@ -5548,6 +5740,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "No se pudo comprobar. Asegúrate de que la voz esté conectada y vuelve a abrir esta pestaña."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Reanudar Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude está en pausa. Haz clic en Reanudar Claude."
     }
   },
   "es-419": {
@@ -5770,6 +5970,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "No se pudo verificar. Asegúrate de que la voz esté conectada y vuelve a abrir esta pestaña."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Reanudar Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude está en pausa. Haz clic en Reanudar Claude."
     }
   },
   "sw": {
@@ -5992,6 +6200,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Haikuweza kuangaliwa. Hakikisha sauti imeunganishwa, kisha fungua tena kichupo hiki."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Endelea na Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude imesitishwa. Bofya Endelea na Claude."
     }
   },
   "sv": {
@@ -6214,6 +6430,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Kunde inte kontrollera. Se till att rösten är ansluten och öppna sedan den här fliken igen."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Återuppta Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude är pausad. Klicka på Återuppta Claude."
     }
   },
   "ta": {
@@ -6436,6 +6660,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "சரிபார்க்க முடியவில்லை. குரல் இணைக்கப்பட்டுள்ளதா என உறுதிசெய்து, இந்தத் தாவலை மீண்டும் திறக்கவும்."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude ஐத் தொடரவும்"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude இடைநிறுத்தப்பட்டுள்ளது. «Claude ஐத் தொடரவும்» என்பதைக் கிளிக் செய்யவும்."
     }
   },
   "te": {
@@ -6658,6 +6890,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "తనిఖీ చేయడం సాధ్యపడలేదు. వాయిస్ కనెక్ట్ చేయబడిందో లేదో తనిఖీ చేసి, ఈ ట్యాబ్‌ను మళ్లీ తెరవండి."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claudeను కొనసాగించు"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude పాజ్ చేయబడింది. «Claudeను కొనసాగించు» క్లిక్ చేయండి."
     }
   },
   "tr": {
@@ -6880,6 +7120,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Kontrol edilemedi. Sesin bağlı olduğundan emin olun, ardından bu sekmeyi yeniden açın."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Claude’a devam et"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude duraklatıldı. Claude’a devam et’e tıklayın."
     }
   },
   "th": {
@@ -7102,6 +7350,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "ไม่สามารถตรวจสอบได้ ตรวจสอบว่าเชื่อมต่อเสียงแล้ว แล้วเปิดแท็บนี้ใหม่อีกครั้ง"
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "ดำเนินการ Claude ต่อ"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude หยุดชั่วคราว คลิก ดำเนินการ Claude ต่อ"
     }
   },
   "uk": {
@@ -7324,6 +7580,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Не вдалося перевірити. Переконайтеся, що голосовий зв’язок підключено, і відкрийте цю вкладку знову."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Продовжити Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude призупинено. Натисніть «Продовжити Claude»."
     }
   },
   "vi": {
@@ -7546,6 +7810,14 @@ export default {
     "troubleshooting.checkFailed": {
       "source": "Couldn’t check. Make sure voice is connected, then reopen this tab.",
       "text": "Không thể kiểm tra. Hãy đảm bảo giọng nói đã được kết nối, sau đó mở lại tab này."
+    },
+    "control.resumeCoding": {
+      "source": "Resume Claude",
+      "text": "Tiếp tục Claude"
+    },
+    "status.claudePaused": {
+      "source": "Claude is paused. Click Resume Claude.",
+      "text": "Claude đang tạm dừng. Nhấp vào Tiếp tục Claude."
     }
   }
 }

@@ -29,6 +29,13 @@ export function completionFromTranscript(task, text) {
   const finals = new Map()
   for (const row of rows.slice(rows.indexOf(root) + 1)) {
     if (row.sessionId !== task.sessionId || row.isSidechain || !descendants.has(row.parentUuid)) continue
+    // Claude writes this native marker on manual cancellation, even if the Mod's
+    // completion callback is lost. Require the exact submitted prompt and ancestry;
+    // quoted text, tool errors, subagents, and later user prompts are not evidence.
+    if (row.type === 'user' && row.promptId === root.promptId && !row.origin && !row.isMeta
+      && /^\[Request interrupted by user(?: for tool use)?\]$/.test(plainText(row) ?? '')) {
+      return { status: 'aborted', text: '', evidence: 'claude-transcript-interruption' }
+    }
     // A new prompt may descend from this answer, but its work is a different turn.
     if (row.type === 'user' && row.promptId && row.promptId !== root.promptId) continue
     if (typeof row.uuid === 'string') descendants.add(row.uuid)

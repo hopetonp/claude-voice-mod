@@ -10,7 +10,7 @@ const valid = task => task && typeof task === 'object' && !Array.isArray(task)
   && typeof task.sessionId === 'string' && task.sessionId.length > 0 && task.sessionId.length <= 256
   && (task.playbackId === undefined || Number.isSafeInteger(task.playbackId) && task.playbackId > 0)
   && (task.claimedAt === undefined || Number.isSafeInteger(task.claimedAt) && task.claimedAt > 0)
-  && (task.submissionState === undefined || task.submissionState === 'not-started' || task.submissionState === 'started')
+  && (task.submissionState === undefined || task.submissionState === 'not-started' || task.submissionState === 'started' || task.submissionState === 'rejected')
   && (task.turnId === null || typeof task.turnId === 'string' && task.turnId.length <= 256)
   && (task.result === null || typeof task.result === 'string' && task.result.length <= 16000)
 

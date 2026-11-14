@@ -225,3 +225,69 @@ test('host exits and removes discovery on shutdown even with an open socket', { 
     await host.stop()
   }
 })
+
+
+test('a missed manual stop recovers, acknowledges its late callback, and accepts another request', async () => {
+  const task = { ...request('session-a', 'stopped-request'), status: 'running', turnId: 'desktop-turn',
+    claimedAt: 1000, result: null, playbackId: 1 }
+  const rows = finishedTranscript(task).trim().split('\n').map(JSON.parse)
+  const root = rows.find(row => row.type === 'user')
+  const answer = rows.find(row => row.type === 'assistant')
+  const text = [root, answer, { type: 'user', uuid: 'manual-stop', parentUuid: answer.uuid,
+    sessionId: task.sessionId, promptId: root.promptId,
+    message: { content: [{ type: 'text', text: '[Request interrupted by user for tool use]' }] } }]
+    .map(JSON.stringify).join('\n') + '\n'
+  const host = await startHost({ tasks: { 'session-a': task }, claudeTranscript: { sessionId: task.sessionId, text } })
+  try {
+    await host.call('POST', '/api/claude/select', { sessionId: task.sessionId })
+    assert.equal((await host.call('GET', '/api/claude/status')).body.taskStatus, 'aborted')
+    const result = { id: task.id, sessionId: task.sessionId, turnId: task.turnId, status: 'aborted', text: 'Partial answer' }
+    assert.equal((await host.call('POST', '/api/claude/result', result)).status, 200)
+    await host.call('POST', '/api/pipeline/played', { playbackId: 1 })
+    assert.equal((await host.call('POST', '/api/claude/request', request('session-a', 'next-after-stop'))).status, 202)
+    assert.equal((await host.call('POST', '/api/claude/result', result)).status, 200)
+    assert.equal((await host.call('GET', '/api/claude/request?sessionId=session-a')).body.task.id, 'next-after-stop')
+    assert.equal((await host.call('POST', '/api/claude/result', { ...result, turnId: 'unrelated' })).status, 409)
+  } finally { await host.stop() }
+})
+
+
+test('an explicit rejected submission is held for a user retry and cannot reset a running turn', async () => {
+  const host = await startHost()
+  try {
+    const key = { id: 'drop-test', sessionId: 'session-a' }
+    await host.call('POST', '/api/claude/request', request(key.sessionId, key.id))
+    await host.call('POST', '/api/claude/claim', key)
+    await host.call('POST', '/api/claude/submitting', key)
+    assert.equal((await host.call('POST', '/api/claude/submission-rejected', key)).status, 200)
+    const held = (await host.call('GET', '/api/claude/request?sessionId=session-a')).body.task
+    assert.equal(held.submissionState, 'rejected')
+    assert.equal(held.status, 'claimed')
+    assert.equal((await host.call('POST', '/api/claude/submitting', key)).status, 200)
+    await host.call('POST', '/api/claude/started', { ...key, turnId: 'live-turn' })
+    assert.equal((await host.call('POST', '/api/claude/submission-rejected', key)).status, 409)
+  } finally { await host.stop() }
+})
+
+
+test('a spoken stop caption cancels coding without model delegation and reports the terminal stop without a new turn', async () => {
+  const task = { ...request('session-a', 'spoken-stop-task'), status: 'running', turnId: 'active-turn',
+    claimedAt: Date.now(), result: null, playbackId: 1 }
+  const host = await startHost({ tasks: { 'session-a': task } })
+  try {
+    await host.call('POST', '/api/claude/select', { sessionId: 'session-a' })
+    assert.equal((await host.call('POST', '/api/pipeline/exchange', {
+      id: 'stop-caption', role: 'user', text: 'Actually, can you stop? Stop', phase: 'final',
+    })).status, 200)
+    const steer = (await host.call('GET', '/api/claude/steer?sessionId=session-a')).body.steer
+    assert.equal(steer.kind, 'stop')
+    assert.equal(steer.parentId, task.id)
+    await host.call('POST', '/api/claude/result', { id: task.id, sessionId: task.sessionId,
+      turnId: task.turnId, status: 'aborted', text: '' })
+    assert.equal((await host.call('GET', '/api/claude/request?sessionId=session-a')).body.task, null,
+      'a plain stop must not enqueue a confirmation coding turn')
+    const result = (await host.call('GET', '/api/pipeline/owed')).body.result
+    assert.equal(result.status, 'aborted', 'voice receives actual cancellation confirmation')
+    assert.equal((await host.call('GET', '/api/claude/steer?sessionId=session-a')).body.steer, null)
+  } finally { await host.stop() }
+})

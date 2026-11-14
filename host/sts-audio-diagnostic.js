@@ -75,7 +75,7 @@ export async function probeRealtimeAudioTools(id, settings, options = {}) {
       try {
         const bytes = Array.isArray(data) ? Buffer.concat(data) : Buffer.isBuffer(data) ? data : Buffer.from(data)
         const value = JSON.parse(bytes.toString('utf8'))
-        if (!value || typeof value !== 'object' || Array.isArray(value) || typeof value.type !== 'string'
+        if (!value || typeof value !== 'object' || Array.isArray(value)
           || value.type === 'error' || 'error' in value) return finish(false)
         if (live && value.type === 'session.output_audio.delta') audio = true
         for (const event of adapter.decode(value)) {

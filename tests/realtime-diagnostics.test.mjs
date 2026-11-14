@@ -102,3 +102,33 @@ test('Gemini diagnostic lets Composer schedule the tool-result response', async 
   socket.terminate()
   assert.equal(await checking, false)
 })
+
+
+test('Gemini connection diagnostic decodes a native binary setupComplete packet without a type field', async () => {
+  const socket = new EventEmitter(), sent = []
+  socket.readyState = WebSocket.OPEN
+  socket.send = text => sent.push(JSON.parse(text))
+  socket.terminate = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  const checking = probeRealtimeConnection('gemini', {
+    key: 'fixture-key', model: 'gemini-3.8-live', voice: 'Kore',
+  }, { makeSocket: () => socket })
+  socket.emit('open')
+  assert.ok(sent[0].setup)
+  socket.emit('message', Buffer.from(JSON.stringify({ setupComplete: {} })), true)
+  assert.equal(await checking, true)
+})
+
+test('Gemini audio diagnostic accepts native readiness before sending its isolated probe', async () => {
+  const socket = new EventEmitter(), sent = []
+  socket.readyState = WebSocket.OPEN
+  socket.send = text => sent.push(JSON.parse(text))
+  socket.terminate = () => { socket.readyState = WebSocket.CLOSED; socket.emit('close') }
+  const checking = probeRealtimeAudioTools('gemini', {
+    key: 'fixture-key', model: 'gemini-3.8-live', voice: 'Kore',
+  }, { makeSocket: () => socket })
+  socket.emit('open')
+  socket.emit('message', Buffer.from(JSON.stringify({ setupComplete: {} })), true)
+  assert.ok(sent.length > 1, 'valid Gemini readiness must start the diagnostic, not fail validation')
+  socket.terminate()
+  assert.equal(await checking, false, 'readiness alone does not prove audio and tools succeeded')
+})

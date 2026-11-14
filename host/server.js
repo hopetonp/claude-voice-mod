@@ -496,7 +496,12 @@ const server = createServer(async (request, response) => {
           id === 'openai-live' ? listLiveBackendModels(key, signal) : Promise.resolve([]),
         ])
         send(response, 200, { models, ...voices, backendModels })
-      } catch { send(response, 502, { error: 'Could not load Composer provider catalog' }) }
+      } catch (error) {
+        const denied = id === 'gemini' && /^Gemini model discovery failed \(HTTP (401|403)\)$/.test(error?.message ?? '')
+        send(response, 502, { error: denied
+          ? 'Google denied Gemini API access. Check that the Generative Language API is enabled and allowed by this key’s restrictions.'
+          : 'Could not load Composer provider catalog' })
+      }
       return
     }
     if (request.method === 'POST' && url.pathname === '/api/preview/keepalive') {

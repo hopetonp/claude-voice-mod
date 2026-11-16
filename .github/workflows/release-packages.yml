@@ -205,3 +205,42 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: gh release edit "$RELEASE_TAG" --prerelease=false --latest
+      - name: Verify public update channels agree
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict'
+          import { setTimeout } from 'node:timers/promises'
+          const expected = process.env.RELEASE_TAG.slice(1)
+          async function json(url, headers = {}) {
+            const response = await fetch(`${url}?verification=${Date.now()}`, {
+              headers: { Accept: 'application/json', 'Cache-Control': 'no-cache', ...headers },
+              signal: AbortSignal.timeout(10000),
+            })
+            assert.ok(response.ok, `Update endpoint returned ${response.status}`)
+            return response.json()
+          }
+          // npm publication can take a few minutes to reach its public registry.
+          for (let attempt = 0; ; attempt++) {
+            try {
+              const [tags, npm, github] = await Promise.all([
+                json('https://registry.npmjs.org/-/package/claude-voice-mod/dist-tags'),
+                json('https://registry.npmjs.org/claude-voice-mod/latest'),
+                json('https://api.github.com/repos/hopetonp/claude-voice-mod/releases/latest', {
+                  Authorization: `Bearer ${process.env.GH_TOKEN}`,
+                }),
+              ])
+              assert.equal(tags.latest, expected, 'npm latest is stale')
+              assert.equal(tags.beta, expected, 'npm beta is stale')
+              assert.equal(npm.version, expected, 'npm default package version is stale')
+              assert.equal(github.tag_name, `v${expected}`, 'GitHub latest is stale')
+              console.log(`Verified npm latest, npm beta, default package, and GitHub latest: ${expected}`)
+              break
+            } catch (error) {
+              if (attempt >= 17) throw error
+              console.log(`Waiting for public update channels: ${error.message}`)
+              await setTimeout(10000)
+            }
+          }
+          JS

@@ -157,6 +157,10 @@ export const claudeBackend: VoiceSettingsBackend = {
   },
 }
 
-export async function requestUpdateCheck(): Promise<void> {
-  await request('/api/claude/check-updates', { method: 'POST' })
+export type UpdateCheck = { current: string; latest: string; updateAvailable: boolean; upgradeUrl: string | null }
+export async function requestUpdateCheck(): Promise<UpdateCheck> {
+  return request('/api/updates/check', { method: 'POST' })
+}
+export async function openUpgrade(version: string): Promise<void> {
+  await request('/api/updates/open', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version }) })
 }

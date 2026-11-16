@@ -234,16 +234,24 @@ export default {
       "text": "अपडेट जाँचीं"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "अनुरोध भेजल जात बा…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "अपडेट जाँच के अनुरोध भेज दिहल गइल।"
+      "source": "Checking…",
+      "text": "जाँच होत बा…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "अपडेट जाँच ना भेजाइल। फेर कोशिश करीं।"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "अपडेट जाँच भा डाउनलोड ना खुलल। फेर कोशिश करीं।"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "रउआँ अपडेट बानी."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "वर्जन {latest} उपलब्ध बा।"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "अपडेट डाउनलोड करीं"
     }
   },
   "am": {
@@ -480,16 +488,24 @@ export default {
       "text": "ዝማኔዎችን ያረጋግጡ"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "ጥያቄ በመላክ ላይ…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "የዝማኔ ማረጋገጫ ተጠይቋል።"
+      "source": "Checking…",
+      "text": "በመፈተሽ ላይ…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "የዝማኔ ጥያቄውን መላክ አልተቻለም። እንደገና ይሞክሩ።"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "ዝማኔውን መፈተሽ ወይም ማውረጃውን መክፈት አልተቻለም። እንደገና ይሞክሩ።"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "የቅርብ ጊዜውን እየተጠቀሙ ነው."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "ስሪት {latest} ይገኛል።"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "ዝማኔ አውርድ"
     }
   },
   "bn": {
@@ -726,16 +742,24 @@ export default {
       "text": "আপডেট দেখুন"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "অনুরোধ পাঠানো হচ্ছে…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "আপডেট যাচাইয়ের অনুরোধ পাঠানো হয়েছে।"
+      "source": "Checking…",
+      "text": "পরীক্ষা করা হচ্ছে…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "আপডেট যাচাইয়ের অনুরোধ পাঠানো যায়নি। আবার চেষ্টা করুন।"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "আপডেট পরীক্ষা বা ডাউনলোড খোলা যায়নি। আবার চেষ্টা করুন।"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "আপনি হালনাগাদ সংস্করণ ব্যবহার করছেন."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "সংস্করণ {latest} উপলব্ধ।"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "আপডেট ডাউনলোড করুন"
     }
   },
   "zh-Hans": {
@@ -972,16 +996,24 @@ export default {
       "text": "检查更新"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "正在请求…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "已请求检查更新。"
+      "source": "Checking…",
+      "text": "正在检查…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "无法发送更新检查请求。请重试。"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "无法检查更新或打开下载。请重试。"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "您已是最新版本."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "版本 {latest} 可用。"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "下载更新"
     }
   },
   "zh-Hant": {
@@ -1218,16 +1250,24 @@ export default {
       "text": "檢查更新"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "正在請求…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "已請求檢查更新。"
+      "source": "Checking…",
+      "text": "正在檢查…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "無法傳送更新檢查請求。請再試一次。"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "無法檢查更新或開啟下載。請重試。"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "您已是最新版本."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "版本 {latest} 現已推出。"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "下載更新"
     }
   },
   "da": {
@@ -1464,16 +1504,24 @@ export default {
       "text": "Søg efter opdateringer"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Anmoder…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Der er anmodet om at søge efter opdateringer."
+      "source": "Checking…",
+      "text": "Søger…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Kunne ikke sende anmodningen. Prøv igen."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Kunne ikke søge efter opdateringer eller åbne download. Prøv igen."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Du er opdateret."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Version {latest} er tilgængelig."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Download opdatering"
     }
   },
   "fil": {
@@ -1710,16 +1758,24 @@ export default {
       "text": "Tingnan kung may update"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Ipinapadala ang kahilingan…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Naipadala na ang kahilingan sa pag-check ng update."
+      "source": "Checking…",
+      "text": "Sinusuri…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Hindi maipadala ang pag-check ng update. Subukang muli."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Hindi masuri ang update o mabuksan ang download. Subukan muli."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Napapanahon ang bersyon mo."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Available na ang Bersyon {latest}."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "I-download ang update"
     }
   },
   "fi": {
@@ -1956,16 +2012,24 @@ export default {
       "text": "Tarkista päivitykset"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Pyydetään…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Päivitysten tarkistusta pyydetty."
+      "source": "Checking…",
+      "text": "Tarkistetaan…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Päivityspyyntöä ei voitu lähettää. Yritä uudelleen."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Päivitystä ei voitu tarkistaa tai latausta avata. Yritä uudelleen."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Käytössäsi on uusin versio."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Versio {latest} on saatavilla."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Lataa päivitys"
     }
   },
   "nl": {
@@ -2202,16 +2266,24 @@ export default {
       "text": "Controleren op updates"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Aanvragen…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Updatecontrole aangevraagd."
+      "source": "Checking…",
+      "text": "Controleren…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Kan de updatecontrole niet verzenden. Probeer het opnieuw."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Kon niet op updates controleren of de download openen. Probeer opnieuw."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Je bent bijgewerkt."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Versie {latest} is beschikbaar."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Update downloaden"
     }
   },
   "fr-FR": {
@@ -2448,16 +2520,24 @@ export default {
       "text": "Rechercher des mises à jour"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Demande en cours…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Vérification des mises à jour demandée."
+      "source": "Checking…",
+      "text": "Vérification…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Impossible d’envoyer la demande. Réessayez."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Impossible de vérifier les mises à jour ou d’ouvrir le téléchargement. Réessayez."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Vous êtes à jour."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "La version {latest} est disponible."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Télécharger la mise à jour"
     }
   },
   "gu": {
@@ -2694,16 +2774,24 @@ export default {
       "text": "અપડેટ તપાસો"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "વિનંતી મોકલાઈ રહી છે…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "અપડેટ તપાસવાની વિનંતી મોકલાઈ."
+      "source": "Checking…",
+      "text": "તપાસી રહ્યું છે…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "અપડેટ તપાસવાની વિનંતી મોકલી શકાઈ નહીં. ફરી પ્રયાસ કરો."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "અપડેટ તપાસી કે ડાઉનલોડ ખોલી શકાયું નહીં. ફરી પ્રયાસ કરો."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "તમે અદ્યતન છો."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "આવૃત્તિ {latest} ઉપલબ્ધ છે."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "અપડેટ ડાઉનલોડ કરો"
     }
   },
   "de-DE": {
@@ -2940,16 +3028,24 @@ export default {
       "text": "Nach Updates suchen"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Wird angefordert…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Updateprüfung angefordert."
+      "source": "Checking…",
+      "text": "Wird geprüft…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Die Updateprüfung konnte nicht gesendet werden. Versuche es erneut."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Updates konnten nicht geprüft oder der Download geöffnet werden. Erneut versuchen."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Du bist auf dem neuesten Stand."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Version {latest} ist verfügbar."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Update herunterladen"
     }
   },
   "ha": {
@@ -3186,16 +3282,24 @@ export default {
       "text": "Duba sabuntawa"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Ana aika buƙata…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "An aika buƙatar duba sabuntawa."
+      "source": "Checking…",
+      "text": "Ana dubawa…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "An kasa aika buƙatar sabuntawa. Sake gwadawa."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "An kasa duba sabuntawa ko buɗe saukewa. Sake gwadawa."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Kana amfani da sabuwar siga."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Sigar {latest} tana nan."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Sauke sabuntawa"
     }
   },
   "hi-IN": {
@@ -3432,16 +3536,24 @@ export default {
       "text": "अपडेट जाँचें"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "अनुरोध भेजा जा रहा है…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "अपडेट जाँच का अनुरोध भेज दिया गया।"
+      "source": "Checking…",
+      "text": "जाँच हो रही है…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "अपडेट जाँच का अनुरोध नहीं भेजा जा सका। फिर कोशिश करें।"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "अपडेट जाँच या डाउनलोड खोलना संभव नहीं हुआ। फिर कोशिश करें।"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "आपका संस्करण अद्यतित है."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "संस्करण {latest} उपलब्ध है।"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "अपडेट डाउनलोड करें"
     }
   },
   "ja-JP": {
@@ -3678,16 +3790,24 @@ export default {
       "text": "更新を確認"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "リクエスト中…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "更新の確認をリクエストしました。"
+      "source": "Checking…",
+      "text": "確認中…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "更新の確認を送信できませんでした。もう一度お試しください。"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "更新の確認またはダウンロードを開けませんでした。再試行してください。"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "最新の状態です."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "バージョン {latest} が利用可能です。"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "更新をダウンロード"
     }
   },
   "id-ID": {
@@ -3924,16 +4044,24 @@ export default {
       "text": "Periksa pembaruan"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Mengirim permintaan…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Pemeriksaan pembaruan diminta."
+      "source": "Checking…",
+      "text": "Memeriksa…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Tidak dapat mengirim pemeriksaan pembaruan. Coba lagi."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Tidak dapat memeriksa pembaruan atau membuka unduhan. Coba lagi."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Versi Anda sudah terbaru."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Versi {latest} tersedia."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Unduh pembaruan"
     }
   },
   "it-IT": {
@@ -4170,16 +4298,24 @@ export default {
       "text": "Controlla aggiornamenti"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Richiesta in corso…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Controllo aggiornamenti richiesto."
+      "source": "Checking…",
+      "text": "Verifica…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Impossibile inviare la richiesta. Riprova."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Impossibile verificare gli aggiornamenti o aprire il download. Riprova."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "La versione è aggiornata."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "È disponibile la versione {latest}."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Scarica aggiornamento"
     }
   },
   "ko-KR": {
@@ -4416,16 +4552,24 @@ export default {
       "text": "업데이트 확인"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "요청 중…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "업데이트 확인을 요청했습니다."
+      "source": "Checking…",
+      "text": "확인 중…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "업데이트 확인 요청을 보내지 못했습니다. 다시 시도하세요."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "업데이트를 확인하거나 다운로드를 열 수 없습니다. 다시 시도하세요."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "최신 상태입니다."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "{latest} 버전을 사용할 수 있습니다."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "업데이트 다운로드"
     }
   },
   "kn": {
@@ -4662,16 +4806,24 @@ export default {
       "text": "ನವೀಕರಣಗಳನ್ನು ಪರಿಶೀಲಿಸಿ"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "ವಿನಂತಿಸಲಾಗುತ್ತಿದೆ…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "ನವೀಕರಣ ಪರಿಶೀಲನೆಗೆ ವಿನಂತಿಸಲಾಗಿದೆ."
+      "source": "Checking…",
+      "text": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "ನವೀಕರಣ ವಿನಂತಿಯನ್ನು ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "ನವೀಕರಣ ಪರಿಶೀಲಿಸಲು ಅಥವಾ ಡೌನ್‌ಲೋಡ್ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "ನೀವು ನವೀಕೃತ ಆವೃತ್ತಿಯಲ್ಲಿದ್ದೀರಿ."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "ಆವೃತ್ತಿ {latest} ಲಭ್ಯವಿದೆ."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "ನವೀಕರಣ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
     }
   },
   "ml": {
@@ -4908,16 +5060,24 @@ export default {
       "text": "അപ്‌ഡേറ്റുകൾ പരിശോധിക്കുക"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "അഭ്യർത്ഥിക്കുന്നു…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "അപ്‌ഡേറ്റ് പരിശോധന അഭ്യർത്ഥിച്ചു."
+      "source": "Checking…",
+      "text": "പരിശോധിക്കുന്നു…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "അപ്‌ഡേറ്റ് പരിശോധന അയയ്ക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "അപ്ഡേറ്റ് പരിശോധിക്കാനോ ഡൗൺലോഡ് തുറക്കാനോ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "നിങ്ങളുടെ പതിപ്പ് പുതുക്കിയതാണ്."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "പതിപ്പ് {latest} ലഭ്യമാണ്."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "അപ്ഡേറ്റ് ഡൗൺലോഡ് ചെയ്യുക"
     }
   },
   "mr": {
@@ -5154,16 +5314,24 @@ export default {
       "text": "अपडेट तपासा"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "विनंती पाठवत आहे…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "अपडेट तपासण्याची विनंती पाठवली."
+      "source": "Checking…",
+      "text": "तपासत आहे…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "अपडेट तपासण्याची विनंती पाठवता आली नाही. पुन्हा प्रयत्न करा."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "अपडेट तपासता किंवा डाउनलोड उघडता आले नाही. पुन्हा प्रयत्न करा."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "तुमची आवृत्ती अद्ययावत आहे."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "आवृत्ती {latest} उपलब्ध आहे."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "अपडेट डाउनलोड करा"
     }
   },
   "pt-BR": {
@@ -5400,16 +5568,24 @@ export default {
       "text": "Verificar atualizações"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Solicitando…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Verificação de atualizações solicitada."
+      "source": "Checking…",
+      "text": "Verificando…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Não foi possível enviar a solicitação. Tente novamente."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Não foi possível verificar atualizações ou abrir o download. Tente novamente."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Você está atualizado."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "A versão {latest} está disponível."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Baixar atualização"
     }
   },
   "nb": {
@@ -5646,16 +5822,24 @@ export default {
       "text": "Se etter oppdateringer"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Ber om…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Oppdateringssjekk forespurt."
+      "source": "Checking…",
+      "text": "Sjekker…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Kunne ikke sende forespørselen. Prøv igjen."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Kunne ikke se etter oppdateringer eller åpne nedlastingen. Prøv igjen."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Du er oppdatert."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Versjon {latest} er tilgjengelig."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Last ned oppdatering"
     }
   },
   "ru": {
@@ -5892,16 +6076,24 @@ export default {
       "text": "Проверить обновления"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Отправка запроса…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Запрошена проверка обновлений."
+      "source": "Checking…",
+      "text": "Проверка…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Не удалось отправить запрос. Попробуйте ещё раз."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Не удалось проверить обновления или открыть загрузку. Повторите попытку."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "У вас актуальная версия."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Доступна версия {latest}."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Скачать обновление"
     }
   },
   "es-ES": {
@@ -6138,16 +6330,24 @@ export default {
       "text": "Buscar actualizaciones"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Solicitando…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Comprobación de actualizaciones solicitada."
+      "source": "Checking…",
+      "text": "Comprobando…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "No se pudo enviar la solicitud. Inténtalo de nuevo."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "No se pudieron comprobar las actualizaciones o abrir la descarga. Inténtalo de nuevo."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Estás al día."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "La versión {latest} está disponible."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Descargar actualización"
     }
   },
   "es-419": {
@@ -6384,16 +6584,24 @@ export default {
       "text": "Buscar actualizaciones"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Solicitando…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Se solicitó la búsqueda de actualizaciones."
+      "source": "Checking…",
+      "text": "Buscando…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "No se pudo enviar la solicitud. Inténtalo de nuevo."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "No se pudieron buscar actualizaciones o abrir la descarga. Inténtalo de nuevo."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Estás al día."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "La versión {latest} está disponible."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Descargar actualización"
     }
   },
   "sw": {
@@ -6630,16 +6838,24 @@ export default {
       "text": "Angalia masasisho"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Inatuma ombi…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Ombi la kuangalia masasisho limetumwa."
+      "source": "Checking…",
+      "text": "Inakagua…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Imeshindwa kutuma ombi. Jaribu tena."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Imeshindwa kukagua masasisho au kufungua upakuaji. Jaribu tena."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Una toleo la sasa."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Toleo {latest} linapatikana."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Pakua sasisho"
     }
   },
   "sv": {
@@ -6876,16 +7092,24 @@ export default {
       "text": "Sök efter uppdateringar"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Begär…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Uppdateringskontroll begärd."
+      "source": "Checking…",
+      "text": "Söker…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Kunde inte skicka begäran. Försök igen."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Kunde inte söka efter uppdateringar eller öppna hämtningen. Försök igen."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Du är uppdaterad."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Version {latest} finns tillgänglig."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Hämta uppdatering"
     }
   },
   "ta": {
@@ -7122,16 +7346,24 @@ export default {
       "text": "புதுப்பிப்புகளைச் சரிபார்க்கவும்"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "கோரிக்கை அனுப்பப்படுகிறது…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "புதுப்பிப்பு சரிபார்ப்பு கோரப்பட்டது."
+      "source": "Checking…",
+      "text": "சரிபார்க்கிறது…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "புதுப்பிப்பு கோரிக்கையை அனுப்ப முடியவில்லை. மீண்டும் முயலவும்."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "புதுப்பிப்பைச் சரிபார்க்கவோ பதிவிறக்கத்தைத் திறக்கவோ முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "உங்கள் பதிப்பு புதுப்பித்த நிலையில் உள்ளது."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "பதிப்பு {latest} கிடைக்கிறது."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "புதுப்பிப்பைப் பதிவிறக்கு"
     }
   },
   "te": {
@@ -7368,16 +7600,24 @@ export default {
       "text": "నవీకరణలను తనిఖీ చేయండి"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "అభ్యర్థిస్తోంది…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "నవీకరణ తనిఖీ అభ్యర్థించబడింది."
+      "source": "Checking…",
+      "text": "తనిఖీ చేస్తోంది…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "నవీకరణ అభ్యర్థన పంపలేకపోయింది. మళ్లీ ప్రయత్నించండి."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "అప్‌డేట్ తనిఖీ చేయడం లేదా డౌన్‌లోడ్ తెరవడం సాధ్యం కాలేదు. మళ్లీ ప్రయత్నించండి."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "మీ వెర్షన్ తాజాగా ఉంది."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "వెర్షన్ {latest} అందుబాటులో ఉంది."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "అప్‌డేట్ డౌన్‌లోడ్ చేయండి"
     }
   },
   "tr": {
@@ -7614,16 +7854,24 @@ export default {
       "text": "Güncellemeleri denetle"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "İsteniyor…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Güncelleme denetimi istendi."
+      "source": "Checking…",
+      "text": "Kontrol ediliyor…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Güncelleme isteği gönderilemedi. Yeniden deneyin."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Güncellemeler kontrol edilemedi veya indirme açılamadı. Tekrar deneyin."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Güncelsiniz."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "{latest} sürümü mevcut."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Güncellemeyi indir"
     }
   },
   "th": {
@@ -7860,16 +8108,24 @@ export default {
       "text": "ตรวจสอบการอัปเดต"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "กำลังส่งคำขอ…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "ส่งคำขอตรวจสอบการอัปเดตแล้ว"
+      "source": "Checking…",
+      "text": "กำลังตรวจสอบ…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "ส่งคำขอตรวจสอบการอัปเดตไม่ได้ โปรดลองอีกครั้ง"
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "ตรวจสอบอัปเดตหรือเปิดการดาวน์โหลดไม่ได้ โปรดลองอีกครั้ง"
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "คุณใช้เวอร์ชันล่าสุดแล้ว."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "มีเวอร์ชัน {latest} ให้อัปเดต"
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "ดาวน์โหลดอัปเดต"
     }
   },
   "uk": {
@@ -8106,16 +8362,24 @@ export default {
       "text": "Перевірити оновлення"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Надсилання запиту…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Надіслано запит на перевірку оновлень."
+      "source": "Checking…",
+      "text": "Перевірка…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Не вдалося надіслати запит. Спробуйте ще раз."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Не вдалося перевірити оновлення або відкрити завантаження. Спробуйте ще раз."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "У вас актуальна версія."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Доступна версія {latest}."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Завантажити оновлення"
     }
   },
   "vi": {
@@ -8352,16 +8616,24 @@ export default {
       "text": "Kiểm tra cập nhật"
     },
     "update.requesting": {
-      "source": "Requesting…",
-      "text": "Đang gửi yêu cầu…"
-    },
-    "update.requested": {
-      "source": "Update check requested.",
-      "text": "Đã yêu cầu kiểm tra cập nhật."
+      "source": "Checking…",
+      "text": "Đang kiểm tra…"
     },
     "update.failed": {
-      "source": "Could not send the update check. Try again.",
-      "text": "Không thể gửi yêu cầu kiểm tra cập nhật. Hãy thử lại."
+      "source": "Could not check npm for updates or open the download. Try again.",
+      "text": "Không thể kiểm tra bản cập nhật hoặc mở nội dung tải xuống. Hãy thử lại."
+    },
+    "update.current": {
+      "source": "You’re up to date.",
+      "text": "Bạn đã cập nhật."
+    },
+    "update.available": {
+      "source": "Version {latest} is available.",
+      "text": "Đã có phiên bản {latest}."
+    },
+    "update.download": {
+      "source": "Download update",
+      "text": "Tải bản cập nhật"
     }
   }
 }

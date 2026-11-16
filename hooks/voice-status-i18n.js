@@ -3,9 +3,11 @@ import catalogs from './voice-status-catalogs.js'
 // Voice-row copy is saved with the Mod, so it renders immediately and works offline.
 export const english = {
   "update.check": "Check for updates",
-  "update.requesting": "Requesting\u2026",
-  "update.requested": "Update check requested.",
-  "update.failed": "Could not send the update check. Try again.",
+  "update.requesting": "Checking\u2026",
+  "update.current": "You’re up to date.",
+  "update.available": "Version {latest} is available.",
+  "update.download": "Download update",
+  "update.failed": "Could not check npm for updates or open the download. Try again.",
 
   'status.hostNotConnected': 'Voice host not connected',
   'status.pageNotResponding': 'Voice page not responding',

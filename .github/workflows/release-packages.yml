@@ -7,6 +7,11 @@ on:
         description: 'Publish the npm installer for an existing published release (e.g. v0.1.215); leave blank to build packages'
         required: false
         type: string
+      sync_tags_only:
+        description: 'Synchronize npm latest and beta for publish_npm_tag without republishing'
+        required: false
+        type: boolean
+        default: false
   release:
     types: [published]
   push:
@@ -144,6 +149,8 @@ jobs:
           node-version: '24'
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+      - name: Install npm with trusted-publisher dist-tag support
+        run: npm install --global npm@11.21.0
       - name: Verify installer version and published release assets
         env:
           GH_TOKEN: ${{ github.token }}
@@ -185,8 +192,14 @@ jobs:
           writeFileSync(path, source.replace(pattern, `const checksums = ${JSON.stringify(checksums, null, 2)}`))
           JS
       - name: Publish latest installer with npm trusted publishing
+        if: inputs.sync_tags_only != true
         working-directory: npm-installer
         run: npm publish --tag latest --access public
+      - name: Synchronize current and legacy npm channels
+        run: |
+          version="${RELEASE_TAG#v}"
+          npm dist-tag add "claude-voice-mod@$version" latest
+          npm dist-tag add "claude-voice-mod@$version" beta
       - name: Mark published GitHub release as latest
         env:
           GH_TOKEN: ${{ github.token }}

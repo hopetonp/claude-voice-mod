@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFile } from 'node:fs/promises'
-import { codingResultText, stoppedCodingResult, codingAcknowledgement, liveInstructions, gptLiveInstructions, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
+import { codingResultText, stoppedCodingResult, codingAcknowledgement, liveInstructions, gptLiveInstructions, conversationRecall, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
 
 test('questions about images or the screen go to the coding session, stated early', () => {
   const text = liveInstructions()
@@ -59,4 +59,17 @@ test('GPT Live uses its documented native delegation trigger before promising wo
   assert.equal(liveInstructions().includes('<|SpawnThinking|>'), false, 'other providers retain their own tool protocol')
   const source = await readFile(new URL('../host/voice-server.js', import.meta.url), 'utf8')
   assert.ok(source.includes('${gptLiveInstructions('), 'the actual GPT-Live session must use this prompt')
+})
+
+
+test('follow-up recall uses conversation context before requesting fresh workspace work', async () => {
+  for (const prompt of [liveInstructions(), gptLiveInstructions()]) {
+    assert.ok(prompt.includes(conversationRecall))
+    assert.match(prompt, /A few intervening turns do not make an earlier answer stale/)
+    assert.match(prompt, /Do not recheck a result merely because the user asks about it again/)
+    assert.match(prompt, /explicitly asks for fresh verification/)
+  }
+  const pipeline = await readFile(new URL('../media/pipeline.js', import.meta.url), 'utf8')
+  assert.ok(pipeline.includes('${conversationRecall}'))
+  assert.match(gptLiveInstructions(), /Answer from that context without another backend request/)
 })

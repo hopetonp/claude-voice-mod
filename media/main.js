@@ -1,6 +1,7 @@
 import { createOpenaiWebRtcAdapter, createPcmSink, createStsController, createVoiceLifecycle, subscribeVoiceAudio } from '@voicemesh/composer/browser'
 import { createStatusSounds } from './status-sounds.js'
 import { createClaudePipeline } from './pipeline.js'
+import { createHostPoll } from './host-poll.js'
 
 const $ = id => document.getElementById(id)
 let token = ''
@@ -269,9 +270,25 @@ async function pollCommands() {
     standbyTransition = true
     try {
       if (!pipelineController && Number.isSafeInteger(owedTurn) && owedTurn > 0) await controller.readBackOutput('claude', owedTurn)
-    } finally { standbyTransition = false }
+    } catch (error) { showError(error) }
+    finally { standbyTransition = false }
   }
 }
+
+const hostPollWarning = 'Voice host connection interrupted. Retrying…'
+const pollHost = createHostPoll(pollCommands, {
+  unavailable() {
+    // The provider may still be listening. Keep its phase and preserve provider errors.
+    if (state.error) return
+    state.error = hostPollWarning
+    void publish().catch(() => {})
+  },
+  recovered() {
+    if (state.error !== hostPollWarning) return
+    state.error = null
+    void publish().catch(() => {})
+  },
+})
 
 $('enable').addEventListener('click', () => void enableAudio())
 $('stop').addEventListener('click', () => void stop())
@@ -289,5 +306,5 @@ try {
   connection = connections[0] ?? null
   if (!connection) state.error = 'Voice provider is not configured'
   await publish()
-  setInterval(() => void pollCommands().catch(showError), 400)
+  setInterval(() => void pollHost(), 400)
 } catch (error) { showError(error) }

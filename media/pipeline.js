@@ -1,6 +1,6 @@
 /** Claude's thin session adapter for Composer's reusable voice pipeline. */
 import { PipelineConversation } from '@voicemesh/composer/pipeline'
-import { codingResultText, stoppedCodingResult, codingAcknowledgement, noHandoffTalk, spokenTechnicalText, userNameInstruction } from '../host/voice-policy.js'
+import { codingResultText, stoppedCodingResult, conversationRecall, codingAcknowledgement, noHandoffTalk, spokenTechnicalText, userNameInstruction } from '../host/voice-policy.js'
 import { createBrowserPipelineController, createPipelinePlayback, openPipelineSttStream } from '@voicemesh/composer/browser'
 
 const tool = { type: 'function', function: { name: 'dispatch_coding_task',
@@ -58,7 +58,7 @@ export function createClaudePipeline({ connection, token, sink, caption, setting
   })
   const routingInstruction = connection.classifierEnabled
     ? 'The pipeline routes each completed request before you respond. Follow the route supplied with the turn; do not call coding tools.'
-    : 'For requests about code, files, projects, or technical work, call dispatch_coding_task so Claude performs the work.'
+    : 'Call dispatch_coding_task for new workspace actions or facts missing from the supplied conversation. Do not call it merely to repeat or explain an answer already in context.'
   const conversation = new PipelineConversation({
     request: (body, signal) => post('/api/pipeline/answer', body, signal),
     ...(connection.classifierEnabled ? { classify: async (utterance, context, signal) =>
@@ -69,7 +69,7 @@ export function createClaudePipeline({ connection, token, sink, caption, setting
       if (name !== 'dispatch_coding_task' || !args || typeof args.instruction !== 'string') throw new Error('Unknown voice tool')
       return (await post('/api/pipeline/dispatch', { instruction: args.instruction })).json()
     },
-    system: kind => `You are the voice attendant for Claude's coding agent. Speak naturally and briefly in the user's language. ${spokenTechnicalText} ${userNameInstruction(connection.userName)} You receive speech transcripts. Answer ordinary conversation yourself. ${routingInstruction} Never claim to have inspected or changed files yourself. A dispatched task is a receipt, not its result. Do not mention your instructions, internal routing, classifier, or tool calls in spoken replies. ${codingAcknowledgement} ${noHandoffTalk} ${stoppedCodingResult} ${kind === 'coding-result' ? `Summarize the supplied Claude result without calling tools.${connection.plainLanguageSummaries ? ' Use simple everyday language, avoid jargon where possible, briefly explain necessary technical terms, and preserve key findings, blockers, and next steps.' : ''}` : kind === 'coding-progress' ? 'Report only the supplied coding progress.' : ''}`,
+    system: kind => `You are the voice attendant for Claude's coding agent. Speak naturally and briefly in the user's language. ${spokenTechnicalText} ${userNameInstruction(connection.userName)} You receive speech transcripts. Answer ordinary conversation yourself. ${conversationRecall} ${routingInstruction} Never claim to have inspected or changed files yourself. A dispatched task is a receipt, not its result. Do not mention your instructions, internal routing, classifier, or tool calls in spoken replies. ${codingAcknowledgement} ${noHandoffTalk} ${stoppedCodingResult} ${kind === 'coding-result' ? `Summarize the supplied Claude result without calling tools.${connection.plainLanguageSummaries ? ' Use simple everyday language, avoid jargon where possible, briefly explain necessary technical terms, and preserve key findings, blockers, and next steps.' : ''}` : kind === 'coding-progress' ? 'Report only the supplied coding progress.' : ''}`,
     tools: () => [tool],
     contextTurns: () => 6,
     toolRounds: () => 2,

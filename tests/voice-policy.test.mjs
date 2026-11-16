@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFile } from 'node:fs/promises'
-import { codingResultText, stoppedCodingResult, codingAcknowledgement, liveInstructions, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
+import { codingResultText, stoppedCodingResult, codingAcknowledgement, liveInstructions, gptLiveInstructions, noHandoffTalk, spokenTechnicalText } from '../host/voice-policy.js'
 
 test('questions about images or the screen go to the coding session, stated early', () => {
   const text = liveInstructions()
@@ -13,9 +13,9 @@ test('questions about images or the screen go to the coding session, stated earl
   assert.equal(text.match(/cannot see/g).length, 3, 'stated once, not duplicated')
 })
 
-test('every provider gets example acknowledgements and no routing talk', async () => {
-  assert.match(codingAcknowledgement, /"I'm on it," "One moment, please," or "Let me check that\."/)
-  assert.match(codingAcknowledgement, /examples, not a fixed list/)
+test('every provider gets contextual acknowledgements and no routing talk', async () => {
+  assert.match(codingAcknowledgement, /latest message, the surrounding conversation, and what you are actually about to do/)
+  assert.match(codingAcknowledgement, /Avoid habitual filler and canned phrase rotation/)
   assert.ok(liveInstructions().includes(codingAcknowledgement), 'realtime providers and GPT Live')
   const pipeline = await readFile(new URL('../media/pipeline.js', import.meta.url), 'utf8')
   assert.match(pipeline, /spoken replies\. \$\{codingAcknowledgement\}/, 'pipeline providers')
@@ -46,4 +46,17 @@ test('stopped work is acknowledged in the user language without treating it as a
   assert.ok(liveInstructions().includes(stoppedCodingResult))
   assert.match(stoppedCodingResult, /user’s language/)
   assert.match(stoppedCodingResult, /Do not apologize, ask them to retry/)
+})
+
+
+test('GPT Live uses its documented native delegation trigger before promising workspace work', async () => {
+  const text = gptLiveInstructions()
+  for (const heading of ['Backchannel policy:', 'Interruption policy:', 'Delegation policy:', 'Backend tools:',
+    'Generate <|SpawnThinking|> when:', 'Do not generate <|SpawnThinking|> when:']) assert.ok(text.includes(heading))
+  assert.match(text, /how much is done, what changed/)
+  assert.match(text, /accepts a clear actionable proposal/)
+  assert.match(text, /Wait for the client admission notice before acknowledging that work is underway/)
+  assert.equal(liveInstructions().includes('<|SpawnThinking|>'), false, 'other providers retain their own tool protocol')
+  const source = await readFile(new URL('../host/voice-server.js', import.meta.url), 'utf8')
+  assert.ok(source.includes('${gptLiveInstructions('), 'the actual GPT-Live session must use this prompt')
 })

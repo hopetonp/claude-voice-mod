@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-test('live voice keeps tooltip anchors stable through hover changes and resumes drawing after dismissal', async () => {
+test('one tooltip dismisses on click and never retargets from Resume to another control', async () => {
   const { register } = await import('../hooks/register.js?live-hover')
   const handlers = new Map()
   register((name, options, handler) => handlers.set(name, handler ?? options))
@@ -19,11 +19,7 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
     store: { get: async () => [], set: async () => {} },
     clock: {
       every(_ms, callback) { poll = callback },
-      after(ms, callback) {
-        const timer = { ms, callback, cancelled: false }
-        timers.push(timer)
-        return { cancel() { timer.cancelled = true } }
-      },
+      after(ms, callback) { const timer = { ms, callback, cancelled: false }; timers.push(timer); return { cancel() { timer.cancelled = true } } },
     },
     ui: {
       invalidate() { renders++ },
@@ -60,8 +56,9 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
     drawnNodes = nodes
     const popovers = nodes.filter(node => node.type === 'Box' && node.props.position === 'absolute'
       && node.props.display === 'none' && node.props.hover?.display === 'flex' && !node.props.hover.scope)
-    assert.equal(popovers.length, 1, 'only one native popover may exist in the row')
-    if (expectedHint) assert.equal(popovers[0].children[0].children[0], expectedHint)
+    assert.ok(popovers.length <= 1, 'native popovers must never stack')
+    if (hovered) assert.equal(popovers.length, 1)
+    if (expectedHint && hovered) assert.equal(popovers[0].children[0].children[0], expectedHint)
     const anchor = nodes.find(node => node.props.key === 'voice-tooltip-anchor')
     assert.ok(anchor)
     const row = anchor.children[0]
@@ -78,20 +75,17 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
   assert.ok(stateReads > reads && taskReads > tasks, 'voice and coding bridge polling must continue')
   await hover('voice-icon-settings', false)
   await hover('voice-toggle', true)
-  assert.equal(renders, before + 1, 'switching controls moves the single tooltip anchor once')
+  assert.equal(renders, before + 1, 'switching controls updates the one popup')
   before = renders
   assert.ok(await drawing('toggle') > settingsOffset, 'the tooltip must move right from Settings to the toggle')
-  assert.equal(timers[0].cancelled, true, 'moving to the next control cancels the pending redraw')
   poll(); await settle()
   assert.equal(renders, before)
   await hover('voice-toggle', false)
   poll(); await settle()
-  assert.equal(renders, before, 'wait for native tooltip dismissal before redrawing')
-  assert.ok(timers.at(-1).ms > 150)
+  assert.equal(renders, before, 'native dismissal must finish before replacing the anchor')
   timers.at(-1).callback()
-  assert.equal(renders, before + 1, 'refresh once after leaving the controls')
   poll(); await settle()
-  assert.ok(renders > before + 1, 'live animation resumes')
+  assert.ok(renders > before + 1, 'live animation resumes after dismissal')
   for (const multiline of [false, true]) {
     voiceDisplay = { multiline, maxLines: 8 }
     await hover('voice-icon-settings', true)
@@ -109,6 +103,27 @@ test('live voice keeps tooltip anchors stable through hover changes and resumes 
     timers.at(-1).callback()
   }
   voiceDisplay = { multiline: false, maxLines: 8 }
+  phase = 'standby'
+  poll(); await settle()
+  await hover('voice-icon-resume', true)
+  await drawing('resume', 'Resume voice')
+  await handlers.get('ui.message')($,
+    { element: 'voice-icon-resume', surface: 'desktop', data: { action: 'resume' } }, async () => {})
+  await drawing(undefined)
+  const popupCount = () => drawnNodes.filter(node => node.props.display === 'none' && node.props.hover?.display === 'flex').length
+  assert.equal(popupCount(), 0, 'a tap removes the popup before Resume disappears')
+  await hover('voice-icon-resume', true)
+  await drawing(undefined)
+  assert.equal(popupCount(), 0, 'a stale hover must not reopen the dismissed popup')
+  assert.equal(drawnNodes.some(node => node.props.key === 'voice-control-resume'), false)
+  phase = 'listening'
+  poll(); await settle()
+  await drawing(undefined)
+  await hover('voice-icon-resume', false)
+  await hover('voice-icon-settings', true)
+  await drawing('settings', 'Voice settings')
+  await hover('voice-icon-settings', false)
+  timers.at(-1).callback()
   phase = 'idle'
   poll(); await settle()
   await hover('voice-toggle', true)

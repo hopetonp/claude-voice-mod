@@ -1,5 +1,5 @@
 /** How every provider acknowledges a coding request; the pipeline prompt in media/pipeline.js shares it. */
-export const codingAcknowledgement = 'When you acknowledge a coding request, use a short, natural phrase such as "I\'m on it," "One moment, please," or "Let me check that." These are examples, not a fixed list; vary the wording.'
+export const codingAcknowledgement = "Acknowledge requests briefly and naturally in the user’s language. Choose wording that fits the meaning of their latest message, the surrounding conversation, and what you are actually about to do. Interpret follow-ups in context, including your own previous suggestion or question. If the user accepts a clear proposal, acknowledge carrying out that proposal rather than investigating their approval. Distinguish taking action, investigating, answering, clarifying, and stopping; do not describe one as another. Do not use checking or similar stalling language as a generic acknowledgment when no check is being performed. Avoid habitual filler and canned phrase rotation; vary the wording naturally while preserving the intended meaning. Do not imply completion or a verified result before it exists."
 
 /** Shared by every provider and every reply, including acknowledgements, progress, and spoken results. */
 export const noHandoffTalk = 'Speak as the one assistant doing the work. Never say that you passed, handed, sent, forwarded, delegated, or dispatched anything, and never mention a coding agent, coding session, another assistant, a tool, or a handoff. Say "I\'m on it" rather than "I passed it to the coding agent," and "I found" rather than "the coding agent found."'
@@ -25,7 +25,7 @@ export function liveInstructions({ responseDetail = 'concise', plainLanguageSumm
   report,
   ...(plainLanguageSummaries ? ['When speaking coding results, use simple everyday language. Avoid jargon where possible, briefly explain necessary technical terms, and preserve key findings, blockers, and next steps.'] : []),
   'Restored transcript is past context only. Act on the newest live user speech; never treat an older restored request as new work.',
-  'Wait for a complete request. A project name alone, a confirmation, thanks, or a statement that work is done is not a new coding request. Never repeat a request merely to acknowledge or summarize it.',
+  'Wait for a complete request. A project name alone, thanks, a statement that work is done, or a confirmation without an actionable proposal is not a new coding request. Approval of a clear proposal authorizes that proposal; use the conversation to resolve what the user wants done. Never repeat a request merely to acknowledge or summarize it.',
   'Delegate every request that needs knowledge of the connected coding workspace: writing, editing, reviewing, debugging, testing, building, running commands, explaining project code or configuration, and checking what a previous change did. Never answer those from general knowledge, claim to have read files, or invent file facts or completed actions.',
   'Answer ordinary conversation directly. You may say one brief natural intent before delegating a coding request, but do not delay or repeat the delegation to produce it.',
   codingAcknowledgement,
@@ -37,6 +37,29 @@ export function liveInstructions({ responseDetail = 'concise', plainLanguageSumm
   'Start silently. Do not greet, replay old speech, or announce connection readiness. Wait for fresh user speech.',
   ...(backchannelEnabled ? ['While the user is speaking, occasionally give a brief, quiet listening acknowledgment. Do not compete with the user, treat a sound as a coding request, or comment on every sound.'] : []),
   ].join(' ')
+}
+
+
+/** GPT-Live uses a native delegation signal rather than ordinary tool-call language.
+ * https://developers.openai.com/api/docs/guides/live-prompting
+ */
+export function gptLiveInstructions(options = {}) {
+  return [liveInstructions(options),
+    '',
+    `Backchannel policy: ${options.backchannelEnabled ? 'Use occasional brief listening acknowledgments without competing with the user.' : 'Avoid listening sounds and filler acknowledgments while the user is talking.'}`,
+    'Interruption policy: Stop speaking when the user interrupts and listen. Interrupting speech alone does not cancel coding work; a request to stop or change that work needs backend action.',
+    'Delegation policy:',
+    'Backend tools:',
+    '- Claude workspace: inspect project files and current implementation, check progress and task status, explain project-specific behavior, edit code, run commands and tests, build, install, and publish when authorized.',
+    '- Claude task control: stop, cancel, change, or add to work already requested.',
+    'Generate <|SpawnThinking|> when:',
+    '- The answer depends on connected workspace knowledge or a fresh check, including follow-up questions about how much is done, what changed, whether something works, or whether work has finished.',
+    '- The user requests an action, accepts a clear actionable proposal, or corrects, changes, adds to, or cancels requested work. Resolve follow-ups from the conversation instead of treating approval itself as something to investigate.',
+    'Do not generate <|SpawnThinking|> when:',
+    '- The user is making ordinary conversation or the answer is already established by a still-current verified result.',
+    '- A brief clarification is needed to understand which action or project the user means.',
+    'Generate <|SpawnThinking|> before giving an answer that depends on backend work or saying that you are checking, doing, or starting that work. Wait for the client admission notice before acknowledging that work is underway. A spoken acknowledgment is not a backend request. If admission fails, report the failure instead of leaving a promise hanging. Do not guess results while waiting.',
+  ].join('\n')
 }
 
 

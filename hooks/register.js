@@ -23,6 +23,9 @@ let replyChangedAt = 0
 let lineShown = false
 let drawnVoicePhase = null
 let hoveredControl = null
+let dismissedTooltipControl = null
+let lastTooltipControl = null
+let tooltipDismissed = false
 let hoverReleasePending = false
 let hoverReleaseTimer = null
 let sessionId = null
@@ -155,8 +158,8 @@ function currentLine(now) {
   return liveLine({ ...media, transcript: history.unwritten(media.transcript ?? ''), userChangedAt, replyChangedAt }, now)
 }
 
-// Live audio redraws replace tooltip anchors. Keep them stable until Claude's
-// 150 ms pointer-leave dismissal has completed; new captions must still render immediately.
+// Keep Client hit regions stable under the pointer during meter updates.
+// Pointer leave allows Claude's native dismissal to finish before another meter redraw.
 // The connecting SVG runs its own clock; repeated row replacement restarts it.
 function redraw($, force = false) {
   if (!force && media.phase === 'connecting' && drawnVoicePhase === 'connecting') return
@@ -828,11 +831,12 @@ function voiceStrip($, e, original) {
     ...(connection ? [['voice-icon-settings', vt('control.settings')]] : []),
     ['voice-toggle', vt(active ? 'control.stop' : 'control.start')],
   ]
-  // A press clears hover while the row changes; keep its fallback on the
-  // start/stop button rather than the first newly added microphone control.
-  const hoveredHintIndex = hints.findIndex(([key]) => key === hoveredControl)
+  // Keep one native popup bound before pointer entry. Retain its anchor on leave;
+  // a press removes it before voice-state changes, and pointer leave rearms it.
+  const hoveredHintIndex = hints.findIndex(([key]) => key === (hoveredControl ?? lastTooltipControl))
   const hintIndex = hoveredHintIndex < 0 ? hints.length - 1 : hoveredHintIndex
   const hintOffset = hintIndex * 3.5
+  const showTooltip = !tooltipDismissed
   const line = currentLine(Date.now())
   // A claimed voice request may still be waiting for handoff. Only a started Claude turn
   // means Claude is actually working; its turn ID survives a Mod reload via the host.
@@ -923,7 +927,7 @@ function voiceStrip($, e, original) {
             ],
           }),
             ] }),
-            tooltip(hints[hintIndex][1]),
+            ...(showTooltip ? [tooltip(hints[hintIndex][1])] : []),
           ] }),
         ],
       }),
@@ -1037,19 +1041,28 @@ export function register(on) {
     if ((e.element === 'voice-toggle' || e.element?.startsWith('voice-icon-'))
       && typeof e.data?.hovered === 'boolean') {
       if (e.data.hovered) {
-        const changed = hoveredControl !== e.element
+        if (dismissedTooltipControl === e.element) return next(e)
         hoverReleaseTimer?.cancel()
         hoverReleaseTimer = null
         hoverReleasePending = false
+        dismissedTooltipControl = null
+        tooltipDismissed = false
+        lastTooltipControl = e.element
+        const changed = hoveredControl !== e.element
         hoveredControl = e.element
         if (changed) $.ui.invalidate('ui.render')
       }
-      else if (hoveredControl === e.element) {
+      else if (hoveredControl === e.element || dismissedTooltipControl === e.element) {
         hoveredControl = null
         hoverReleasePending = true
+        hoverReleaseTimer?.cancel()
         hoverReleaseTimer = $.clock.after(250, () => {
           hoverReleaseTimer = null
           hoverReleasePending = false
+          if (dismissedTooltipControl === e.element) {
+            dismissedTooltipControl = null
+            tooltipDismissed = false
+          }
           redraw($, true)
         })
       }
@@ -1058,8 +1071,11 @@ export function register(on) {
     if (e.data?.action) {
       hoverReleaseTimer?.cancel()
       hoverReleaseTimer = null
-      hoveredControl = null
       hoverReleasePending = false
+      dismissedTooltipControl = e.element
+      tooltipDismissed = true
+      hoveredControl = null
+      $.ui.invalidate('ui.render')
     }
 
     if (e.element === 'voice-toggle' && e.data?.action === 'toggle') {

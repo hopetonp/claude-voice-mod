@@ -38,5 +38,5 @@ html[data-theme="dark"] .coding-diagnostics-panel { background: #202020; border-
 .settings-footer:has(.settings-footer-info) { flex-wrap: wrap; }
 .settings-footer:has(.settings-footer-info) > p { order: 1; flex-basis: 100%; }
 .settings-footer:has(.settings-footer-info) > p:empty { display: none; }
-.settings-update-check a { color: var(--accent); text-decoration: underline; }
+.settings-update-check .settings-install-update { color: var(--accent); text-decoration: underline; }
 .settings-update-check [role="status"]:empty { display: none; }

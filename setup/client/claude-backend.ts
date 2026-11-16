@@ -161,6 +161,6 @@ export type UpdateCheck = { current: string; latest: string; updateAvailable: bo
 export async function requestUpdateCheck(): Promise<UpdateCheck> {
   return request('/api/updates/check', { method: 'POST' })
 }
-export async function openUpgrade(version: string): Promise<void> {
-  await request('/api/updates/open', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version }) })
+export async function installUpgrade(version: string): Promise<void> {
+  await request('/api/updates/install', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version, sessionId: new URLSearchParams(location.search).get('sessionId') }) })
 }

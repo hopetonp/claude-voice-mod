@@ -1,8 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
-
-const run = promisify(execFile)
+import { randomUUID } from 'node:crypto'
 const stableVersion = /^\d+\.\d+\.\d+$/
 const installedPattern = /^\d+\.\d+\.\d+(?:-[\w.-]+)?$/
 
@@ -41,10 +38,26 @@ export async function checkForUpdate({ currentVersion, fetchImpl = fetch, platfo
   return { current, latest, updateAvailable, upgradeUrl: updateAvailable ? upgradeUrl(latest, platform, arch) : null }
 }
 
-export async function openUpgrade(version) {
-  // Never open a caller-supplied URL or invoke a command shell.
-  const url = upgradeUrl(version)
-  if (process.platform === 'darwin') await run('open', [url])
-  else if (process.platform === 'win32') await run('rundll32.exe', ['url.dll,FileProtocolHandler', url], { windowsHide: true })
-  else await run('xdg-open', [url])
+/** An install action belongs to the Claude chat that opened the dialog. */
+export function createUpdateInstalls() {
+  const pending = new Map()
+  return {
+    request(sessionId, version) {
+      if (!sessionId) throw new Error('Open Voice settings from a Claude chat first')
+      if (!stableVersion.test(version)) throw new Error('Invalid update version')
+      const existing = pending.get(sessionId)
+      if (existing) return existing
+      const request = { id: randomUUID(), sessionId, version,
+        text: `Install VoiceMesh Claude Mod version ${version} on this computer. Follow https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md using the published v${version} installer for this platform. Verify its SHA-256 checksum, run the installer, preserve saved settings and credentials, verify the installed Mod and host versions, and tell me whether Claude must restart. Do not build from source or change this project's code.` }
+      pending.set(sessionId, request)
+      return request
+    },
+    get(sessionId) { return pending.get(sessionId) ?? null },
+    claim(sessionId, id) {
+      const request = pending.get(sessionId)
+      if (!request || request.id !== id) return null
+      pending.delete(sessionId)
+      return request
+    },
+  }
 }

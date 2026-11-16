@@ -57,7 +57,7 @@ test('the settings icon opens the pane in terminal and the HTML dialog in Deskto
   assert.ok(words(await pane()).includes('Saved for the next Voice session.'))
 
   await handlers.get('ui.message:')($, { surface: 'desktop', element: 'voice-icon-settings', data: { action: 'settings' } }, async () => {})
-  assert.deepEqual(posted.at(-1), ['/api/setup-dialog', {}])
+  assert.deepEqual(posted.at(-1), ['/api/setup-dialog', { sessionId: 'claude-session' }])
   const strip = () => handlers.get('ui.render:AbovePrompt')($,
     { component: 'AbovePrompt', surface: 'desktop', props: { bodyColumns: 80 } }, async () => elements.Box({ children: [] }))
   assert.equal(find(await strip(), 'popup-voice'), null, 'Desktop uses the HTML dialog instead of a Mod card')

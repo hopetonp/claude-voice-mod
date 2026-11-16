@@ -26,7 +26,7 @@ export function settingsApi(fetch, connection) {
     return value
   }
   return {
-    setupDialog: theme => request('/api/setup-dialog', { theme }),
+    setupDialog: (theme, sessionId) => request('/api/setup-dialog', { theme, sessionId }),
     closed: () => request('/api/settings/closed', {}),
     load: async () => preferences(await request('/api/settings')),
     selectProvider: async id => preferences(await request('/api/provider-selection', { id })),

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createTranslator, VoiceSettingsEditor } from '@voicemesh/settings-editor'
-import { claudeBackend, codingDiagnostics, requestUpdateCheck, openUpgrade, type UpdateCheck } from './claude-backend.ts'
+import { claudeBackend, codingDiagnostics, requestUpdateCheck, installUpgrade, type UpdateCheck } from './claude-backend.ts'
 import { CodingDiagnostics } from './coding-diagnostics.tsx'
 import { voiceText } from '../../hooks/voice-status-i18n.js'
 
@@ -23,6 +23,7 @@ function savedSection(): typeof sections[number] {
 export function SettingsShell({ locale, onClose }: { locale: string; onClose?: () => void }) {
   const [section, setSection] = useState<typeof sections[number]>(savedSection)
   const [updateState, setUpdateState] = useState<'idle' | 'pending' | 'complete' | 'failed'>('idle')
+  const [installing, setInstalling] = useState(false)
   const [update, setUpdate] = useState<UpdateCheck | null>(null)
   const checkUpdates = async () => {
     setUpdateState('pending')
@@ -77,10 +78,13 @@ export function SettingsShell({ locale, onClose }: { locale: string; onClose?: (
               {updateState === 'failed' && voiceText(locale, 'update.failed')}
               {updateState === 'complete' && update && <>
                 {voiceText(locale, update.updateAvailable ? 'update.available' : 'update.current', update)}
-                {update.upgradeUrl && <> <a href={update.upgradeUrl} target="_blank" rel="noreferrer" onClick={event => {
-                  event.preventDefault()
-                  void openUpgrade(update.latest).catch(() => setUpdateState('failed'))
-                }}>{voiceText(locale, 'update.download')}</a></>}
+                {update.updateAvailable && <> <button type="button" className="settings-install-update" disabled={installing} onClick={() => {
+                  setInstalling(true)
+                  void installUpgrade(update.latest).then(() => onClose?.()).catch(() => {
+                    setInstalling(false)
+                    setUpdateState('failed')
+                  })
+                }}>{voiceText(locale, 'update.install')}</button></>}
               </>}
             </div></div>
             <div className="settings-footer-versions" aria-label={t('shell.installedVersions')}>

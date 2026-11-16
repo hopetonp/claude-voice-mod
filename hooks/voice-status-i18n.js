@@ -6,8 +6,8 @@ export const english = {
   "update.requesting": "Checking\u2026",
   "update.current": "You’re up to date.",
   "update.available": "Version {latest} is available.",
-  "update.download": "Download update",
-  "update.failed": "Could not check npm for updates or open the download. Try again.",
+  "update.install": "Install update",
+  "update.failed": "Could not check for updates or request installation. Try again.",
 
   'status.hostNotConnected': 'Voice host not connected',
   'status.pageNotResponding': 'Voice page not responding',

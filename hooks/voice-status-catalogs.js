@@ -238,8 +238,8 @@ export default {
       "text": "जाँच होत बा…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "अपडेट जाँच भा डाउनलोड ना खुलल। फेर कोशिश करीं।"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "अनुरोध पूरा ना भइल। फेर कोशिश करीं।"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -249,9 +249,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "वर्जन {latest} उपलब्ध बा।"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "अपडेट डाउनलोड करीं"
+    "update.install": {
+      "source": "Install update",
+      "text": "अपडेट इंस्टॉल करीं"
     }
   },
   "am": {
@@ -492,8 +492,8 @@ export default {
       "text": "በመፈተሽ ላይ…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "ዝማኔውን መፈተሽ ወይም ማውረጃውን መክፈት አልተቻለም። እንደገና ይሞክሩ።"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "ጥያቄውን ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -503,9 +503,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "ስሪት {latest} ይገኛል።"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "ዝማኔ አውርድ"
+    "update.install": {
+      "source": "Install update",
+      "text": "ዝማኔ ጫን"
     }
   },
   "bn": {
@@ -746,8 +746,8 @@ export default {
       "text": "পরীক্ষা করা হচ্ছে…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "আপডেট পরীক্ষা বা ডাউনলোড খোলা যায়নি। আবার চেষ্টা করুন।"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "অনুরোধ সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -757,9 +757,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "সংস্করণ {latest} উপলব্ধ।"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "আপডেট ডাউনলোড করুন"
+    "update.install": {
+      "source": "Install update",
+      "text": "আপডেট ইনস্টল করুন"
     }
   },
   "zh-Hans": {
@@ -1000,8 +1000,8 @@ export default {
       "text": "正在检查…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "无法检查更新或打开下载。请重试。"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "无法完成请求。请重试。"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -1011,9 +1011,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "版本 {latest} 可用。"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "下载更新"
+    "update.install": {
+      "source": "Install update",
+      "text": "安装更新"
     }
   },
   "zh-Hant": {
@@ -1254,8 +1254,8 @@ export default {
       "text": "正在檢查…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "無法檢查更新或開啟下載。請重試。"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "無法完成請求。請重試。"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -1265,9 +1265,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "版本 {latest} 現已推出。"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "下載更新"
+    "update.install": {
+      "source": "Install update",
+      "text": "安裝更新"
     }
   },
   "da": {
@@ -1508,8 +1508,8 @@ export default {
       "text": "Søger…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Kunne ikke søge efter opdateringer eller åbne download. Prøv igen."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Kunne ikke fuldføre anmodningen. Prøv igen."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -1519,9 +1519,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Version {latest} er tilgængelig."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Download opdatering"
+    "update.install": {
+      "source": "Install update",
+      "text": "Installer opdatering"
     }
   },
   "fil": {
@@ -1762,8 +1762,8 @@ export default {
       "text": "Sinusuri…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Hindi masuri ang update o mabuksan ang download. Subukan muli."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Hindi makumpleto ang kahilingan. Subukan muli."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -1773,9 +1773,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Available na ang Bersyon {latest}."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "I-download ang update"
+    "update.install": {
+      "source": "Install update",
+      "text": "I-install ang update"
     }
   },
   "fi": {
@@ -2016,8 +2016,8 @@ export default {
       "text": "Tarkistetaan…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Päivitystä ei voitu tarkistaa tai latausta avata. Yritä uudelleen."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Pyyntöä ei voitu suorittaa. Yritä uudelleen."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -2027,9 +2027,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Versio {latest} on saatavilla."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Lataa päivitys"
+    "update.install": {
+      "source": "Install update",
+      "text": "Asenna päivitys"
     }
   },
   "nl": {
@@ -2270,8 +2270,8 @@ export default {
       "text": "Controleren…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Kon niet op updates controleren of de download openen. Probeer opnieuw."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Kon het verzoek niet voltooien. Probeer opnieuw."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -2281,9 +2281,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Versie {latest} is beschikbaar."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Update downloaden"
+    "update.install": {
+      "source": "Install update",
+      "text": "Update installeren"
     }
   },
   "fr-FR": {
@@ -2524,8 +2524,8 @@ export default {
       "text": "Vérification…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Impossible de vérifier les mises à jour ou d’ouvrir le téléchargement. Réessayez."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Impossible de terminer la demande. Réessayez."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -2535,9 +2535,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "La version {latest} est disponible."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Télécharger la mise à jour"
+    "update.install": {
+      "source": "Install update",
+      "text": "Installer la mise à jour"
     }
   },
   "gu": {
@@ -2778,8 +2778,8 @@ export default {
       "text": "તપાસી રહ્યું છે…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "અપડેટ તપાસી કે ડાઉનલોડ ખોલી શકાયું નહીં. ફરી પ્રયાસ કરો."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "વિનંતી પૂર્ણ થઈ શકી નહીં. ફરી પ્રયાસ કરો."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -2789,9 +2789,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "આવૃત્તિ {latest} ઉપલબ્ધ છે."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "અપડેટ ડાઉનલોડ કરો"
+    "update.install": {
+      "source": "Install update",
+      "text": "અપડેટ સ્થાપિત કરો"
     }
   },
   "de-DE": {
@@ -3032,8 +3032,8 @@ export default {
       "text": "Wird geprüft…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Updates konnten nicht geprüft oder der Download geöffnet werden. Erneut versuchen."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Anfrage konnte nicht abgeschlossen werden. Erneut versuchen."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -3043,9 +3043,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Version {latest} ist verfügbar."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Update herunterladen"
+    "update.install": {
+      "source": "Install update",
+      "text": "Update installieren"
     }
   },
   "ha": {
@@ -3286,8 +3286,8 @@ export default {
       "text": "Ana dubawa…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "An kasa duba sabuntawa ko buɗe saukewa. Sake gwadawa."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "An kasa kammala buƙatar. Sake gwadawa."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -3297,9 +3297,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Sigar {latest} tana nan."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Sauke sabuntawa"
+    "update.install": {
+      "source": "Install update",
+      "text": "Shigar da sabuntawa"
     }
   },
   "hi-IN": {
@@ -3540,8 +3540,8 @@ export default {
       "text": "जाँच हो रही है…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "अपडेट जाँच या डाउनलोड खोलना संभव नहीं हुआ। फिर कोशिश करें।"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "अनुरोध पूरा नहीं हो सका। फिर कोशिश करें।"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -3551,9 +3551,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "संस्करण {latest} उपलब्ध है।"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "अपडेट डाउनलोड करें"
+    "update.install": {
+      "source": "Install update",
+      "text": "अपडेट इंस्टॉल करें"
     }
   },
   "ja-JP": {
@@ -3794,8 +3794,8 @@ export default {
       "text": "確認中…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "更新の確認またはダウンロードを開けませんでした。再試行してください。"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "リクエストを完了できませんでした。再試行してください。"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -3805,9 +3805,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "バージョン {latest} が利用可能です。"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "更新をダウンロード"
+    "update.install": {
+      "source": "Install update",
+      "text": "更新をインストール"
     }
   },
   "id-ID": {
@@ -4048,8 +4048,8 @@ export default {
       "text": "Memeriksa…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Tidak dapat memeriksa pembaruan atau membuka unduhan. Coba lagi."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Tidak dapat menyelesaikan permintaan. Coba lagi."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -4059,9 +4059,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Versi {latest} tersedia."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Unduh pembaruan"
+    "update.install": {
+      "source": "Install update",
+      "text": "Instal pembaruan"
     }
   },
   "it-IT": {
@@ -4302,8 +4302,8 @@ export default {
       "text": "Verifica…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Impossibile verificare gli aggiornamenti o aprire il download. Riprova."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Impossibile completare la richiesta. Riprova."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -4313,9 +4313,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "È disponibile la versione {latest}."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Scarica aggiornamento"
+    "update.install": {
+      "source": "Install update",
+      "text": "Installa aggiornamento"
     }
   },
   "ko-KR": {
@@ -4556,8 +4556,8 @@ export default {
       "text": "확인 중…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "업데이트를 확인하거나 다운로드를 열 수 없습니다. 다시 시도하세요."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "요청을 완료하지 못했습니다. 다시 시도하세요."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -4567,9 +4567,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "{latest} 버전을 사용할 수 있습니다."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "업데이트 다운로드"
+    "update.install": {
+      "source": "Install update",
+      "text": "업데이트 설치"
     }
   },
   "kn": {
@@ -4810,8 +4810,8 @@ export default {
       "text": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "ನವೀಕರಣ ಪರಿಶೀಲಿಸಲು ಅಥವಾ ಡೌನ್‌ಲೋಡ್ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "ವಿನಂತಿಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -4821,9 +4821,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "ಆವೃತ್ತಿ {latest} ಲಭ್ಯವಿದೆ."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "ನವೀಕರಣ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
+    "update.install": {
+      "source": "Install update",
+      "text": "ನವೀಕರಣ ಸ್ಥಾಪಿಸಿ"
     }
   },
   "ml": {
@@ -5064,8 +5064,8 @@ export default {
       "text": "പരിശോധിക്കുന്നു…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "അപ്ഡേറ്റ് പരിശോധിക്കാനോ ഡൗൺലോഡ് തുറക്കാനോ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "അഭ്യർത്ഥന പൂർത്തിയാക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -5075,9 +5075,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "പതിപ്പ് {latest} ലഭ്യമാണ്."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "അപ്ഡേറ്റ് ഡൗൺലോഡ് ചെയ്യുക"
+    "update.install": {
+      "source": "Install update",
+      "text": "അപ്ഡേറ്റ് ഇൻസ്റ്റാൾ ചെയ്യുക"
     }
   },
   "mr": {
@@ -5318,8 +5318,8 @@ export default {
       "text": "तपासत आहे…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "अपडेट तपासता किंवा डाउनलोड उघडता आले नाही. पुन्हा प्रयत्न करा."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "विनंती पूर्ण होऊ शकली नाही. पुन्हा प्रयत्न करा."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -5329,9 +5329,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "आवृत्ती {latest} उपलब्ध आहे."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "अपडेट डाउनलोड करा"
+    "update.install": {
+      "source": "Install update",
+      "text": "अपडेट स्थापित करा"
     }
   },
   "pt-BR": {
@@ -5572,8 +5572,8 @@ export default {
       "text": "Verificando…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Não foi possível verificar atualizações ou abrir o download. Tente novamente."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Não foi possível concluir a solicitação. Tente novamente."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -5583,9 +5583,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "A versão {latest} está disponível."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Baixar atualização"
+    "update.install": {
+      "source": "Install update",
+      "text": "Instalar atualização"
     }
   },
   "nb": {
@@ -5826,8 +5826,8 @@ export default {
       "text": "Sjekker…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Kunne ikke se etter oppdateringer eller åpne nedlastingen. Prøv igjen."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Kunne ikke fullføre forespørselen. Prøv igjen."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -5837,9 +5837,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Versjon {latest} er tilgjengelig."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Last ned oppdatering"
+    "update.install": {
+      "source": "Install update",
+      "text": "Installer oppdatering"
     }
   },
   "ru": {
@@ -6080,8 +6080,8 @@ export default {
       "text": "Проверка…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Не удалось проверить обновления или открыть загрузку. Повторите попытку."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Не удалось выполнить запрос. Повторите попытку."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -6091,9 +6091,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Доступна версия {latest}."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Скачать обновление"
+    "update.install": {
+      "source": "Install update",
+      "text": "Установить обновление"
     }
   },
   "es-ES": {
@@ -6334,8 +6334,8 @@ export default {
       "text": "Comprobando…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "No se pudieron comprobar las actualizaciones o abrir la descarga. Inténtalo de nuevo."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "No se pudo completar la solicitud. Inténtalo de nuevo."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -6345,9 +6345,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "La versión {latest} está disponible."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Descargar actualización"
+    "update.install": {
+      "source": "Install update",
+      "text": "Instalar actualización"
     }
   },
   "es-419": {
@@ -6588,8 +6588,8 @@ export default {
       "text": "Buscando…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "No se pudieron buscar actualizaciones o abrir la descarga. Inténtalo de nuevo."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "No se pudo completar la solicitud. Inténtalo de nuevo."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -6599,9 +6599,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "La versión {latest} está disponible."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Descargar actualización"
+    "update.install": {
+      "source": "Install update",
+      "text": "Instalar actualización"
     }
   },
   "sw": {
@@ -6842,8 +6842,8 @@ export default {
       "text": "Inakagua…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Imeshindwa kukagua masasisho au kufungua upakuaji. Jaribu tena."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Imeshindwa kukamilisha ombi. Jaribu tena."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -6853,9 +6853,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Toleo {latest} linapatikana."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Pakua sasisho"
+    "update.install": {
+      "source": "Install update",
+      "text": "Sakinisha sasisho"
     }
   },
   "sv": {
@@ -7096,8 +7096,8 @@ export default {
       "text": "Söker…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Kunde inte söka efter uppdateringar eller öppna hämtningen. Försök igen."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Kunde inte slutföra begäran. Försök igen."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -7107,9 +7107,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Version {latest} finns tillgänglig."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Hämta uppdatering"
+    "update.install": {
+      "source": "Install update",
+      "text": "Installera uppdatering"
     }
   },
   "ta": {
@@ -7350,8 +7350,8 @@ export default {
       "text": "சரிபார்க்கிறது…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "புதுப்பிப்பைச் சரிபார்க்கவோ பதிவிறக்கத்தைத் திறக்கவோ முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "கோரிக்கையை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -7361,9 +7361,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "பதிப்பு {latest} கிடைக்கிறது."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "புதுப்பிப்பைப் பதிவிறக்கு"
+    "update.install": {
+      "source": "Install update",
+      "text": "புதுப்பிப்பை நிறுவு"
     }
   },
   "te": {
@@ -7604,8 +7604,8 @@ export default {
       "text": "తనిఖీ చేస్తోంది…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "అప్‌డేట్ తనిఖీ చేయడం లేదా డౌన్‌లోడ్ తెరవడం సాధ్యం కాలేదు. మళ్లీ ప్రయత్నించండి."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "అభ్యర్థనను పూర్తి చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -7615,9 +7615,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "వెర్షన్ {latest} అందుబాటులో ఉంది."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "అప్‌డేట్ డౌన్‌లోడ్ చేయండి"
+    "update.install": {
+      "source": "Install update",
+      "text": "అప్‌డేట్ ఇన్‌స్టాల్ చేయండి"
     }
   },
   "tr": {
@@ -7858,8 +7858,8 @@ export default {
       "text": "Kontrol ediliyor…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Güncellemeler kontrol edilemedi veya indirme açılamadı. Tekrar deneyin."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "İstek tamamlanamadı. Tekrar deneyin."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -7869,9 +7869,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "{latest} sürümü mevcut."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Güncellemeyi indir"
+    "update.install": {
+      "source": "Install update",
+      "text": "Güncellemeyi yükle"
     }
   },
   "th": {
@@ -8112,8 +8112,8 @@ export default {
       "text": "กำลังตรวจสอบ…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "ตรวจสอบอัปเดตหรือเปิดการดาวน์โหลดไม่ได้ โปรดลองอีกครั้ง"
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "ดำเนินการตามคำขอไม่สำเร็จ โปรดลองอีกครั้ง"
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -8123,9 +8123,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "มีเวอร์ชัน {latest} ให้อัปเดต"
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "ดาวน์โหลดอัปเดต"
+    "update.install": {
+      "source": "Install update",
+      "text": "ติดตั้งอัปเดต"
     }
   },
   "uk": {
@@ -8366,8 +8366,8 @@ export default {
       "text": "Перевірка…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Не вдалося перевірити оновлення або відкрити завантаження. Спробуйте ще раз."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Не вдалося виконати запит. Спробуйте ще раз."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -8377,9 +8377,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Доступна версія {latest}."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Завантажити оновлення"
+    "update.install": {
+      "source": "Install update",
+      "text": "Установити оновлення"
     }
   },
   "vi": {
@@ -8620,8 +8620,8 @@ export default {
       "text": "Đang kiểm tra…"
     },
     "update.failed": {
-      "source": "Could not check npm for updates or open the download. Try again.",
-      "text": "Không thể kiểm tra bản cập nhật hoặc mở nội dung tải xuống. Hãy thử lại."
+      "source": "Could not check for updates or request installation. Try again.",
+      "text": "Không thể hoàn tất yêu cầu. Hãy thử lại."
     },
     "update.current": {
       "source": "You’re up to date.",
@@ -8631,9 +8631,9 @@ export default {
       "source": "Version {latest} is available.",
       "text": "Đã có phiên bản {latest}."
     },
-    "update.download": {
-      "source": "Download update",
-      "text": "Tải bản cập nhật"
+    "update.install": {
+      "source": "Install update",
+      "text": "Cài đặt bản cập nhật"
     }
   }
 }

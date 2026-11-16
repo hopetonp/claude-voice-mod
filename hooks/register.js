@@ -184,7 +184,7 @@ async function refresh($) {
       const saved = await $.fs.read(`${home}/.claude/voicemesh-controls/connection.json`)
       connection = JSON.parse(saved)
     }
-    const response = await $.http.fetch(`${connection.url}/api/state`, {
+    const response = await $.http.fetch(`${connection.url}/api/state?sessionId=${encodeURIComponent(sessionId ?? "")}`, {
       headers: { Authorization: `Bearer ${connection.token}` },
     })
     if (!response.ok) throw new Error(`Host returned ${response.status}`)
@@ -566,6 +566,13 @@ async function pollBridge($) {
     if (connection) await completionOutbox?.flush()
     if (media.selectedSession === null && sessionId
       && (await $.session.surfaces().catch(() => [])).length) await selectThisSession($).catch(() => {})
+    const update = media.updateInstall
+    if (update?.sessionId === sessionId) {
+      const claimed = await postBridge($, '/api/updates/install/claim', { sessionId, id: update.id })
+      if (claimed.request) void $.prompt.submit({ text: claimed.request.text, asUser: true })
+        .then(result => { if (result?.drop !== undefined) $.ui.toast(vt('update.failed')) })
+        .catch(() => $.ui.toast(vt('update.failed')))
+    }
     await pollVoiceTask($)
     await pollSteer($)
   } finally { bridgePolling = false }
@@ -769,7 +776,7 @@ async function displayFile($) {
 async function openSettings($, surface) {
   if (surface === 'desktop') {
     try {
-      await (await settingsHost($)).setupDialog()
+      await (await settingsHost($)).setupDialog(undefined, sessionId)
     }
     catch (error) { $.ui.toast(`Voice settings could not open: ${error.message}`) }
     return

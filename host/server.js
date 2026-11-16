@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { WebSocketServer } from 'ws'
 import { createSettings } from './provider-settings.js'
 import { createVoiceDisplaySettings } from './voice-display-settings.js'
-import { checkForUpdate, openUpgrade } from './update-check.js'
+import { checkForUpdate, createUpdateInstalls } from './update-check.js'
 import { createTaskLedger } from './task-ledger.js'
 import { unstartedClaimExpired } from './claim-recovery.js'
 import { createClaudeTaskRecovery } from './claude-task-recovery.js'
@@ -45,6 +45,7 @@ const displayFile = process.env.VOICEMESH_DISPLAY_FILE ?? join(homedir(), '.clau
 const voiceDisplaySettings = createVoiceDisplaySettings(process.env.VOICEMESH_VOICE_DISPLAY_FILE
   ?? join(homedir(), '.claude', 'voicemesh-controls', 'voice-display.json'))
 const token = randomBytes(32).toString('hex')
+const updateInstalls = createUpdateInstalls()
 const providerStore = await createSettings(process.env.COMPOSER_SETTINGS_FILE ?? join(homedir(), '.claude', 'voicemesh-controls', 'providers.json'))
 const localRoot = process.env.VOICEMESH_LOCAL_ROOT ?? join(homedir(), '.claude', 'voicemesh-controls', 'voice-local')
 const localRuntimePath = join(localRoot, 'runtime')
@@ -758,14 +759,18 @@ const server = createServer(async (request, response) => {
       try { return send(response, 200, await checkForUpdate()) }
       catch (error) { return send(response, 502, { error: error.message }) }
     }
-    if (request.method === 'POST' && url.pathname === '/api/updates/open') {
-      const { version } = await readJson(request)
-      try { await openUpgrade(version); return send(response, 200, { opened: true }) }
+    if (request.method === 'POST' && url.pathname === '/api/updates/install') {
+      const { version, sessionId } = await readJson(request)
+      try { return send(response, 200, { request: updateInstalls.request(sessionId, version) }) }
       catch (error) { return send(response, 400, { error: error.message }) }
+    }
+    if (request.method === 'POST' && url.pathname === '/api/updates/install/claim') {
+      const { sessionId, id } = await readJson(request)
+      return send(response, 200, { request: updateInstalls.claim(sessionId, id) })
     }
     if (request.method === 'GET' && url.pathname === '/api/state') {
       const selected = sessions.selected()
-      send(response, 200, { ...mediaState, voiceDisplay: await voiceDisplaySettings.read(), theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale(), mediaConnected: Date.now() - mediaSeenAt < 2500,
+      send(response, 200, { ...mediaState, updateInstall: updateInstalls.get(url.searchParams.get('sessionId')), voiceDisplay: await voiceDisplaySettings.read(), theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale(), mediaConnected: Date.now() - mediaSeenAt < 2500,
         voiceConfigured: availableConnections().length > 0,
         classifierEnabled: providerStore.classifier?.().enabled === true,
         captionRevision: selected ? transcriptLedger.revision(selected) : 0, sequence,
@@ -815,8 +820,9 @@ const server = createServer(async (request, response) => {
       return
     }
     if (request.method === 'POST' && url.pathname === '/api/setup-dialog') {
-      await readJson(request)
-      const params = new URLSearchParams({ theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale() })
+      const { sessionId } = await readJson(request)
+      const params = new URLSearchParams({ theme: await claudeDesktopTheme(), locale: await claudeDesktopLocale(),
+        sessionId: typeof sessionId === 'string' && sessionId ? sessionId : sessions.selected() ?? '' })
       const page = `http://localhost:${server.address().port}/setup/?${params}`
       await openSettingsWindow(page, { onClosed: settingsClosed })
       send(response, 200, { ok: true })

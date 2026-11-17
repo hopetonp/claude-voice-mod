@@ -434,7 +434,7 @@ async function submitHandoff($, task) {
   task.submissionRetry = false
   void $.prompt.submit({ text: task.text, asUser: true }).then(async result => {
     if (result?.drop === undefined || voiceTask !== task || task.turnId) return
-    await postBridge($, '/api/claude/submission-rejected', { id: task.id, sessionId })
+    await postBridge($, '/api/claude/submission-rejected', { id: task.id, sessionId, reason: String(result.drop).slice(0, 500) })
     task.submissionRetry = true
     redraw($)
     show($, vt('status.claudePaused'))

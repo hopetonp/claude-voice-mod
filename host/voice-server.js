@@ -243,7 +243,7 @@ export function attachVoice(socket, store, tasks, onLive, onCaption = async () =
         const policy = {
           request: latestLiveUserRequest,
           missingTranscript: 'Please repeat your question.',
-          accepted: 'The coding request was admitted. This is an internal notice, not a spoken response. Do not acknowledge it again; wait for the coding result.',
+          accepted: 'The coding request was admitted.',
           rejected: 'Claude could not accept that request.',
           classification: liveClassification(store),
           result: state => ({

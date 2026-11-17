@@ -153,6 +153,7 @@ test('an explicit submission drop waits for a fresh voice-button gesture before 
   let attempts = 0
   const posts = []
   const notices = []
+  const rejections = []
   const task = { id: 'dropped-task', text: 'Read the README', mode: 'submit', status: 'queued' }
   const $ = {
     env: { get: async () => '/tmp' }, fs: { read: async () => JSON.stringify({ url: 'http://voice.test', token: 'test' }) },
@@ -162,7 +163,11 @@ test('an explicit submission drop waits for a fresh voice-button gesture before 
     prompt: { submit: async () => { attempts++; return { drop: 'the session was stopped and nobody has sent input since' } } },
     http: { fetch: async (url, options = {}) => {
       const path = new URL(url).pathname
-      if (options.method === 'POST') { posts.push(path); return { ok: true, text: '{}' } }
+      if (options.method === 'POST') {
+        posts.push(path)
+        if (path === '/api/claude/submission-rejected') rejections.push(JSON.parse(options.body))
+        return { ok: true, text: '{}' }
+      }
       return { ok: true, text: JSON.stringify(path === '/api/state' ? { phase: 'idle', mediaConnected: true } : { task }) }
     } },
   }
@@ -171,6 +176,7 @@ test('an explicit submission drop waits for a fresh voice-button gesture before 
   await settle()
   assert.equal(attempts, 1)
   assert(posts.includes('/api/claude/submission-rejected'))
+  assert.equal(rejections[0].reason, 'the session was stopped and nobody has sent input since')
   assert.deepEqual(notices, ['Claude is paused. Click Resume Claude.'])
   clock(); await settle()
   assert.equal(attempts, 1, 'the timer must not retry a blocked prompt')

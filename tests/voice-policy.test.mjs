@@ -73,3 +73,14 @@ test('follow-up recall uses conversation context before requesting fresh workspa
   assert.ok(pipeline.includes('${conversationRecall}'))
   assert.match(gptLiveInstructions(), /Answer from that context without another backend request/)
 })
+
+
+test('coding admission is factual context and does not order an acknowledgement to stop', async () => {
+  const source = await readFile(new URL('../host/voice-server.js', import.meta.url), 'utf8')
+  assert.match(source, /accepted: 'The coding request was admitted\.'/)
+  for (const text of [liveInstructions(), gptLiveInstructions()]) {
+    assert.match(text, /finish that same brief sentence naturally/)
+    assert.match(text, /Do not repeat an acknowledgement already completed/)
+    assert.match(text, /After finishing it, wait silently/)
+  }
+})

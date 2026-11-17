@@ -10,6 +10,7 @@ import { createVoiceDisplaySettings } from './voice-display-settings.js'
 import { checkForUpdate, createUpdateInstalls } from './update-check.js'
 import { createTaskLedger } from './task-ledger.js'
 import { unstartedClaimExpired } from './claim-recovery.js'
+import { recordSubmissionRejection } from './submission-rejection.js'
 import { createClaudeTaskRecovery } from './claude-task-recovery.js'
 import { createResultLedger } from './result-ledger.js'
 import { createTranscriptLedger } from './transcript-ledger.js'
@@ -921,14 +922,16 @@ const server = createServer(async (request, response) => {
       return
     }
     if (request.method === 'POST' && url.pathname === '/api/claude/submission-rejected') {
-      const { id, sessionId } = await readJson(request)
+      const { id, sessionId, reason } = await readJson(request)
       const task = typeof sessionId === 'string' ? taskOf(sessionId) : null
       if (!task || task.id !== id || task.status !== 'submitting' || task.turnId) {
         return send(response, 409, { error: 'Voice request is not awaiting submission' })
       }
       // The Mod received Claude's explicit {drop}: no prompt entered its queue.
       // Hold the same request for a fresh user gesture, without expiring it.
-      await persistTask({ ...task, status: 'claimed', submissionState: 'rejected' })
+      const rejection = await recordSubmissionRejection(task, reason, { persist: persistTask,
+        notify: text => sessions.selected() === sessionId ? activeLive?.notice?.(text) : false })
+      console.info('Claude voice submission rejected', JSON.stringify({ sessionId, requestId: id, ...rejection }))
       send(response, 200, { ok: true })
       return
     }

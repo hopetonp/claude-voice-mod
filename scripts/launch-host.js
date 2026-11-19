@@ -1,6 +1,9 @@
 import { desktopRunning, watchDesktop } from '../host/desktop-lifecycle.js'
 import { readFile } from 'node:fs/promises'
 
+const { assertNodeVersion } = await import('./node-requirement.cjs').catch(() => import('../npm-installer/node-requirement.cjs'))
+assertNodeVersion()
+
 // Local development may borrow Composer Playground's existing connection.
 // A normal installation omits this argument and uses this harness's own settings.
 const developmentConnections = process.argv[2]

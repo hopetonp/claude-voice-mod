@@ -957,7 +957,7 @@ async function recordDrawError($, error) {
   } catch {}
 }
 
-// Windows launches a packaged runtime; macOS starts its registered launchd job.
+// Start the registered launcher so the host also returns after Claude reopens.
 let packagedHostStarting = false
 
 async function packagedHostRunning($, home) {
@@ -971,20 +971,6 @@ async function packagedHostRunning($, home) {
   } catch { return false }
 }
 
-async function packagedChromePath($) {
-  const override = await $.env.get('VOICE_MEDIA_BROWSER')
-  if (override) return override
-  const programFiles = await $.env.get('ProgramFiles')
-  const programFilesX86 = await $.env.get('ProgramFiles(x86)')
-  const localAppData = await $.env.get('LOCALAPPDATA')
-  for (const base of [programFiles, programFilesX86, localAppData]) {
-    if (!base) continue
-    const path = `${base}/Google/Chrome/Application/chrome.exe`
-    if (await $.fs.exists(path)) return path
-  }
-  return 'chrome.exe'
-}
-
 async function ensurePackagedHost($) {
   let root = $.plugin.root
   // macOS keeps the host registered with launchd after a clean desktop shutdown.
@@ -994,26 +980,25 @@ async function ensurePackagedHost($) {
     for await (const _ of $.process.spawn({ argv: ['/bin/launchctl', 'start', 'com.voicemesh.claude-host'] })) {}
     return
   }
-  // The full Windows installer keeps its runtime beside app/, outside the Mod.
-  if (!await $.fs.exists(`${root}/runtime/node.exe`)) {
+  const modBootstrap = `${root}/app/scripts/bootstrap-host.js`
+  const hasModHost = await $.fs.exists(modBootstrap)
+  // The full Windows installer keeps the launcher outside the cached Mod.
+  if (!hasModHost && !await $.fs.exists(`${root}/launch-host.vbs`)) {
     const localAppData = await $.env.get('LOCALAPPDATA')
     if (!localAppData) return
     root = `${localAppData}/VoiceMesh/ClaudeVoice`
   }
-  const node = `${root}/runtime/node.exe`
-  if (!await $.fs.exists(node) || packagedHostStarting) return
+  if (!hasModHost && !await $.fs.exists(`${root}/launch-host.vbs`) || packagedHostStarting) return
   const home = await $.env.get('HOME') ?? await $.env.get('USERPROFILE')
   if (!home) return
   if (!await $.env.get('HOME')) await $.env.set('HOME', home)
   if (await packagedHostRunning($, home)) return
 
   packagedHostStarting = true
-  const path = await $.env.get('PATH') ?? ''
-  const browser = await packagedChromePath($)
+  const windows = await $.env.get('WINDIR') ?? 'C:/Windows'
   const stream = $.process.spawn({
-    argv: [node, `${root}/app/scripts/launch-host.js`],
+    argv: hasModHost ? ['node', modBootstrap] : [`${windows}/System32/wscript.exe`, `${root}/launch-host.vbs`],
     cwd: `${root}/app`,
-    env: { HOME: home, PATH: `${root}/runtime;${path}`, VOICE_MEDIA_BROWSER: browser },
   })
   void (async () => {
     try { for await (const _ of stream) {} }

@@ -9,15 +9,19 @@ test('Windows installer installs and refreshes both Mods, checks failures, and p
   const root = await mkdtemp(join(tmpdir(), 'voicemesh-installer-'))
   const source = join(root, 'download with spaces')
   try {
-    for (const artifact of ['runtime/node.exe', 'app/dist/index.html',
+    for (const artifact of ['app/dist/index.html',
       'app/settings-window/src-tauri/target/release/voicemesh-settings-window.exe',
       'plugin-marketplace/.claude-plugin/marketplace.json']) {
       const destination = join(source, artifact)
       await mkdir(resolve(destination, '..'), { recursive: true })
       await writeFile(destination, '{}')
     }
-    for (const name of ['install.ps1', 'uninstall.ps1']) {
+    for (const name of ['install.ps1', 'uninstall.ps1', 'host-process.ps1']) {
       await copyFile(resolve('windows', name), join(source, name))
+    }
+    for (const name of ['node-requirement.cjs', 'node-minimum']) {
+      await mkdir(join(source, 'app/scripts'), { recursive: true })
+      await copyFile(resolve('npm-installer', name), join(source, 'app/scripts', name))
     }
     const harness = join(root, 'check.ps1')
     await writeFile(harness, String.raw`
@@ -30,10 +34,12 @@ $global:hasClaude = $true
 $global:failInstall = $false
 $global:launches = 0
 $global:shortcutRemoved = $false
+$global:hasNode = $true
 function Get-CimInstance { param($ClassName, $Filter) }
 function Get-Command {
-  param($Name, $ErrorAction)
+  param($Name, $CommandType, $ErrorAction)
   if ($Name -eq 'claude' -and $global:hasClaude) { return @{ Name = 'claude' } }
+  if ($Name -eq 'node.exe' -and $global:hasNode) { return @{ Source = $env:VOICEMESH_TEST_NODE } }
 }
 function claude {
   $global:calls += ,@($args)
@@ -70,7 +76,21 @@ try { & $installer } catch { $caught = $_.Exception.Message -match 'Claude CLI i
 Assert $caught 'Missing Claude must fail before changing the installation'
 Assert (-not (Test-Path $destination)) 'Missing Claude created an installation'
 $global:hasClaude = $true
+$global:hasNode = $false
+$caught = $false
+try { & $installer } catch { $caught = $_.Exception.Message -match 'requires Node.js' }
+Assert $caught 'Missing Node must fail before changing the installation'
+Assert (-not (Test-Path $destination)) 'Missing Node created an installation'
+$global:hasNode = $true
+New-Item -ItemType Directory -Path (Join-Path $destination 'runtime') -Force | Out-Null
+Set-Content -LiteralPath (Join-Path $destination 'runtime\node.exe') -Value 'old bundled runtime'
 & $installer
+Assert (-not (Test-Path (Join-Path $destination 'runtime'))) 'Upgrade left the stale runtime behind'
+Assert ((Get-Content (Join-Path $destination 'app\node-path.txt') -Raw).Trim() -eq $env:VOICEMESH_TEST_NODE) 'System Node path was not saved'
+. (Join-Path $TestRoot 'download with spaces\host-process.ps1')
+Assert (Test-VoiceMeshHostCommand ('"C:\Program Files\nodejs\node.exe" "' + (Join-Path $destination 'app\scripts\launch-host.js') + '"') $destination) 'Installed host command was not recognized'
+Assert (-not (Test-VoiceMeshHostCommand ('"C:\Program Files\nodejs\node.exe" "' + (Join-Path $destination 'app\scripts\launch-host.js.other') + '"') $destination)) 'A different Node application matched'
+Assert (-not (Test-VoiceMeshHostCommand 'node.exe C:\other\launch-host.js' $destination)) 'A host in another installation matched'
 Assert ($global:calls.Count -eq 6) 'Installation must refresh the marketplace and both Mods'
 Assert ($global:calls[0][3] -eq '--keep-data') 'Upgrade must preserve Mod data'
 Assert ($global:calls[3][3] -eq (Join-Path $destination 'plugin-marketplace')) 'Marketplace must use the installed path'
@@ -89,6 +109,23 @@ $global:launches = 0
 Assert ($global:calls.Count -eq 0 -and $global:launches -eq 0) 'Staging must not touch Claude or launch a host'
 & $uninstaller -StagingOnly
 Assert ($global:calls.Count -eq 0) 'Staging uninstall must not touch Claude'
+$stagedUser = Join-Path $env:TEMP 'VoiceMeshPackageSmoke\user'
+$stagedLocal = Join-Path $env:TEMP 'VoiceMeshPackageSmoke\local'
+$saved = Join-Path $stagedUser '.claude\voicemesh-controls'
+$store = Join-Path $stagedUser '.claude\plugins\store'
+$cache = Join-Path $stagedLocal 'com.voicemesh.claude.settings'
+$oldBuild = Join-Path $stagedLocal 'VoiceMesh\Marketplaces'
+foreach ($path in @($saved, $store, $cache, $oldBuild)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+Set-Content (Join-Path $saved 'providers.json') 'saved credentials'
+Set-Content (Join-Path $store 'voicemesh-controls_voicemesh-local-test.json') 'voice history'
+Set-Content (Join-Path $store 'other-plugin.json') 'unrelated data'
+& $uninstaller -StagingOnly
+Assert (-not (Test-Path $cache) -and -not (Test-Path $oldBuild)) 'Uninstall left disposable cache or old builds'
+Assert (Test-Path $saved) 'Normal uninstall deleted saved data'
+& $uninstaller -StagingOnly -Purge
+Assert (-not (Test-Path $saved)) 'Purge left saved data'
+Assert (-not (Test-Path (Join-Path $store 'voicemesh-controls_voicemesh-local-test.json'))) 'Purge left voice history'
+Assert (Test-Path (Join-Path $store 'other-plugin.json')) 'Purge deleted unrelated plugin data'
 & $uninstaller
 Assert ($global:calls.Count -eq 3) 'Uninstall must remove both Mods and marketplace'
 Assert ($global:calls[0][3] -eq '--keep-data') 'Uninstall must preserve Mod data'
@@ -96,7 +133,7 @@ Assert $global:shortcutRemoved 'Uninstall must remove the startup shortcut'
 Assert (-not (Test-Path $destination)) 'Uninstall left the package in place'
 Write-Output 'Installer parity checks passed'
 `)
-    const output = execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', harness, root], { encoding: 'utf8' })
+    const output = execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', harness, root], { encoding: 'utf8', env: { ...process.env, VOICEMESH_TEST_NODE: process.execPath } })
     assert.match(output, /Installer parity checks passed/)
   } finally {
     await rm(root, { recursive: true, force: true })

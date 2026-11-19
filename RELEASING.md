@@ -1,6 +1,6 @@
 # Publish prebuilt installers
 
-The [Build installable packages](.github/workflows/release-packages.yml) workflow builds macOS arm64, macOS x64, and Windows x64 packages on GitHub-hosted runners. It puts the three ZIPs and `SHA256SUMS` in a **draft** GitHub Release. Each ZIP includes the built settings app, bundled Node runtime, local host, and both Claude Mods.
+The [Build installable packages](.github/workflows/release-packages.yml) workflow builds macOS arm64, macOS x64, and Windows x64 packages on GitHub-hosted runners. It puts the three ZIPs and `SHA256SUMS` in a **draft** GitHub Release. Each ZIP includes the built settings app, local host, and both Claude Mods. No Node runtime is bundled; the target computer must already have Node.js 22.19 or later.
 
 1. Commit the intended source and set `.claude-plugin/plugin.json` to the release version.
 2. Push a matching `v<version>` tag. The workflow rejects a tag that differs from the Mod version.

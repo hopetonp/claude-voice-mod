@@ -48,12 +48,13 @@ test('desktop session attach restarts macOS and both Windows package layouts', a
     const env = { HOME: '/home/user', LOCALAPPDATA: '/local' }
     const install = '/local/VoiceMesh/ClaudeVoice'
     const $ = {
+      clock: { every() {} },
       plugin: { root: '/plugin' },
       env: { get: async key => env[key] },
       fs: {
         exists: async path => path === (layout === 'mac'
           ? '/home/user/Library/LaunchAgents/com.voicemesh.claude-host.plist'
-          : `${layout === 'windows-mod' ? '/plugin' : install}/runtime/node.exe`),
+          : layout === 'windows-mod' ? '/plugin/app/scripts/bootstrap-host.js' : `${install}/launch-host.vbs`),
         read: async () => { throw new Error('No host discovery') },
       },
       process: { spawn: options => (async function* () { spawned.push(options.argv) })() },
@@ -61,7 +62,7 @@ test('desktop session attach restarts macOS and both Windows package layouts', a
     await events.get('session.attach')($, { surface: 'desktop' }, async event => event)
     assert.deepEqual(spawned, [layout === 'mac'
       ? ['/bin/launchctl', 'start', 'com.voicemesh.claude-host']
-      : [`${layout === 'windows-mod' ? '/plugin' : install}/runtime/node.exe`,
-        `${layout === 'windows-mod' ? '/plugin' : install}/app/scripts/launch-host.js`]])
+      : layout === 'windows-mod' ? ['node', '/plugin/app/scripts/bootstrap-host.js']
+        : ['C:/Windows/System32/wscript.exe', `${install}/launch-host.vbs`]])
   }
 })

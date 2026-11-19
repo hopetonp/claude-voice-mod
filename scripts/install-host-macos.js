@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { mkdir, rename, writeFile } from 'node:fs/promises'
+import { mkdir, realpath, rename, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -28,8 +28,11 @@ if (process.argv[2] === '--dev-connections') {
   if (!developmentConnections || !isAbsolute(developmentConnections)) throw new Error('Pass an absolute development connection file path')
 } else if (process.argv.length > 2) throw new Error('Usage: install-host-macos.js [--dev-connections /absolute/path | --remove]')
 
-// A 2 MB semi-space keeps V8's young generation, and so the long-running host's heap, small.
-const args = [process.execPath, '--max-semi-space-size=2', join(root, 'scripts', 'launch-host.js'), ...(developmentConnections ? [developmentConnections] : [])]
+const { assertNodeVersion } = await import('./node-requirement.cjs').catch(() => import('../npm-installer/node-requirement.cjs'))
+assertNodeVersion()
+await writeFile(join(root, 'node-path.txt'), await realpath(process.execPath) + '\n', { mode: 0o600 })
+// The shell shim can explain a deleted or outdated Node even when JavaScript cannot run.
+const args = ['/bin/sh', join(root, 'scripts', 'launch-host.sh'), ...(developmentConnections ? [developmentConnections] : [])]
 // launchd does not inherit an interactive shell's PATH. Local model installation needs
 // a current Python and npm, both commonly installed by Homebrew on macOS.
 const servicePath = [dirname(process.execPath), '/opt/homebrew/bin', '/usr/local/bin', '/usr/bin', '/bin', '/usr/sbin', '/sbin'].join(':')
@@ -42,6 +45,7 @@ ${element('key', 'WorkingDirectory')}${element('string', root)}
 ${element('key', 'EnvironmentVariables')}<dict>${element('key', 'PATH')}${element('string', servicePath)}</dict>
 ${element('key', 'RunAtLoad')}<true/>
 ${element('key', 'KeepAlive')}<dict>${element('key', 'SuccessfulExit')}<false/></dict>
+${element('key', 'ThrottleInterval')}<integer>60</integer>
 ${element('key', 'StandardOutPath')}${element('string', join(logDir, 'host.stdout.log'))}
 ${element('key', 'StandardErrorPath')}${element('string', join(logDir, 'host.stderr.log'))}
 </dict></plist>

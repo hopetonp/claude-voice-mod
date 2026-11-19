@@ -1,17 +1,19 @@
 # Claude Voice Mod
 
-Install the prebuilt VoiceMesh Mod for Claude Code on macOS or Windows:
+Requires **Node.js 22.19 or later**. Install it from [nodejs.org](https://nodejs.org); on Windows, prefer the official installer over an outdated nvm-windows installation.
+
+Install the prebuilt VoiceMesh Mod for Claude Code on macOS or Windows with visible progress:
 
 ```sh
-npm install --global claude-voice-mod@beta
+npx --yes claude-voice-mod@latest
 ```
 
 With pnpm, run the installer directly:
 
 ```sh
-pnpm dlx claude-voice-mod@beta
+pnpm dlx claude-voice-mod@latest
 ```
 
-Installation downloads the matching [v0.1.220 Beta GitHub release](https://github.com/hopetonp/claude-voice-mod/releases/tag/v0.1.220), checks its SHA-256 digest, and runs the bundled installer. It requires the Claude CLI and Chrome; it does not compile code or require Rust. Restart Claude after installation.
+Install Node.js 22.19 or later first. Installation downloads the matching [GitHub release](https://github.com/hopetonp/claude-voice-mod/releases/latest), checks its SHA-256 digest, and runs its installer. It requires the Claude CLI and Chrome; it does not bundle Node, compile code, or require Rust. Restart Claude after installation.
 
-This package supports macOS arm64, macOS x64, and Windows x64. If npm lifecycle scripts are disabled, the installer does not run.
+For a global installation, use `npm install --global --foreground-scripts claude-voice-mod@latest` to show installer output. This package supports macOS arm64, macOS x64, and Windows x64. If npm lifecycle scripts are disabled, run the `claude-voice-mod` command explicitly after installing the package.

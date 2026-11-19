@@ -12,13 +12,17 @@ In either mode, coding requests go to the active Claude session. Optional **requ
 
 ## Installation
 
-Install the latest release with npm (Node.js and npm are required):
+Requires **Node.js 22.19 or later** and npm. Install Node from [nodejs.org](https://nodejs.org); on Windows, prefer the official installer over an outdated nvm-windows installation.
+
+Run the installer directly to see download progress, checksum verification, and the result:
 
 ```sh
-npm install --global claude-voice-mod@latest
+npx --yes claude-voice-mod@latest
 ```
 
 This downloads and verifies the prebuilt package for your Mac or Windows PC. With pnpm, use `pnpm dlx claude-voice-mod@latest`. Restart Claude after installation.
+
+For a global installation, use `npm install --global --foreground-scripts claude-voice-mod@latest` so npm shows the installer output.
 
 For an installation without npm, download a prebuilt ZIP from the [GitHub releases](https://github.com/hopetonp/claude-voice-mod/releases) page. Choose the release marked “Latest”.
 
@@ -26,12 +30,16 @@ Ask an AI agent with shell access to your computer:
 
 > Read https://github.com/hopetonp/claude-voice-mod/blob/main/INSTALL_WITH_CLAUDE.md. Download the latest published ZIP, verify it, run its installer, and check both Mods and the local host.
 
-Choose `voicemesh-claude-macos-arm64-<version>.zip` for an Apple Silicon Mac (M-series), `voicemesh-claude-macos-x64-<version>.zip` for an Intel Mac, or `voicemesh-claude-win-x64-<version>.zip` for a Windows x64 PC. Run `install.sh` on macOS or `install.ps1` on Windows after extraction. The prebuilt packages include the runtime and settings app, so no build tools are needed. Claude Code and Chrome are required for use. The Mod has been installed successfully on macOS arm64 and on a Windows box.
+Choose `voicemesh-claude-macos-arm64-<version>.zip` for an Apple Silicon Mac (M-series), `voicemesh-claude-macos-x64-<version>.zip` for an Intel Mac, or `voicemesh-claude-win-x64-<version>.zip` for a Windows x64 PC. Install Node.js 22.19 or later before running `install.sh` on macOS or `install.ps1` on Windows. The prebuilt packages include the host and settings app, so no build tools are needed. Claude Code and Chrome are required for use. The Mod has been installed successfully on macOS arm64 and on a Windows box.
 
 To compile it yourself, see [BUILD_FROM_SOURCE.md](BUILD_FROM_SOURCE.md). GitHub's automatically generated **Source code** archives are not installable packages.
 
+## Uninstall
+
+Run `uninstall.sh` on macOS or `uninstall.ps1` on Windows from the installed package. This removes the host, settings-window caches and old packaged builds while keeping saved settings, keys and history. For a complete uninstall that also deletes those personal records, use `sh uninstall.sh --purge` or `powershell.exe -File .\uninstall.ps1 -Purge`.
+
 ## Security
 
-Provider keys are saved locally in Claude's user data under `.claude/voicemesh-controls/providers.json`; they are not encrypted by this Mod or stored in your Claude account. The local host listens on `127.0.0.1` and omits keys from settings responses. Audio and text are sent to the voice providers you configure. If you enable request classification, its provider also receives the spoken request and context. Uninstalling leaves your settings and keys in place.
+Provider keys are saved locally in Claude's user data under `.claude/voicemesh-controls/providers.json`; they are not encrypted by this Mod or stored in your Claude account. The local host listens on `127.0.0.1` and omits keys from settings responses. Audio and text are sent to the voice providers you configure. If you enable request classification, its provider also receives the spoken request and context. Uninstalling leaves your settings and keys in place unless you explicitly use the purge option.
 
 Claude Voice Mod is available under the [MIT License](LICENSE). Third-party components retain their own terms.

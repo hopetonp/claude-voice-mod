@@ -6,7 +6,7 @@ Give an AI agent with shell access on the target Mac or Windows PC this request:
 
 ## Instructions for Claude
 
-Use a local agent session with shell access on the computer that will run VoiceMesh. Clone the repository, build on that computer, and install from the resulting directory. Do not use a GitHub-generated source archive as an installer: it lacks the compiled settings window and runtime. For an installation without build tools, use the [prebuilt release guide](INSTALL_WITH_CLAUDE.md).
+Use a local agent session with shell access on the computer that will run VoiceMesh. Clone the repository, build on that computer, and install from the resulting directory. Do not use a GitHub-generated source archive as an installer: it lacks the compiled settings window and host bundle. For an installation without build tools, use the [prebuilt release guide](INSTALL_WITH_CLAUDE.md).
 
 Confirm that Claude Code or Claude Desktop Code and the `claude` CLI are installed. Chrome is required for voice media. On macOS, install [Chrome for Testing](https://developer.chrome.com/docs/automation-and-testing/download-test-binaries) in `~/Applications` or `/Applications` to keep the hidden media worker separate from the regular Chrome app; VoiceMesh prefers it when present. Building requires Git, Node.js 22.19 or later, npm, Rust, and Cargo. Windows also requires Visual Studio C++ build tools and the Windows SDK. If a required tool is missing, report it and stop rather than substituting an unrelated binary.
 
@@ -37,15 +37,14 @@ Confirm that `release.json` in the package directory matches the current Mod ver
 
 ### Windows
 
-Run on the target Windows PC in PowerShell. The Windows builder needs an official Node distribution of the same architecture as the build, containing `node.exe`, `npm.cmd`, `LICENSE`, and `node_modules\npm`. The installed Node directory may qualify; if it does not, use an official extracted Node distribution and pass its directory as `--node-dir`.
+Run on the target Windows PC in PowerShell using Node.js 22.19 or later. The package uses the target computer's Node; the builder does not copy a Node distribution.
 
 ```powershell
-$nodeDir = Split-Path (Get-Command node).Source
-npm run release:windows -- --node-dir "$nodeDir"
+npm run release:windows
 $arch = node -p "process.arch"
 & ".\release\voicemesh-claude-win-$arch\install.ps1"
 ```
 
-Confirm that `release.json` in the package directory matches the current Mod version and Windows architecture. After installation, check that `claude plugin list` shows both Mods enabled, the installed `runtime\node.exe` has a running host process, and the Startup folder contains `VoiceMesh Claude Voice.lnk`. Report any failure. Tell the user to restart Claude and open Voice settings to configure a provider key, model, and voice.
+Confirm that `release.json` in the package directory matches the current Mod version and Windows architecture. After installation, check that `claude plugin list` shows both Mods enabled, a host process is running `app\scripts\launch-host.js`, and the Startup folder contains `VoiceMesh Claude Voice.lnk`. Report any failure. Tell the user to restart Claude and open Voice settings to configure a provider key, model, and voice.
 
-The installers copy the built package to a durable location and register its bundled local Claude marketplace. Saved VoiceMesh settings and provider credentials are preserved during reinstall. The built package also contains `uninstall.sh` or `uninstall.ps1` to remove the host and Mods while preserving those settings. The source checkout can be removed after installation.
+The installers copy the built package to a durable location and register its bundled local Claude marketplace. Saved VoiceMesh settings and provider credentials are preserved during reinstall. The built package also contains `uninstall.sh` or `uninstall.ps1` to remove the host, Mods, settings-window caches and old packaged builds while preserving saved settings and history. Use `--purge` on macOS or `-Purge` on Windows only when the user explicitly requests deletion of their saved settings, keys, transcripts and Mod data. The source checkout can be removed after installation.

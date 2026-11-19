@@ -5,7 +5,13 @@ $ErrorActionPreference = 'Stop'
 $source = (Resolve-Path -LiteralPath $PSScriptRoot).Path
 $destination = if ($StagingOnly) { Join-Path $env:TEMP 'VoiceMeshPackageSmoke\ClaudeVoice' } else { Join-Path $env:LOCALAPPDATA 'VoiceMesh\ClaudeVoice' }
 $startup = Join-Path ([Environment]::GetFolderPath('Startup')) 'VoiceMesh Claude Voice.lnk'
-if (-not (Test-Path -LiteralPath (Join-Path $source 'runtime\node.exe'))) { throw 'The private Node runtime is missing from this package.' }
+$minimum = (Get-Content -LiteralPath (Join-Path $source 'app\scripts\node-minimum') -Raw).Trim()
+$nodeCommand = Get-Command node.exe -CommandType Application -ErrorAction SilentlyContinue
+if (-not $nodeCommand) { throw "VoiceMesh requires Node.js $minimum or later. Install Node from https://nodejs.org (or winget install OpenJS.NodeJS) and run this installer again." }
+$nodePath = & $nodeCommand.Source (Join-Path $source 'app\scripts\node-requirement.cjs') --resolve
+if ($LASTEXITCODE -ne 0) { throw 'Node.js does not meet the VoiceMesh requirement. Install a supported Node version and run this installer again.' }
+$nodePath = ($nodePath -join "`n").Trim()
+if (-not [IO.Path]::IsPathRooted($nodePath) -or -not (Test-Path -LiteralPath $nodePath -PathType Leaf)) { throw 'Node.js did not return a valid absolute executable path.' }
 if (-not (Test-Path -LiteralPath (Join-Path $source 'app\dist\index.html'))) { throw 'The built voice page is missing from this package.' }
 if (-not (Test-Path -LiteralPath (Join-Path $source 'app\settings-window\src-tauri\target\release\voicemesh-settings-window.exe'))) { throw 'The settings window is missing from this package.' }
 if (-not (Test-Path -LiteralPath (Join-Path $source 'plugin-marketplace\.claude-plugin\marketplace.json'))) { throw 'The bundled Claude marketplace is missing from this package.' }
@@ -13,12 +19,19 @@ if (-not $StagingOnly -and -not (Get-Command claude -ErrorAction SilentlyContinu
 if ($source.TrimEnd('\') -eq $destination.TrimEnd('\')) { throw 'Run the installer from the built package directory, not from the installation directory.' }
 
 # Stop only a previous VoiceMesh host from this installation directory.
+. (Join-Path $source 'host-process.ps1')
 Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object {
-    $_.ExecutablePath -and $_.ExecutablePath.Equals((Join-Path $destination 'runtime\node.exe'), [StringComparison]::OrdinalIgnoreCase)
+    Test-VoiceMeshHostCommand $_.CommandLine $destination
 } | ForEach-Object { Stop-Process -Id $_.ProcessId -ErrorAction SilentlyContinue }
 
 New-Item -ItemType Directory -Path $destination -Force | Out-Null
+# Remove the old runtime and npm tree on upgrades; Copy-Item alone leaves them behind.
+foreach ($stale in @('runtime', 'app\node_modules', 'app\vendor', 'app\host')) {
+    $path = Join-Path $destination $stale
+    if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path -Recurse -Force }
+}
 Copy-Item -Path (Join-Path $source '*') -Destination $destination -Recurse -Force
+[IO.File]::WriteAllText((Join-Path $destination 'app\node-path.txt'), $nodePath + "`n")
 
 if (-not $StagingOnly) {
     $shell = New-Object -ComObject WScript.Shell
@@ -45,5 +58,5 @@ if (-not $StagingOnly) {
 $status = if ($StagingOnly) { 'staged for testing' } else { 'installed' }
 Write-Host "VoiceMesh host $status at $destination"
 Write-Host "Claude plugin marketplace: $(Join-Path $destination 'plugin-marketplace')"
-Write-Host 'The bundled Node runtime is private to VoiceMesh; no system Node installation is needed.'
+Write-Host "VoiceMesh uses system Node: $nodePath (requires $minimum or later)."
 if (-not $StagingOnly) { Write-Host 'Restart Claude to load the Mods, then open Voice settings to configure a provider.' }

@@ -9,10 +9,9 @@ export async function buildWindowsModRelease(options) {
   const output = options.output ?? join(root, 'release', 'voicemesh-claude-mod-win-x64')
   await buildWindowsRelease({ ...options, output })
   const controls = join(output, 'plugin-marketplace', 'plugins', 'voicemesh-controls')
-  await rename(join(output, 'runtime'), join(controls, 'runtime'))
   await rename(join(output, 'app'), join(controls, 'app'))
   await addWindowsAutostart(controls)
-  for (const installer of ['install.ps1', 'uninstall.ps1', 'launch-host.vbs']) {
+  for (const installer of ['install.ps1', 'uninstall.ps1', 'launch-host.vbs', 'launch-host.ps1', 'host-process.ps1']) {
     await rm(join(output, installer))
   }
   console.log(`Marketplace Mod release staged: ${output}`)
@@ -28,7 +27,7 @@ export async function addWindowsAutostart(controls) {
     SessionStart: [{
       hooks: [{
         type: 'command',
-        command: '${CLAUDE_PLUGIN_ROOT}/runtime/node.exe',
+        command: 'node',
         args: ['${CLAUDE_PLUGIN_ROOT}/app/scripts/bootstrap-host.js'],
         timeout: 10,
       }],

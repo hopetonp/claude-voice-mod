@@ -51,7 +51,13 @@ jobs:
           test -n "$archive"
           ditto -x -k "$archive" "$RUNNER_TEMP/voicemesh-verify"
           package=$(find "$RUNNER_TEMP/voicemesh-verify" -mindepth 1 -maxdepth 1 -type d -print -quit)
-          test -x "$package/runtime/node"
+          test ! -e "$package/runtime"
+          test ! -e "$package/app/node_modules"
+          test ! -e "$package/app/vendor"
+          test -f "$package/app/host/server.js"
+          test -f "$package/app/scripts/launch-host.sh"
+          node "$package/app/scripts/node-requirement.cjs"
+          node --test tests/system-node.test.mjs tests/npm-installer-output.test.mjs tests/uninstall-cleanup.test.mjs tests/windows-release.test.mjs tests/desktop-lifecycle.test.mjs
           test -f "$package/plugin-marketplace/.claude-plugin/marketplace.json"
           test -d "$package/app/settings-window/src-tauri/target/release/bundle/macos/VoiceMesh Settings.app"
           test -f "$package/release.json"
@@ -83,12 +89,16 @@ jobs:
       - name: Build and archive Windows package
         shell: pwsh
         run: |
-          $nodeDir = Split-Path (Get-Command node).Source
-          npm run release:windows -- --node-dir "$nodeDir"
+          npm run release:windows
           if ($LASTEXITCODE -ne 0) { throw 'Windows release build failed' }
           $version = (Get-Content .claude-plugin/plugin.json | ConvertFrom-Json).version
           $arch = node -p 'process.arch'
           $package = "voicemesh-claude-win-$arch"
+          foreach ($excluded in @('runtime', 'app\node_modules', 'app\vendor')) {
+            if (Test-Path "release\$package\$excluded") { throw "Unexpected packaged directory: $excluded" }
+          }
+          node --test tests/system-node.test.mjs tests/npm-installer-output.test.mjs tests/windows-release.test.mjs tests/windows-installer.test.mjs tests/desktop-lifecycle.test.mjs
+          if ($LASTEXITCODE -ne 0) { throw 'Installer regression checks failed' }
           $archive = "$package-$version.zip"
           Push-Location release
           try {

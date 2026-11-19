@@ -6,6 +6,8 @@ import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const appRoot = fileURLToPath(new URL('..', import.meta.url))
+const { assertNodeVersion } = await import('./node-requirement.cjs').catch(() => import('../npm-installer/node-requirement.cjs'))
+assertNodeVersion()
 const home = process.env.USERPROFILE || process.env.HOME || homedir()
 const dataDir = join(home, '.claude', 'voicemesh-controls')
 const lockFile = join(dataDir, 'host-bootstrap.lock')

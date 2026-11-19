@@ -6,8 +6,10 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { Readable } from 'node:stream'
+import { Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { fileURLToPath } from 'node:url'
+import { assertNodeVersion } from './node-requirement.cjs'
 
 const version = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version
 const checksums = {
@@ -42,17 +44,34 @@ async function sha256(path) {
 }
 
 export async function install() {
+  // npm can run under an older Node even if its engines warning was ignored.
+  assertNodeVersion()
   if (process.platform === 'darwin' && process.getuid() === 0) {
     throw new Error('Run npm as your normal Mac user, without sudo, so VoiceMesh installs for that user')
   }
   const release = releaseFor()
+  const status = message => console.error(`VoiceMesh: ${message}`)
   const temp = await mkdtemp(join(tmpdir(), 'voicemesh-npm-'))
   try {
     const zip = join(temp, release.archive)
+    status(`Downloading ${version} for ${process.platform}-${process.arch}…`)
     const response = await fetch(release.url, { signal: AbortSignal.timeout(300000) })
     if (!response.ok || !response.body) throw new Error(`Could not download VoiceMesh: HTTP ${response.status}`)
-    await pipeline(Readable.fromWeb(response.body), createWriteStream(zip))
+    let received = 0
+    let nextReport = 1024 * 1024
+    const total = Number(response.headers.get('content-length'))
+    const progress = new Transform({ transform(chunk, _encoding, callback) {
+      received += chunk.length
+      if (received >= nextReport) {
+        status(`Downloaded ${(received / 1048576).toFixed(1)}${total > 0 ? ` of ${(total / 1048576).toFixed(1)}` : ''} MB`)
+        nextReport = received + 1024 * 1024
+      }
+      callback(null, chunk)
+    } })
+    await pipeline(Readable.fromWeb(response.body), progress, createWriteStream(zip))
+    status('Verifying SHA-256 checksum…')
     if (await sha256(zip) !== release.checksum) throw new Error('VoiceMesh package checksum does not match the published release')
+    status('Checksum verified. Extracting package…')
 
     const unpacked = join(temp, 'unpacked')
     if (process.platform === 'darwin') run('ditto', ['-x', '-k', zip, unpacked])
@@ -64,8 +83,10 @@ export async function install() {
     const metadata = JSON.parse(await readFile(join(packageDir, 'release.json'), 'utf8'))
     if (metadata.version !== version || metadata.architecture !== process.arch) throw new Error('VoiceMesh package version or architecture does not match')
 
+    status('Installing host and Claude Mods…')
     if (process.platform === 'darwin') run('sh', [join(packageDir, 'install.sh')])
     else run('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', join(packageDir, 'install.ps1')])
+    status(`${version} installed. Restart Claude, then open Voice settings.`)
   } finally {
     await rm(temp, { recursive: true, force: true })
   }

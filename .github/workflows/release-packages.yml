@@ -97,7 +97,7 @@ jobs:
           foreach ($excluded in @('runtime', 'app\node_modules', 'app\vendor')) {
             if (Test-Path "release\$package\$excluded") { throw "Unexpected packaged directory: $excluded" }
           }
-          node --test tests/system-node.test.mjs tests/npm-installer-output.test.mjs tests/windows-release.test.mjs tests/windows-installer.test.mjs tests/desktop-lifecycle.test.mjs
+          node --test tests/system-node.test.mjs tests/npm-installer-output.test.mjs tests/windows-release.test.mjs tests/windows-installer.test.mjs tests/windows-process.test.mjs tests/desktop-lifecycle.test.mjs
           if ($LASTEXITCODE -ne 0) { throw 'Installer regression checks failed' }
           $archive = "$package-$version.zip"
           Push-Location release
@@ -231,7 +231,7 @@ jobs:
             assert.ok(response.ok, `Update endpoint returned ${response.status}`)
             return response.json()
           }
-          // npm publication can take a few minutes to reach its public registry.
+          // 0.1.226 reached the public registry after the former three-minute window.
           for (let attempt = 0; ; attempt++) {
             try {
               const [tags, npm, github] = await Promise.all([
@@ -248,7 +248,7 @@ jobs:
               console.log(`Verified npm latest, npm beta, default package, and GitHub latest: ${expected}`)
               break
             } catch (error) {
-              if (attempt >= 17) throw error
+              if (attempt >= 59) throw error
               console.log(`Waiting for public update channels: ${error.message}`)
               await setTimeout(10000)
             }

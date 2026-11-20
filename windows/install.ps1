@@ -1,4 +1,4 @@
-param([switch]$StagingOnly)
+param([switch]$StagingOnly, [string]$NodePath)
 
 $ErrorActionPreference = 'Stop'
 
@@ -6,9 +6,14 @@ $source = (Resolve-Path -LiteralPath $PSScriptRoot).Path
 $destination = if ($StagingOnly) { Join-Path $env:TEMP 'VoiceMeshPackageSmoke\ClaudeVoice' } else { Join-Path $env:LOCALAPPDATA 'VoiceMesh\ClaudeVoice' }
 $startup = Join-Path ([Environment]::GetFolderPath('Startup')) 'VoiceMesh Claude Voice.lnk'
 $minimum = (Get-Content -LiteralPath (Join-Path $source 'app\scripts\node-minimum') -Raw).Trim()
-$nodeCommand = Get-Command node.exe -CommandType Application -ErrorAction SilentlyContinue
-if (-not $nodeCommand) { throw "VoiceMesh requires Node.js $minimum or later. Install Node from https://nodejs.org (or winget install OpenJS.NodeJS) and run this installer again." }
-$nodePath = & $nodeCommand.Source (Join-Path $source 'app\scripts\node-requirement.cjs') --resolve
+if (-not $NodePath) {
+    $nodeCommand = Get-Command node.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($nodeCommand) { $NodePath = $nodeCommand.Source }
+}
+if (-not $NodePath -or -not [IO.Path]::IsPathRooted($NodePath) -or -not (Test-Path -LiteralPath $NodePath -PathType Leaf)) {
+    throw "VoiceMesh requires Node.js $minimum or later. Install Node from https://nodejs.org (or winget install OpenJS.NodeJS) and run this installer again."
+}
+$nodePath = & $NodePath (Join-Path $source 'app\scripts\node-requirement.cjs') --resolve
 if ($LASTEXITCODE -ne 0) { throw 'Node.js does not meet the VoiceMesh requirement. Install a supported Node version and run this installer again.' }
 $nodePath = ($nodePath -join "`n").Trim()
 if (-not [IO.Path]::IsPathRooted($nodePath) -or -not (Test-Path -LiteralPath $nodePath -PathType Leaf)) { throw 'Node.js did not return a valid absolute executable path.' }
@@ -20,15 +25,14 @@ if ($source.TrimEnd('\') -eq $destination.TrimEnd('\')) { throw 'Run the install
 
 # Stop only a previous VoiceMesh host from this installation directory.
 . (Join-Path $source 'host-process.ps1')
-Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object {
-    Test-VoiceMeshHostCommand $_.CommandLine $destination
-} | ForEach-Object { Stop-Process -Id $_.ProcessId -ErrorAction SilentlyContinue }
+$profileRoot = if ($StagingOnly) { Join-Path $env:TEMP 'VoiceMeshPackageSmoke\user' } else { $env:USERPROFILE }
+Stop-VoiceMeshProcesses -Destination $destination -MediaProfile (Join-Path $profileRoot '.claude\voicemesh-controls\media-profile')
 
 New-Item -ItemType Directory -Path $destination -Force | Out-Null
 # Remove the old runtime and npm tree on upgrades; Copy-Item alone leaves them behind.
 foreach ($stale in @('runtime', 'app\node_modules', 'app\vendor', 'app\host')) {
     $path = Join-Path $destination $stale
-    if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path -Recurse -Force }
+    Remove-VoiceMeshPath -Path $path -Recurse
 }
 Copy-Item -Path (Join-Path $source '*') -Destination $destination -Recurse -Force
 [IO.File]::WriteAllText((Join-Path $destination 'app\node-path.txt'), $nodePath + "`n")

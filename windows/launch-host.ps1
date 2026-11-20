@@ -6,10 +6,21 @@ New-Item -ItemType Directory -Path $logs -Force | Out-Null
 try {
     $minimum = (Get-Content -LiteralPath (Join-Path $app 'scripts\node-minimum') -Raw).Trim()
     $saved = Join-Path $app 'node-path.txt'
-    if (-not (Test-Path -LiteralPath $saved)) { throw "VoiceMesh has no saved Node path. Install Node.js $minimum or later from https://nodejs.org and run the VoiceMesh installer again." }
-    $node = (Get-Content -LiteralPath $saved -Raw).Trim()
-    if (-not [IO.Path]::IsPathRooted($node) -or -not (Test-Path -LiteralPath $node -PathType Leaf)) {
-        throw "VoiceMesh cannot find its saved Node executable. Install Node.js $minimum or later from https://nodejs.org and run the VoiceMesh installer again."
+    $node = if (Test-Path -LiteralPath $saved) { (Get-Content -LiteralPath $saved -Raw).Trim() } else { '' }
+    if (-not $node -or -not [IO.Path]::IsPathRooted($node) -or -not (Test-Path -LiteralPath $node -PathType Leaf)) {
+        $node = ''
+        foreach ($candidate in @(Get-Command node.exe -CommandType Application -ErrorAction SilentlyContinue)) {
+            try {
+                $resolved = & $candidate.Source (Join-Path $app 'scripts\node-requirement.cjs') --resolve 2>$null
+                if ($LASTEXITCODE -eq 0 -and $resolved -and (Test-Path -LiteralPath ($resolved -join "`n").Trim() -PathType Leaf)) {
+                    $node = ($resolved -join "`n").Trim()
+                    break
+                }
+            } catch { }
+        }
+        if (-not $node) { throw "VoiceMesh cannot find a supported Node executable. Install Node.js $minimum or later from https://nodejs.org and run the VoiceMesh installer again." }
+        [IO.File]::WriteAllText($saved, $node + "`n")
+        Add-Content -LiteralPath (Join-Path $logs 'host-launcher.log') -Value ("$(Get-Date -Format o) Saved Node was unavailable; recovered with $node")
     }
     $check = & $node (Join-Path $app 'scripts\node-requirement.cjs') 2>&1
     if ($LASTEXITCODE -ne 0) { throw ($check -join "`n") }

@@ -16,12 +16,10 @@ if (-not $StagingOnly) {
     }
 }
 . (Join-Path $PSScriptRoot 'host-process.ps1')
-Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object {
-    Test-VoiceMeshHostCommand $_.CommandLine $destination
-} | ForEach-Object { Stop-Process -Id $_.ProcessId -ErrorAction SilentlyContinue }
+Stop-VoiceMeshProcesses -Destination $destination -MediaProfile (Join-Path $profileRoot '.claude\voicemesh-controls\media-profile')
 if (-not $StagingOnly) { Remove-Item -LiteralPath $startup -Force -ErrorAction SilentlyContinue }
 foreach ($cache in @((Join-Path $localRoot 'com.voicemesh.claude.settings'), (Join-Path $localRoot 'VoiceMesh\Marketplaces'))) {
-    if (Test-Path -LiteralPath $cache) { Remove-Item -LiteralPath $cache -Recurse -Force }
+    Remove-VoiceMeshPath -Path $cache -Recurse
 }
 if ($Purge) {
     $claudeData = Join-Path $profileRoot '.claude'
@@ -29,15 +27,15 @@ if ($Purge) {
         'plugins\data\voicemesh-controls-inline', 'plugins\data\voicemesh-controls-voicemesh-local',
         'plugins\data\voicemesh-said-inline', 'plugins\data\voicemesh-said-voicemesh-local')) {
         $path = Join-Path $claudeData $relative
-        if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path -Recurse -Force }
+        Remove-VoiceMeshPath -Path $path -Recurse
     }
     $store = Join-Path $claudeData 'plugins\store'
     if (Test-Path -LiteralPath $store) {
         Get-ChildItem -LiteralPath $store -File | Where-Object { $_.Name -match '^voicemesh-(controls|said)_.+\.json$' } | ForEach-Object {
-            Remove-Item -LiteralPath $_.FullName -Force
+            Remove-VoiceMeshPath -Path $_.FullName
         }
     }
 }
-Remove-Item -LiteralPath $destination -Recurse -Force -ErrorAction SilentlyContinue
+Remove-VoiceMeshPath -Path $destination -Recurse
 if ($Purge) { Write-Host 'VoiceMesh removed, including saved settings, credentials, transcripts and Mod data.' }
 else { Write-Host 'VoiceMesh and caches removed. Saved settings, credentials and history remain; use -Purge to remove them.' }

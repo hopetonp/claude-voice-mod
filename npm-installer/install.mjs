@@ -85,7 +85,7 @@ export async function install() {
 
     status('Installing host and Claude Mods…')
     if (process.platform === 'darwin') run('sh', [join(packageDir, 'install.sh')])
-    else run('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', join(packageDir, 'install.ps1')])
+    else run('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', join(packageDir, 'install.ps1'), '-NodePath', process.execPath])
     status(`${version} installed. Restart Claude, then open Voice settings.`)
   } finally {
     await rm(temp, { recursive: true, force: true })

@@ -24,6 +24,8 @@ This downloads and verifies the prebuilt package for your Mac or Windows PC. Wit
 
 For a global installation, use `npm install --global --foreground-scripts claude-voice-mod@latest` so npm shows the installer output.
 
+If a global installation fails, run `npm uninstall --global claude-voice-mod` before trying again. This removes leftover npm launcher files that can otherwise cause an `EEXIST` error. The `npx` command above avoids creating global launchers.
+
 For an installation without npm, download a prebuilt ZIP from the [GitHub releases](https://github.com/hopetonp/claude-voice-mod/releases) page. Choose the release marked “Latest”.
 
 Ask an AI agent with shell access to your computer:

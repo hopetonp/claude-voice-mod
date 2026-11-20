@@ -39,7 +39,7 @@ function Get-CimInstance { param($ClassName, $Filter) }
 function Get-Command {
   param($Name, $CommandType, $ErrorAction)
   if ($Name -eq 'claude' -and $global:hasClaude) { return @{ Name = 'claude' } }
-  if ($Name -eq 'node.exe' -and $global:hasNode) { return @{ Source = $env:VOICEMESH_TEST_NODE } }
+  if ($Name -eq 'node.exe' -and $global:hasNode) { return @(@{ Source = $env:VOICEMESH_TEST_NODE }, @{ Source = 'C:\stale-nvm\node.exe' }) }
 }
 function claude {
   $global:calls += ,@($args)
@@ -81,6 +81,10 @@ $caught = $false
 try { & $installer } catch { $caught = $_.Exception.Message -match 'requires Node.js' }
 Assert $caught 'Missing Node must fail before changing the installation'
 Assert (-not (Test-Path $destination)) 'Missing Node created an installation'
+$global:hasNode = $true
+# npm passes its own executable even when PATH discovery is unavailable.
+$global:hasNode = $false
+& $installer -StagingOnly -NodePath $env:VOICEMESH_TEST_NODE
 $global:hasNode = $true
 New-Item -ItemType Directory -Path (Join-Path $destination 'runtime') -Force | Out-Null
 Set-Content -LiteralPath (Join-Path $destination 'runtime\node.exe') -Value 'old bundled runtime'

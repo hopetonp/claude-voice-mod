@@ -122,6 +122,8 @@ const signaling = {
       provider: connection.id, transport: connection.transport,
       inputSampleRate: connection.inputSampleRate, outputSampleRate: connection.outputSampleRate,
       nativePlayback: connection.id === 'openai-live',
+      // Gemini Live is louder than the other providers: -6 dB at the output stage.
+      playbackVolume: connection.id === 'gemini' ? 0.5 : 1,
       ...(connection.transport === 'webrtc' ? { rtcAdapter: () => connection.id === 'openai-live'
         ? { channelLabel: 'oai-events', activity: { pollMs: 100, threshold: .01, idleMs: 350 }, decode: () => [] }
         : createOpenaiWebRtcAdapter() } : {}),

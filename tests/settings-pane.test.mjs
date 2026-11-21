@@ -23,8 +23,12 @@ test('summaries describe each closed section', () => {
 })
 
 test('standby choices keep a saved value that is not a preset', () => {
-  assert.deepEqual(standbyOptions(30).map(item => item.label), ['Off', '15 seconds', '30 seconds', '60 seconds', '120 seconds'])
-  assert.deepEqual(standbyOptions(45).map(item => item.value), ['0', '15', '30', '45', '60', '120'])
+  assert.deepEqual(standbyOptions(30).map(item => item.label), ['Off', '15 seconds', '30 seconds', '60 seconds', '120 seconds', '300 seconds', '600 seconds', '900 seconds', '1800 seconds'])
+  assert.deepEqual(standbyOptions(45).map(item => item.value), ['0', '15', '30', '45', '60', '120', '300', '600', '900', '1800'])
+})
+
+test('standby choices include 30 minutes', () => {
+  assert.equal(standbyOptions(30).at(-1).value, '1800')
 })
 
 test('both sections start closed and show only their titles and summaries', () => {

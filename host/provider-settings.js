@@ -67,7 +67,7 @@ export async function createSettings(path, env = process.env) {
         else next[field]=value[field].trim();
       }
       if (value.voiceStandbySec !== undefined) {
-        if (!Number.isInteger(value.voiceStandbySec) || value.voiceStandbySec < 0 || value.voiceStandbySec > 120) throw new Error('Invalid standby duration');
+        if (!Number.isInteger(value.voiceStandbySec) || value.voiceStandbySec < 0 || value.voiceStandbySec > 1800) throw new Error('Invalid standby duration');
         next.voiceStandbySec = value.voiceStandbySec;
       }
       for (const field of ['statusSounds', 'assistantOrbEnabled', 'endConversationEnabled', 'streamingCaptions']) {

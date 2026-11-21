@@ -8,6 +8,24 @@ import { configuredConnections } from '../host/voice-server.js'
 import { liveInstructions } from '../host/voice-policy.js'
 import { openaiLiveProvider } from '@voicemesh/composer/server'
 
+test('all providers accept and restore 30-minute standby', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'voice-standby-'))
+  const path = join(directory, 'providers.json')
+  try {
+    const store = await createSettings(path, {})
+    for (const id of ['openai-live', 'openai', 'gemini', 'xai']) {
+      await store.save({ id, voiceStandbySec: 1800 })
+      const restored = await createSettings(path, {})
+      assert.equal(restored.get(id).voiceStandbySec, 1800)
+      assert.equal(restored.publicSettings().find(value => value.id === id).voiceStandbySec, 1800)
+      await assert.rejects(store.save({ id, voiceStandbySec: 1801 }), /Invalid standby duration/)
+      await assert.rejects(store.save({ id, voiceStandbySec: 120.5 }), /Invalid standby duration/)
+      await store.save({ id, voiceStandbySec: 0 })
+      assert.equal(store.get(id).voiceStandbySec, 0)
+    }
+  } finally { await rm(directory, { recursive: true, force: true }) }
+})
+
 test('DeepSeek-style voice choices persist and shape GPT Live guidance without exposing the key', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'voice-options-'))
   const path = join(directory, 'providers.json')

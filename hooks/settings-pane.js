@@ -25,7 +25,8 @@ export function summaries(prefs) {
 
 /** Standby choices, keeping a saved value that is not a preset. */
 export function standbyOptions(current) {
-  const values = STANDBY.includes(current) ? STANDBY : [...STANDBY, current].sort((a, b) => a - b)
+  const presets = [...STANDBY, 300, 600, 900, 1800]
+  const values = presets.includes(current) ? presets : [...presets, current].sort((a, b) => a - b)
   return values.map(value => ({ value: String(value), label: seconds(value) }))
 }
 

@@ -17,12 +17,14 @@ Requires **Node.js 22.19 or later** and npm. Install Node from [nodejs.org](http
 Run the installer directly to see download progress, checksum verification, and the result:
 
 ```sh
-npx --yes claude-voice-mod@latest
+npx --yes --allow-scripts=claude-voice-mod claude-voice-mod@latest
 ```
 
 This downloads and verifies the prebuilt package for your Mac or Windows PC. With pnpm, use `pnpm dlx claude-voice-mod@latest`. Restart Claude after installation.
 
-For a global installation, use `npm install --global --foreground-scripts claude-voice-mod@latest` so npm shows the installer output.
+For a global installation, use `npm install --global --foreground-scripts --allow-scripts=claude-voice-mod claude-voice-mod@latest` so npm permits VoiceMesh's setup script and shows the installer output.
+
+Newer npm versions require local approval for install scripts. The `--allow-scripts=claude-voice-mod` flag approves only this package for that command, following [npm's script-approval policy](https://docs.npmjs.com/cli/commands/npm-install-scripts/). If npm already installed the global command but warned that setup was skipped or not on its allowed list, run `claude-voice-mod` explicitly to finish setup, then restart Claude.
 
 If a global installation fails, run `npm uninstall --global claude-voice-mod` before trying again. This removes leftover npm launcher files that can otherwise cause an `EEXIST` error. The `npx` command above avoids creating global launchers.
 
